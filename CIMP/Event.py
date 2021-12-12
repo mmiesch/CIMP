@@ -2,6 +2,9 @@
 Event class 
 """
 
+def timp():
+    print("Test import")
+
 class Event:
 
     def __init__(self):
