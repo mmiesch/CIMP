@@ -2,9 +2,9 @@
 A tool to plot out an event
 """
 
-import CIMP
+from CIMP import Event as ev
 
-x = CIMP.Event.Event()
+x = ev.Event()
 
 
 
