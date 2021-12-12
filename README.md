@@ -1,0 +1,2 @@
+# CIMP
+Coronagraph Image Processing
