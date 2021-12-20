@@ -2,21 +2,29 @@
 CIMP Event module  
 """
 
+from io import RawIOBase
+import logging
 import os
 from sunpy.net import Fido
 from sunpy.net import attrs as a
+import sunpy.io
+
+# for warning / error statements; print red, yellow text to terminal
+red = '\033[91m'
+yellow = '\033[93m'
+cend = '\033[0m'
 
 testevent = {
     1: {
     'instrument': a.Instrument.lasco,
     'detector': a.Detector.c2,
-    'dir': '/home/mark.miesch/sunpy/data/lasco/',
-    'files': ['22605567.fts', '22605568.fts']
+    'dir': '/home/mark.miesch/sunpy/data/LASCO/',
+    'files': ['22605566.fts','22605567.fts', '22605568.fts','22605569.fts','22605570.fts']
     },
     2: {
     'instrument': a.Instrument.lasco,
     'detector': a.Detector.c3,
-    'dir': '/home/mark.miesch/sunpy/data/lasco/',
+    'dir': '/home/mark.miesch/sunpy/data/LASCO/',
     'files': ['35473922.fts', '35473923.fts']
     }
 }
@@ -37,8 +45,33 @@ class event:
         self.detector = detector
         self._files = files
 
+        # Now read in the data from files.  The assumption here is that there is one image per file.
+        # If that is not the case, then we can generalize this as needed.
         self.nframes = 0
-        self.frames = None
+        self.frames = []
+        self.times = []
+        for file in files:
+            try:
+                data, header = sunpy.io.fits.read(file)[0]
+            except FileNotFoundError as fnf_err:
+                logging.exception(red+"Fatal Error in CIMP.Event.event constructor: {}".format(fnf_err)+cend)
+                raise
+            except ValueError as val_err:
+                logging.exception(red+"Fatal Error in CIMP.Event.event constructor: Incorrect read API for {}: {}".format(file, val_err)+cend)
+                raise
+            except BaseException as err:
+                logging.exception(red+"Fatal Error in CIMP.Event.event constructor: reading file {} : {}".format(file, err)+cend)
+                raise
+
+            try:
+               t = header['DATE'].replace('/','-')
+               time = (datetime.datetime.fromisoformat(t))
+            except Exception as e:
+                logging.exception('Unexpected error in CIMP.Event.event constructor: reading time')
+
+            self.frames.append(data.astyp(float64))
+            self.times.append(time)
+            self.nframes += 1
 
     @classmethod
     def testcase(cls, case = 1):
@@ -69,9 +102,11 @@ class event:
 
     def __str__(self):
         return (f'Instrument = {self.instrument.value} \n'
-               f'Detector = {self.detector.value}\n')
+               f'Detector = {self.detector.value}\n'
+               f'Start time = {self.times[0]}')
 
     def __repr__(self):
         return (f'Instrument = {self.instrument} \n'
                f'Detector = {self.detector}\n'
-               f'files = {self._files}')
+               f'files = {self._files}'
+               f'times = {self.times}')
