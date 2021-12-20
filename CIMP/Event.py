@@ -2,6 +2,7 @@
 CIMP Event module  
 """
 
+import os
 from sunpy.net import Fido
 from sunpy.net import attrs as a
 
@@ -50,15 +51,19 @@ class event:
 
     @classmethod
     def fromtime(cls, instrument = a.Instrument.lasco, detector = a.Detector.c2, 
-                 timerange = a.Time('2016/09/06 10:00:00', '2016/09/06 11:00:00')):
+                 timerange = a.Time('2016/09/06 10:00:00', '2016/09/06 11:00:00'),
+                 dir = os.path.expanduser('~')+'/sunpy/data'):
         """This is an alternative constructor that creates an event object based on a selected time interval, specified as a sunpy time range."""
 
-        # placeholder for testing
-        instrument = a.Instrument.lasco
-        detector = a.Detector.c2
-        dir = '/home/mark.miesch/sunpy/data/lasco/'
-        filelist = ['22605567.fts', '22605568.fts']
-        files = list(dir+file for file in filelist)
+        dbpath = dir + '/' + instrument.value
+
+        qr = Fido.search(timerange, instrument, detector)
+
+        files = Fido.fetch(qr, path = dbpath)
+
+        print(f"CIMP Event constructor downloaded the following files:")
+        for file in files:
+            print(file)
 
         return cls(instrument, detector, files)
 
