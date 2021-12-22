@@ -12,7 +12,6 @@ if plotcase == 1:
     testcase = 1
     nrgf = False
     plotframes = (3, 6, 9, 12)
-    #scale = (700.0, 4000.0)
     scale = (0.0, 1000.0)
 
 elif plotcase == 2:
@@ -45,7 +44,6 @@ if nrgf:
 
 # ===================
 import matplotlib.pyplot as plt
-import numpy as np
 import astropy.units as u
 
 fig = plt.figure(figsize=[18,10])

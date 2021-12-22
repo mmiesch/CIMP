@@ -60,7 +60,7 @@ class event:
 
         # Now read in the data from files.  The assumption here is that there is one image per file.
         # If that is not the case, then we can generalize this as needed.
-        self.frames = []
+        self._frames = []
         self.header = []
         self.times = []
         for file in files:
@@ -86,15 +86,15 @@ class event:
             except Exception as e:
                 logging.exception(red+'Fatal error in CIMP.Event.event constructor: reading time {}'.format(e)+cend)
 
-            if len(self.frames) == 0:
-                self.frames.append(data.astype(float))
+            if len(self._frames) == 0:
+                self._frames.append(data.astype(float))
             else:
-                self.frames.append(data.astype(float) - self.frames[0])
+                self._frames.append(data.astype(float) - self._frames[0])
 
             self.header.append(header)
             self.times.append(time)
 
-        self.nframes = len(self.frames)
+        self.nframes = len(self._frames)
 
     @classmethod
     def testcase(cls, case = 1):
@@ -127,16 +127,16 @@ class event:
         return (self.times[self.nframes-1] - self.times[0])
 
     def map(self, idx):
-        return sunpy.map.Map(self.frames[idx], self.header[idx])
+        return sunpy.map.Map(self._frames[idx], self.header[idx])
 
     def sum(self):
         """
         Long exposure sum of all frames greater than 1.
         Returned as a sunpy map, ready for plotting
         """
-        s = self.frames[1]
+        s = self._frames[1]
         for i in np.arange(2,self.nframes):
-            s += self.frames[i]
+            s += self._frames[i]
         return sunpy.map.Map(s, self.header[0])
 
     def nrgf(self):
@@ -151,13 +151,13 @@ class event:
 
         for i in np.arange(1, self.nframes):
             map = radial.nrgf(self.map(i), edges)
-            self.frames[i] = map.data
+            self._frames[i] = map.data
 
     def __len__(self):
         return self.nframes
 
     def __getitem__(self,idx):
-        return self.frames[idx]
+        return self._frames[idx]
 
     def __str__(self):
         return (f'Instrument = {self.instrument.value} \n'
