@@ -5,6 +5,7 @@ CIMP Event module
 from io import RawIOBase
 import datetime
 import logging
+import numpy as np
 import os
 from sunpy.net import Fido
 from sunpy.net import attrs as a
@@ -21,7 +22,9 @@ testevent = {
     'instrument': a.Instrument.lasco,
     'detector': a.Detector.c2,
     'dir': '/home/mark.miesch/sunpy/data/LASCO/',
-    'files': ['22605566.fts','22605567.fts', '22605568.fts','22605569.fts','22605570.fts']
+    'files': ['22605555.fts','22605556.fts','22605557.fts',
+              '22605558.fts','22605562.fts','22605563.fts','22605564.fts','22605565.fts',
+              '22605566.fts','22605567.fts', '22605568.fts','22605569.fts','22605570.fts']
     },
     2: {
     'instrument': a.Instrument.lasco,
@@ -82,7 +85,8 @@ class event:
                 self.frames.append(data.astype(float) - self.frames[0])
 
             self.times.append(time)
-            self.nframes += 1
+
+        self.nframes = len(self.frames)
 
     @classmethod
     def testcase(cls, case = 1):
@@ -95,7 +99,7 @@ class event:
 
     @classmethod
     def fromtime(cls, instrument = a.Instrument.lasco, detector = a.Detector.c2, 
-                 timerange = a.Time('2016/09/06 10:00:00', '2016/09/06 11:00:00'),
+                 timerange = a.Time('2016/09/06 9:00:00', '2016/09/06 12:00:00'),
                  dir = os.path.expanduser('~')+'/sunpy/data'):
         """This is an alternative constructor that creates an event object based on a selected time interval, specified as a sunpy time range."""
 
@@ -116,6 +120,16 @@ class event:
 
     def map(self, idx):
         return sunpy.map.Map(self.frames[idx], self.header)
+
+    def sum(self):
+        """
+        Long exposure sum of all frames greater than 1.
+        Returned as a sunpy map, ready for plotting
+        """
+        s = self.frames[1]
+        for i in np.arange(2,self.nframes):
+            s += self.frames[i]
+        return sunpy.map.Map(s, self.header)
 
     def __len__(self):
         return self.nframes
