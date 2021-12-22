@@ -2,11 +2,14 @@
 CIMP Event module  
 """
 
+import astropy.units as u
 from io import RawIOBase
 import datetime
 import logging
 import numpy as np
 import os
+import sunkit_image.radial as radial
+from sunkit_image.utils import equally_spaced_bins
 from sunpy.net import Fido
 from sunpy.net import attrs as a
 import sunpy.map
@@ -34,6 +37,11 @@ testevent = {
     }
 }
 
+fov = {
+    'LASCO-C2' : (1.5, 6.0),
+    'LASCO-C3' : (3.7, 30.0)
+}
+
 class event:
     """An event is defined as a series of coronagraph images for a particular instrument, detector, and time interval"""
 
@@ -52,8 +60,8 @@ class event:
 
         # Now read in the data from files.  The assumption here is that there is one image per file.
         # If that is not the case, then we can generalize this as needed.
-        self.nframes = 0
         self.frames = []
+        self.header = []
         self.times = []
         for file in files:
             try:
@@ -78,12 +86,12 @@ class event:
             except Exception as e:
                 logging.exception(red+'Fatal error in CIMP.Event.event constructor: reading time {}'.format(e)+cend)
 
-            if self.nframes == 0:
-                self.header = header
+            if len(self.frames) == 0:
                 self.frames.append(data.astype(float))
             else:
                 self.frames.append(data.astype(float) - self.frames[0])
 
+            self.header.append(header)
             self.times.append(time)
 
         self.nframes = len(self.frames)
@@ -119,7 +127,7 @@ class event:
         return (self.times[self.nframes-1] - self.times[0])
 
     def map(self, idx):
-        return sunpy.map.Map(self.frames[idx], self.header)
+        return sunpy.map.Map(self.frames[idx], self.header[idx])
 
     def sum(self):
         """
@@ -129,7 +137,21 @@ class event:
         s = self.frames[1]
         for i in np.arange(2,self.nframes):
             s += self.frames[i]
-        return sunpy.map.Map(s, self.header)
+        return sunpy.map.Map(s, self.header[0])
+
+    def nrgf(self):
+        """
+        Apply a normalized radial gradient filter to all frames > 0
+        """
+        
+        myfov = fov[self.instrument.value+'-'+self.detector.value]
+        
+        edges = equally_spaced_bins(myfov[0], myfov[1])
+        edges *= u.R_sun
+
+        for i in np.arange(1, self.nframes):
+            map = radial.nrgf(self.map(i), edges)
+            self.frames[i] = map.data
 
     def __len__(self):
         return self.nframes

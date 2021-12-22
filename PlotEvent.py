@@ -17,6 +17,10 @@ print(80*'-')
 print(repr(x))
 print(80*'-')
 
+# ===================
+# Optionally Apply a filter
+
+x.nrgf()
 
 # ===================
 import matplotlib.pyplot as plt
@@ -34,18 +38,23 @@ amap.plot(clip_interval=[10,90]*u.percent)
 p = [3,6,9,12]
 
 # pick a scale from one of the middle images
-#ref = x.map(9)
-#vmin = ref.min()
-#vmax = ref.max()
-vmin = 700.0
-vmax = 4000.0
+ref = x.map(9)
+print(f"Reference data range: {ref.min()} to {ref.max()}")
 
-print(f"image scale: {vmin} to {vmax}")
+#scale = (ref.min(), ref.max())
+
+# for testcase 1 without the nrgf
+#scale = (700.0, 4000.0)
+
+# testcase 1 with the nrgf
+scale = [-0.0, 4.0]
+
+print(f"image scale: {scale[0]} to {scale[1]}")
 
 for i in np.arange(0,4):
     amap = x.map(p[i])
     ax = fig.add_subplot(2,3,i+2,projection=amap)
-    amap.plot(vmin = vmin, vmax = vmax)
+    amap.plot(vmin = scale[0], vmax = scale[1])
 
 # plot sum in last frame
 long_exposure = x.sum()
