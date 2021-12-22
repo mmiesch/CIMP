@@ -6,10 +6,9 @@ import numpy as np
 from CIMP import Event as ev
 import sunpy.map
 from sunpy.net import attrs as a
+import matplotlib.pyplot as plt
 
-from PIL import Image
-from PIL import ImageFilter
-from PIL import ImageEnhance
+from skimage import exposure
 
 plotcase = 1
 
@@ -47,56 +46,31 @@ print(80*'-')
 
 a = x[idx]
 
+
+
 # image as a sunpy map
 amap = x.map(idx)
-
-# colored image as a numpy array:
-c = amap.cmap(a)
 
 amin = np.amin(a)
 amax = np.amax(a)
 
 print(f"Original image range: {amin} to {amax}")
 
+# clipped image
+aclip = a.clip(min=0.0, max=1000.0)
+
+# scaled byte image
+#asc = (a - amin)/(amax - amin)
+asc = (255*aclip/np.amax(aclip)).astype('uint8')
+
 # ---------
 # basic enhancements
 
-#aimage = Image.fromarray(a.astype('uint8'),'RGB')
-#aimage = Image.fromarray(np.uint8(a)).convert('RGB')
-
-aim = Image.fromarray(a)
-#argb = aim.convert('RGB')
-#argb.show()
-agrey = aim.convert('L')
-
-#print(f"IMAGE MODES {aim.mode} {argb.mode}")
-print(f"IMAGE MODES {aim.mode} {agrey.mode}")
-
-#enh = ImageEnhance.Contrast(aim)
-##pim = enh.enhance(1.3)
-#enh.enhance(1.3).show("more contrast")
-
-#enh = ImageEnhance.Sharpness(aim)
-#asharp = enh.enhance(2.0)
-#print(type(asharp))
-
-# processed image as numpy array
-#pim = aim
-#pim = arargbgb.convert(mode = 'L')
-pim = agrey
-pim.show()
-parr = np.asarray(pim, dtype='float')/255
-p = parr*(amax - amin) + amin
-
-print(f"Processed image range: {np.amin(p)} to {np.amax(p)}")
-
-print(type(p))
-print(p.shape)
+#psc = exposure.equalize_hist(asc)
+psc = exposure.equalize_adapthist(asc)
 
 # ---------
 # plot
-
-import matplotlib.pyplot as plt
 
 fig = plt.figure(figsize=[22,10])
 
@@ -105,16 +79,24 @@ if len(scale) != 2:
 
 print(f"image scale: {scale[0]} to {scale[1]}")
 
-ax = fig.add_subplot(1,2,1,projection=amap)
-#plt.imshow(a, vmin = scale[0], vmax = scale[1])
-print(f"Original image map: {amap.min()} to {amap.max()}")
-amap.plot(vmin = scale[0], vmax = scale[1])
+#ax = fig.add_subplot(1,2,2,projection=pmap)
+#amap.plot(vmin = scale[0], vmax = scale[1])
+
+ax = fig.add_subplot(1,2,1)
+#plt.imshow(a, vmin = scale[0], vmax = scale[1], cmap = amap.cmap)
+plt.imshow(asc, cmap=amap.cmap)
 
 # plot processed image
 
-pmap = sunpy.map.Map(p, x.header[0])
-print(f"Processed image map: {pmap.min()} to {pmap.max()}")
-ax = fig.add_subplot(1,2,2,projection=pmap)
-pmap.plot(vmin = scale[0], vmax = scale[1])
+#pmap = sunpy.map.Map(p, x.header[0])
+#ax = fig.add_subplot(1,2,2,projection=pmap)
+#pmap.plot(pmap)
+#pmap.plot(vmin = scale[0], vmax = scale[1])
+##plt.imshow(p, vmin = scale[0], vmax = scale[1], cmap = amap.cmap)
+#plt.imshow(p,cmap=amap.cmap)
+
+ax = fig.add_subplot(1,2,2)
+plt.imshow(psc, cmap=amap.cmap)
+
 
 plt.show()
