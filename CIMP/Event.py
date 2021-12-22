@@ -3,10 +3,12 @@ CIMP Event module
 """
 
 from io import RawIOBase
+import datetime
 import logging
 import os
 from sunpy.net import Fido
 from sunpy.net import attrs as a
+import sunpy.map
 import sunpy.io
 
 # for warning / error statements; print red, yellow text to terminal
@@ -64,12 +66,21 @@ class event:
                 raise
 
             try:
-               t = header['DATE'].replace('/','-')
+               t = header['DATE-OBS'].replace('/','-') + ' ' + header['TIME-OBS']
                time = (datetime.datetime.fromisoformat(t))
+            except KeyError as key_err:
+                logging.exception(red+"Fatal Error in CIMP.Event.event constructor: header key error {}".format(key_err)+cend)
+            except ValueError as val_err:
+                logging.exception(red+"Fatal error in CIMP.Event.event constructor: time conversion {}".format(val_err))
             except Exception as e:
-                logging.exception('Unexpected error in CIMP.Event.event constructor: reading time')
+                logging.exception(red+'Fatal error in CIMP.Event.event constructor: reading time {}'.format(e)+cend)
 
-            self.frames.append(data.astyp(float64))
+            if self.nframes == 0:
+                self.header = header
+                self.frames.append(data.astype(float))
+            else:
+                self.frames.append(data.astype(float) - self.frames[0])
+
             self.times.append(time)
             self.nframes += 1
 
@@ -100,13 +111,29 @@ class event:
 
         return cls(instrument, detector, files)
 
+    def duration(self):
+        return (self.times[self.nframes-1] - self.times[0])
+
+    def map(self, idx):
+        return sunpy.map.Map(self.frames[idx], self.header)
+
+    def __len__(self):
+        return self.nframes
+
+    def __getitem__(self,idx):
+        return self.frames[idx]
+
     def __str__(self):
         return (f'Instrument = {self.instrument.value} \n'
-               f'Detector = {self.detector.value}\n'
-               f'Start time = {self.times[0]}')
+               f'Detector   = {self.detector.value}\n'
+               f'Start time = {self.times[0]}\n'
+               f'End time   = {self.times[self.nframes-1]}\n'
+               f'Duration   = {self.duration()}\n'
+               f'Nframes    = {self.nframes}')
 
     def __repr__(self):
         return (f'Instrument = {self.instrument} \n'
                f'Detector = {self.detector}\n'
-               f'files = {self._files}'
+               f'Nframes = {self.nframes}\n'
+               f'files = {self._files}\n'
                f'times = {self.times}')
