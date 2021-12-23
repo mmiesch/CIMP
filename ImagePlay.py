@@ -57,7 +57,7 @@ amax = np.amax(a)
 print(f"Original image range: {amin} to {amax}")
 
 # clipped image
-aclip = a.clip(min=0.0, max=1000.0)
+aclip = a.clip(min=scale[0], max=scale[1])
 
 # scaled byte image
 #asc = (a - amin)/(amax - amin)
@@ -69,7 +69,9 @@ asc = (255*aclip/np.amax(aclip)).astype('uint8')
 #psc = exposure.equalize_hist(asc)
 psc = exposure.equalize_adapthist(asc)
 
-# ---------
+p = (scale[1] - scale[0])*psc + scale[0]
+
+#======================================================================
 # plot
 
 fig = plt.figure(figsize=[22,10])
@@ -79,24 +81,32 @@ if len(scale) != 2:
 
 print(f"image scale: {scale[0]} to {scale[1]}")
 
-#ax = fig.add_subplot(1,2,2,projection=pmap)
-#amap.plot(vmin = scale[0], vmax = scale[1])
+# Optionally plot as a sunpy map
 
-ax = fig.add_subplot(1,2,1)
-#plt.imshow(a, vmin = scale[0], vmax = scale[1], cmap = amap.cmap)
-plt.imshow(asc, cmap=amap.cmap)
+plotasmap = True
 
-# plot processed image
+if plotasmap:
+    ax = fig.add_subplot(1,2,1,projection=amap)
+    amap.plot(vmin = scale[0], vmax = scale[1])
+    
+    pmap = sunpy.map.Map(p, x.header[0])
+    ax = fig.add_subplot(1,2,2,projection=pmap)
+    pmap.plot(vmin = scale[0], vmax = scale[1])
 
-#pmap = sunpy.map.Map(p, x.header[0])
-#ax = fig.add_subplot(1,2,2,projection=pmap)
-#pmap.plot(pmap)
-#pmap.plot(vmin = scale[0], vmax = scale[1])
-##plt.imshow(p, vmin = scale[0], vmax = scale[1], cmap = amap.cmap)
-#plt.imshow(p,cmap=amap.cmap)
+else:
+    ax = fig.add_subplot(1,2,1)
+    plt.imshow(a, vmin = scale[0], vmax = scale[1], cmap = amap.cmap)
+    #plt.imshow(asc, cmap=amap.cmap)
+    
+    # plot processed image
+    ax = fig.add_subplot(1,2,2)
+    pplot = plt.imshow(psc, cmap=amap.cmap)
+    
+    # see what matplotlib is using for the limits of the color scale
+    
+    clim = pplot.get_clim()
+    
+    print(f"Limits used for the color table = {clim[0]} to {clim[1]}")
 
-ax = fig.add_subplot(1,2,2)
-plt.imshow(psc, cmap=amap.cmap)
-
-
+#======================================================================
 plt.show()
