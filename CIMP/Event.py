@@ -13,6 +13,7 @@ import sunpy.io
 
 from io import RawIOBase
 from skimage import exposure
+from skimage.restoration import (denoise_tv_chambolle, denoise_nl_means)
 from sunkit_image.utils import equally_spaced_bins
 from sunpy.net import Fido
 from sunpy.net import attrs as a
@@ -141,7 +142,7 @@ class event:
             s += self._frames[i]
         return sunpy.map.Map(s, self.header[0])
 
-    def enhance(self, clip = None):
+    def enhance(self, clip = None, tvnoise = True):
         """
         Enhance image frames for plotting
         clip (optional): 2-element tuple specifying the range to clip the data
@@ -159,8 +160,14 @@ class event:
 
             im = (a - vmin)/(vmax - vmin)
 
+            # remove noise
+            if tvnoise:
+                imdn = denoise_tv_chambolle(im, weight = 0.2)
+            else:
+                imdn = denoise_nl_means(im, patch_size = 4)
+
             # adaptive equalization
-            imeq = exposure.equalize_adapthist(im)
+            imeq = exposure.equalize_adapthist(imdn)
             
             self._frames[i] = (vmax - vmin)*imeq + vmin
 

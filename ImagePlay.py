@@ -46,8 +46,6 @@ print(80*'-')
 
 a = x[idx]
 
-
-
 # image as a sunpy map
 amap = x.map(idx)
 
@@ -64,10 +62,13 @@ aclip = a.clip(min=scale[0], max=scale[1])
 #asc = (255*aclip/np.amax(aclip)).astype('uint8')
 asc = aclip/np.amax(aclip)
 
-# ---------
-# basic enhancements
+#======================================================================
+# image enhancements
 
+# this doesn't do much
 #psc = exposure.equalize_hist(asc)
+
+# this is great
 psc = exposure.equalize_adapthist(asc)
 
 p = (scale[1] - scale[0])*psc + scale[0]
