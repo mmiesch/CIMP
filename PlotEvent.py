@@ -28,7 +28,7 @@ elif plotcase == 3:
     enhance = True
     plotframes = (3, 6, 9, 12)
     clip = (0.0, 1000.0)
-    scale = (50.0, 1000.0)
+    scale = (0.0, 1000.0)
 
 else:
     print("specify a valid plotcase")
@@ -61,6 +61,24 @@ import astropy.units as u
 
 fig = plt.figure(figsize=[18,10])
 
+## ===================\
+## debug - replicate what ImagePlay is doing
+#from skimage import exposure
+#import sunpy.map
+#
+#a = x[9]
+#
+#aclip = a.clip(min=scale[0], max=scale[1])
+##asc = aclip/np.amax(aclip)
+#asc = (aclip - scale[0])/(scale[1]-scale[0])
+#psc = exposure.equalize_adapthist(asc)
+#p = (scale[1] - scale[0])*psc + scale[0]
+#
+#pmap = sunpy.map.Map(p, x.header[9])
+#ax = fig.add_subplot(2,3,1,projection=pmap)
+#pplot = pmap.plot(vmin = scale[0], vmax = scale[1])
+# ===================\
+
 # plot the first frame, not as a diff image
 amap = x.map(0)
 ax = fig.add_subplot(2,3,1,projection=amap)
@@ -83,7 +101,8 @@ print(f"image scale: {scale[0]} to {scale[1]}")
 for i in np.arange(0,4):
     amap = x.map(plotframes[i])
     ax = fig.add_subplot(2,3,i+2,projection=amap)
-    amap.plot(vmin = scale[0], vmax = scale[1])
+    pplot = amap.plot(vmin = scale[0], vmax = scale[1])
+    print(f"color table {pplot.get_clim()}")
 
 # plot sum in last frame
 long_exposure = x.sum()

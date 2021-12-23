@@ -61,7 +61,8 @@ aclip = a.clip(min=scale[0], max=scale[1])
 
 # scaled byte image
 #asc = (a - amin)/(amax - amin)
-asc = (255*aclip/np.amax(aclip)).astype('uint8')
+#asc = (255*aclip/np.amax(aclip)).astype('uint8')
+asc = aclip/np.amax(aclip)
 
 # ---------
 # basic enhancements
@@ -91,7 +92,7 @@ if plotasmap:
     
     pmap = sunpy.map.Map(p, x.header[0])
     ax = fig.add_subplot(1,2,2,projection=pmap)
-    pmap.plot(vmin = scale[0], vmax = scale[1])
+    pplot = pmap.plot(vmin = scale[0], vmax = scale[1])
 
 else:
     ax = fig.add_subplot(1,2,1)
@@ -104,9 +105,9 @@ else:
     
     # see what matplotlib is using for the limits of the color scale
     
-    clim = pplot.get_clim()
+clim = pplot.get_clim()
     
-    print(f"Limits used for the color table = {clim[0]} to {clim[1]}")
+print(f"Limits used for the color table = {clim[0]} to {clim[1]}")
 
 #======================================================================
 plt.show()

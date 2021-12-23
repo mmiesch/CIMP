@@ -146,6 +146,8 @@ class event:
         Enhance image frames for plotting
         clip (optional): 2-element tuple specifying the range to clip the data
         """
+        vmin = clip[0]
+        vmax = clip[1]
 
         # contrast stretching via clipping
         for i in np.arange(1,self.nframes):
@@ -153,16 +155,14 @@ class event:
             if clip is None:
                 a = self._frames[i]
             else:
-                a = self._frames[i].clip(min = clip[0], max = clip[1])
+                a = self._frames[i].clip(min = vmin, max = vmax)
 
-            vmin = np.amin(a)
-            vmax = np.amax(a)
             im = (a - vmin)/(vmax - vmin)
 
             # adaptive equalization
             imeq = exposure.equalize_adapthist(im)
             
-            self._frames[i] = (vmax - vmin)*imeq.astype(float) + vmin
+            self._frames[i] = (vmax - vmin)*imeq + vmin
 
     def nrgf(self):
         """
