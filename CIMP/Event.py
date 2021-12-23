@@ -3,17 +3,19 @@ CIMP Event module
 """
 
 import astropy.units as u
-from io import RawIOBase
 import datetime
 import logging
 import numpy as np
 import os
 import sunkit_image.radial as radial
+import sunpy.map
+import sunpy.io
+
+from io import RawIOBase
+from skimage import exposure
 from sunkit_image.utils import equally_spaced_bins
 from sunpy.net import Fido
 from sunpy.net import attrs as a
-import sunpy.map
-import sunpy.io
 
 # for warning / error statements; print red, yellow text to terminal
 red = '\033[91m'
@@ -138,6 +140,29 @@ class event:
         for i in np.arange(2,self.nframes):
             s += self._frames[i]
         return sunpy.map.Map(s, self.header[0])
+
+    def enhance(self, clip = None):
+        """
+        Enhance image frames for plotting
+        clip (optional): 2-element tuple specifying the range to clip the data
+        """
+
+        # contrast stretching via clipping
+        for i in np.arange(1,self.nframes):
+
+            if clip is None:
+                a = self._frames[i]
+            else:
+                a = self._frames[i].clip(min = clip[0], max = clip[1])
+
+            vmin = np.amin(a)
+            vmax = np.amax(a)
+            im = (a - vmin)/(vmax - vmin)
+
+            # adaptive equalization
+            imeq = exposure.equalize_adapthist(im)
+            
+            self._frames[i] = (vmax - vmin)*imeq.astype(float) + vmin
 
     def nrgf(self):
         """

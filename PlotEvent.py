@@ -6,19 +6,29 @@ import numpy as np
 from CIMP import Event as ev
 from sunpy.net import attrs as a
 
-plotcase = 2
+plotcase = 3
 
 if plotcase == 1:
     testcase = 1
     nrgf = False
+    enhance = False
     plotframes = (3, 6, 9, 12)
     scale = (0.0, 1000.0)
 
 elif plotcase == 2:
     testcase = 1
     nrgf = True
+    enhance = False
     plotframes = (3, 6, 9, 12)
     scale = (0.0, 4.0)
+
+elif plotcase == 3:
+    testcase = 1
+    nrgf = False
+    enhance = True
+    plotframes = (3, 6, 9, 12)
+    clip = (0.0, 1000.0)
+    scale = (50.0, 1000.0)
 
 else:
     print("specify a valid plotcase")
@@ -41,6 +51,9 @@ print(80*'-')
 
 if nrgf:
    x.nrgf()
+
+if enhance:
+    x.enhance(clip = clip)
 
 # ===================
 import matplotlib.pyplot as plt
