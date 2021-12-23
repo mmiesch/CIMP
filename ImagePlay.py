@@ -9,6 +9,10 @@ from sunpy.net import attrs as a
 import matplotlib.pyplot as plt
 
 from skimage import exposure
+from skimage.filters.rank import (median, enhance_contrast, enhance_contrast_percentile,
+                                  autolevel)
+from skimage.morphology import disk
+from skimage.restoration import (denoise_tv_chambolle, denoise_nl_means)
 
 plotcase = 1
 
@@ -65,11 +69,24 @@ asc = aclip/np.amax(aclip)
 #======================================================================
 # image enhancements
 
+# first remove noise
+psc1 = denoise_tv_chambolle(asc, weight = 0.2)
+
 # this doesn't do much
 #psc = exposure.equalize_hist(asc)
 
-# this is great
-psc = exposure.equalize_adapthist(asc)
+# adaptive equalization is great
+psc2 = exposure.equalize_adapthist(psc1)
+
+# gamma correction
+#psc = exposure.adjust_gamma(psc2, gamma=0.9, gain=1.0)
+
+# enhance contrast
+psc = enhance_contrast_percentile(psc2,disk(1), p0=.1, p1=.9)
+#psc = autolevel(psc2,disk(10))
+
+# rescale
+psc = (psc.astype('float') - np.amin(psc))/(np.amax(psc) - np.amin(psc))
 
 p = (scale[1] - scale[0])*psc + scale[0]
 

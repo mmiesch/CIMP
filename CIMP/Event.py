@@ -13,6 +13,8 @@ import sunpy.io
 
 from io import RawIOBase
 from skimage import exposure
+from skimage.filters.rank import median, enhance_contrast_percentile
+from skimage.morphology import disk
 from skimage.restoration import (denoise_tv_chambolle, denoise_nl_means)
 from sunkit_image.utils import equally_spaced_bins
 from sunpy.net import Fido
@@ -36,7 +38,12 @@ testevent = {
     'instrument': a.Instrument.lasco,
     'detector': a.Detector.c3,
     'dir': '/home/mark.miesch/sunpy/data/LASCO/',
-    'files': ['35473922.fts', '35473923.fts']
+    'files': ['32473914.fts', '32473915.fts','32473916.fts','32473917.fts','32473918.fts',
+              '32473919.fts', '32473920.fts','32473921.fts','32473922.fts','32473923.fts',
+              '32473924.fts', '32473925.fts','32473926.fts','32473927.fts','32473928.fts',
+              '32473929.fts', '32473930.fts','32473931.fts','32473932.fts','32473933.fts',
+              '32473934.fts', '32473935.fts','32473936.fts','32473937.fts','32473938.fts',
+              '32473939.fts', '32473940.fts','32473941.fts','32473942.fts','32473943.fts']
     }
 }
 
@@ -80,12 +87,20 @@ class event:
                 raise
 
             try:
-               t = header['DATE-OBS'].replace('/','-') + ' ' + header['TIME-OBS']
-               time = (datetime.datetime.fromisoformat(t))
+                print(f"HEADER TIME {file} {header['DATE-OBS']}")
+                #if (self.instrument.value == 'LASCO' and self.detector.value == 'C2'): 
+                t = header['DATE-OBS'].replace('/','-') + ' ' + header['TIME-OBS']
+                time = datetime.datetime.fromisoformat(t)
+                #else:
+                #    """
+                #    Careful here - it looks like the time stamp on C3 files can be different - like C2 or not
+                #    """
+                #    t = header['DATE-OBS'].replace('T',' ')
+                #    time = datetime.datetime.fromisoformat(t)
             except KeyError as key_err:
                 logging.exception(red+"Fatal Error in CIMP.Event.event constructor: header key error {}".format(key_err)+cend)
             except ValueError as val_err:
-                logging.exception(red+"Fatal error in CIMP.Event.event constructor: time conversion {}".format(val_err))
+                logging.exception(red+"Fatal error in CIMP.Event.event constructor: time conversion {} : {}".format(t, val_err)+cend)
             except Exception as e:
                 logging.exception(red+'Fatal error in CIMP.Event.event constructor: reading time {}'.format(e)+cend)
 
@@ -142,7 +157,7 @@ class event:
             s += self._frames[i]
         return sunpy.map.Map(s, self.header[0])
 
-    def enhance(self, clip = None, tvnoise = True):
+    def enhance(self, clip = None, noise_removal = 'tv'):
         """
         Enhance image frames for plotting
         clip (optional): 2-element tuple specifying the range to clip the data
@@ -161,13 +176,18 @@ class event:
             im = (a - vmin)/(vmax - vmin)
 
             # remove noise
-            if tvnoise:
+            if noise_removal == 'tv':
                 imdn = denoise_tv_chambolle(im, weight = 0.2)
+            elif noise_removal == 'mediam':
+                imdn = median(disk(1))
             else:
                 imdn = denoise_nl_means(im, patch_size = 4)
 
+            imdn = (imdn - np.amin(imdn))/(np.amax(imdn) - np.amin(imdn))
+            imc = enhance_contrast_percentile(imdn,disk(2), p0=.1, p1=.9)
+
             # adaptive equalization
-            imeq = exposure.equalize_adapthist(imdn)
+            imeq = exposure.equalize_adapthist(imc)
             
             self._frames[i] = (vmax - vmin)*imeq + vmin
 

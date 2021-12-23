@@ -9,7 +9,8 @@ from sunpy.net import attrs as a
 import matplotlib.pyplot as plt
 
 from skimage import exposure
-
+from skimage.filters.rank import median, enhance_contrast
+from skimage.morphology import disk
 from skimage.restoration import (denoise_tv_chambolle, denoise_bilateral,
                                  denoise_wavelet, estimate_sigma, denoise_nl_means)
 
@@ -107,12 +108,17 @@ psc = denoise_nl_means(asc, patch_size=4)
 p = (psc - np.amin(psc))/(np.amax(psc) - np.amin(psc))
 pims.append(p)
 
-# wavelet filter
-titles.append('wavelet')
-#psc = denoise_wavelet(asc, rescale_sigma=True)
-psc = denoise_wavelet(asc, sigma=0.1, mode='soft',wavelet='haar')
+titles.append('median')
+psc = median(asc, disk(1))
 p = (psc - np.amin(psc))/(np.amax(psc) - np.amin(psc))
 pims.append(p)
+
+# wavelet filter
+#titles.append('wavelet')
+##psc = denoise_wavelet(asc, rescale_sigma=True)
+#psc = denoise_wavelet(asc, sigma=0.1, mode='soft',wavelet='haar')
+#p = (psc - np.amin(psc))/(np.amax(psc) - np.amin(psc))
+#pims.append(p)
 
 #======================================================================
 # plot
