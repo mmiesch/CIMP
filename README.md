@@ -11,10 +11,10 @@ To load the module, make sure this directory is in your path and then do one of 
 
 ```python
 import CIMP
-x = CIMP.Event.Event()
+x = CIMP.Event.event()
 ```
 
 ```python
 from CIMP import Event as ev
-x = ev.Event()
+x = ev.event()
 ```
