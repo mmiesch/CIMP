@@ -17,7 +17,7 @@ from skimage.restoration import (denoise_tv_chambolle, denoise_nl_means)
 
 plotcase = 3
 
-snap = False
+snapshot = False
 
 if plotcase == 1:
     testcase = 1
@@ -32,28 +32,29 @@ elif plotcase == 2:
     scale = (0.0, 4.0)
 
 elif plotcase == 3:
-    snap = True
+    snapshot = True
     testcase = 1
     nrgf = False
-    #scale = (0.0, 4.0)
+    scale = (600, 4000)
 
 else:
     print("specify a valid plotcase")
     exit()    
 
-
-if snap:
+if snapshot:
     x = snap.snapshot.testcase(testcase)
     a = x.data
     amap = x.map()
+    header = x.header
 else:
     x = ev.event.testcase(testcase)
     a = x[idx]
     amap = x.map(idx)
+    header = x.header[idx]
 
-# for experimenting
-#timerange = a.Time('2016/09/06 8:00:00', '2016/09/06 12:00:00')
-#x = ev.event.fromtime(a.Instrument.lasco, a.Detector.c2, timerange)
+    # for experimenting
+    #timerange = a.Time('2016/09/06 8:00:00', '2016/09/06 12:00:00')
+    #x = ev.event.fromtime(a.Instrument.lasco, a.Detector.c2, timerange)
 
 print(80*'-')
 print(x)
@@ -65,6 +66,9 @@ print(80*'-')
 
 amin = np.amin(a)
 amax = np.amax(a)
+
+if len(scale) != 2:
+    scale = (amin, amax)
 
 print(f"Original image range: {amin} to {amax}")
 
@@ -105,9 +109,6 @@ p = (scale[1] - scale[0])*psc + scale[0]
 
 fig = plt.figure(figsize=[22,10])
 
-if len(scale) != 2:
-    scale = (amin, amax)
-
 print(f"image scale: {scale[0]} to {scale[1]}")
 
 # Optionally plot as a sunpy map
@@ -118,7 +119,7 @@ if plotasmap:
     ax = fig.add_subplot(1,2,1,projection=amap)
     amap.plot(vmin = scale[0], vmax = scale[1])
     
-    pmap = sunpy.map.Map(p, x.header[0])
+    pmap = sunpy.map.Map(p, header)
     ax = fig.add_subplot(1,2,2,projection=pmap)
     pplot = pmap.plot(vmin = scale[0], vmax = scale[1])
 
