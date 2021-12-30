@@ -4,6 +4,7 @@ The purpose of this script is to start playing around with different python imag
 
 import numpy as np
 from CIMP import Event as ev
+from CIMP import Snapshot as snap
 import sunpy.map
 from sunpy.net import attrs as a
 import matplotlib.pyplot as plt
@@ -14,7 +15,9 @@ from skimage.filters.rank import (median, enhance_contrast, enhance_contrast_per
 from skimage.morphology import disk
 from skimage.restoration import (denoise_tv_chambolle, denoise_nl_means)
 
-plotcase = 1
+plotcase = 3
+
+snap = False
 
 if plotcase == 1:
     testcase = 1
@@ -28,12 +31,25 @@ elif plotcase == 2:
     idx = 9
     scale = (0.0, 4.0)
 
+elif plotcase == 3:
+    snap = True
+    testcase = 1
+    nrgf = False
+    #scale = (0.0, 4.0)
+
 else:
     print("specify a valid plotcase")
     exit()    
 
 
-x = ev.event.testcase(testcase)
+if snap:
+    x = snap.snapshot.testcase(testcase)
+    a = x.data
+    amap = x.map()
+else:
+    x = ev.event.testcase(testcase)
+    a = x[idx]
+    amap = x.map(idx)
 
 # for experimenting
 #timerange = a.Time('2016/09/06 8:00:00', '2016/09/06 12:00:00')
@@ -46,12 +62,6 @@ print(repr(x))
 print(80*'-')
 
 # ===================
-# pick an image to work with
-
-a = x[idx]
-
-# image as a sunpy map
-amap = x.map(idx)
 
 amin = np.amin(a)
 amax = np.amax(a)
