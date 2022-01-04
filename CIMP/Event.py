@@ -49,6 +49,12 @@ testevent = {
     'detector': a.Detector.c3,
     'dir': '/home/mark.miesch/sunpy/data/lasco_c3/',
     'files': list(str(num)+'.fts' for num in np.arange(32339573, 32339592))
+    },
+    5: {
+    'instrument': a.Instrument.secchi,
+    'detector': a.Detector.cor1,
+    'dir': '/home/mark.miesch/sunpy/data/secchi_cor1/',
+    'files': list(str(num)+'.fts' for num in np.arange(32339573, 32339592))
     }
 }
 
@@ -71,12 +77,12 @@ class event:
             detector = e['detector']
             files = list(e['dir']+file for file in e['files'])
 
-        self.instrument = instrument
-        self.detector = detector
-        self.source = source
+        if source is None:
+            self.instrument = instrument.value
+        else:
+            self.instrument = source + '/' + instrument.value
+        self.detector = detector.value
         self._files = files
-
-
 
         # Now read in the data from files.  The assumption here is that there is one image per file.
         # If that is not the case, then we can generalize this as needed.
@@ -96,28 +102,24 @@ class event:
                 logging.exception(red+"Fatal Error in CIMP.Event.event constructor: reading file {} : {}".format(file, err)+cend)
                 raise
 
-            try:
-                t = header['DATE-OBS'].replace('/','-') + ' ' + header['TIME-OBS']
-                time = datetime.datetime.fromisoformat(t)
-            except KeyError as key_err:
-                logging.exception(red+"Error in CIMP.Event.event constructor : {} : header key error {}".format(file, key_err)+cend)
-                time = datetime.datetime(datetime.MAXYEAR,1,1)
-            except ValueError as val_err:
-                logging.exception(red+"Error in CIMP.Event.event constructor : {} : time conversion {} : {}".format(file, t, val_err)+cend)
-                time = datetime.datetime(datetime.MAXYEAR,1,1)
-            except Exception as e:
-                logging.exception(red+'Error in CIMP.Event.event constructor : {} : reading time {}'.format(file, e)+cend)
-                time = datetime.datetime(datetime.MAXYEAR,1,1)
-
             if len(self._frames) == 0:
                 self._frames.append(data.astype(float))
             else:
                 self._frames.append(data.astype(float) - self._frames[0])
 
             self.header.append(header)
-            self.times.append(time)
 
         self.nframes = len(self._frames)
+
+        # different instruments have different headers.  Let Sunpy sort it out with maps
+        for i in np.arange(0, self.nframes):
+            m = self.map(i)
+            try: 
+                time = datetime.datetime.fromisoformat(m.date.value)
+            except Exception as e:
+                logging.exception(red+'Error in CIMP.Event.event constructor : {} : reading time {}'.format(self._file[i], e)+cend)
+                time = datetime.datetime(datetime.MAXYEAR,1,1)
+            self.times.append(time)
 
     @classmethod
     def testcase(cls, case = 1):
@@ -209,7 +211,7 @@ class event:
         Apply a normalized radial gradient filter to all frames > 0
         """
         
-        myfov = fov[self.instrument.value.lower()+'-'+self.detector.value.lower()]
+        myfov = fov[self.instrument.lower()+'-'+self.detector.lower()]
         
         edges = equally_spaced_bins(myfov[0], myfov[1])
         edges *= u.R_sun
@@ -225,8 +227,8 @@ class event:
         return self._frames[idx]
 
     def __str__(self):
-        return (f'Instrument = {self.instrument.value} \n'
-               f'Detector   = {self.detector.value}\n'
+        return (f'Instrument = {self.instrument} \n'
+               f'Detector   = {self.detector}\n'
                f'Start time = {self.times[0]}\n'
                f'End time   = {self.times[self.nframes-1]}\n'
                f'Duration   = {self.duration()}\n'
