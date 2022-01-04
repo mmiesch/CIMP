@@ -30,38 +30,39 @@ testevent = {
     'instrument': a.Instrument.lasco,
     'detector': a.Detector.c2,
     'dir': '/home/mark.miesch/sunpy/data/lasco_c2/',
-    'files': ['22605555.fts','22605556.fts','22605557.fts',
-              '22605558.fts','22605562.fts','22605563.fts','22605564.fts','22605565.fts',
-              '22605566.fts','22605567.fts', '22605568.fts','22605569.fts','22605570.fts']
+    'files': list(str(num)+'.fts' for num in np.arange(22605555, 22605571))
     },
     2: {
     'instrument': a.Instrument.lasco,
     'detector': a.Detector.c3,
     'dir': '/home/mark.miesch/sunpy/data/lasco_c3/',
-    'files': ['32473914.fts', '32473915.fts','32473916.fts','32473917.fts','32473918.fts',
-              '32473919.fts', '32473920.fts','32473921.fts','32473922.fts','32473923.fts',
-              '32473924.fts', '32473925.fts','32473926.fts','32473927.fts','32473928.fts',
-              '32473929.fts', '32473930.fts','32473931.fts','32473932.fts','32473933.fts',
-              '32473934.fts', '32473935.fts','32473936.fts','32473937.fts','32473938.fts',
-              '32473939.fts', '32473940.fts','32473941.fts','32473942.fts','32473943.fts']
+    'files': list(str(num)+'.fts' for num in np.arange(32473914, 32473944))
     },
     3: {
     'instrument': a.Instrument.lasco,
     'detector': a.Detector.c2,
     'dir': '/home/mark.miesch/sunpy/data/lasco_c2/',
     'files': list(str(num)+'.fts' for num in np.arange(22459503, 22459510))
+    },
+    4: {
+    'instrument': a.Instrument.lasco,
+    'detector': a.Detector.c3,
+    'dir': '/home/mark.miesch/sunpy/data/lasco_c3/',
+    'files': list(str(num)+'.fts' for num in np.arange(32339573, 32339592))
     }
 }
 
 fov = {
-    'LASCO-C2' : (1.5, 6.0),
-    'LASCO-C3' : (3.7, 30.0)
+    'lasco-c2'   : (1.5,  6.0),
+    'lasco-c3'   : (3.7, 30.0),
+    'secchi-cor1': (1.5,  4.0),
+    'secchi-cor2': (3.0, 15.0)
 }
 
 class event:
     """An event is defined as a series of coronagraph images for a particular instrument, detector, and time interval"""
 
-    def __init__(self, instrument = None, detector = None, files = None):
+    def __init__(self, instrument = None, detector = None, files = None, source = None):
 
         if (instrument is None or detector is None or files is None):
             print("Incomplete argument list: Using default test case")
@@ -72,7 +73,10 @@ class event:
 
         self.instrument = instrument
         self.detector = detector
+        self.source = source
         self._files = files
+
+
 
         # Now read in the data from files.  The assumption here is that there is one image per file.
         # If that is not the case, then we can generalize this as needed.
@@ -93,24 +97,17 @@ class event:
                 raise
 
             try:
-                print(f"HEADER TIME {file} {header['DATE-OBS']}")
-                #if (self.instrument.value == 'LASCO' and self.detector.value == 'C2'): 
                 t = header['DATE-OBS'].replace('/','-') + ' ' + header['TIME-OBS']
                 time = datetime.datetime.fromisoformat(t)
-                #else:
-                #    """
-                #    Careful here - it looks like the time stamp on C3 files can be different - like C2 or not
-                #    """
-                #    t = header['DATE-OBS'].replace('T',' ')
-                #    time = datetime.datetime.fromisoformat(t)
             except KeyError as key_err:
-                logging.exception(red+"Fatal Error in CIMP.Event.event constructor: header key error {}".format(key_err)+cend)
+                logging.exception(red+"Error in CIMP.Event.event constructor : {} : header key error {}".format(file, key_err)+cend)
+                time = datetime.datetime(datetime.MAXYEAR,1,1)
             except ValueError as val_err:
-                logging.exception(red+"Fatal error in CIMP.Event.event constructor: time conversion {} : {}".format(t, val_err)+cend)
+                logging.exception(red+"Error in CIMP.Event.event constructor : {} : time conversion {} : {}".format(file, t, val_err)+cend)
+                time = datetime.datetime(datetime.MAXYEAR,1,1)
             except Exception as e:
-                logging.exception(red+'Fatal error in CIMP.Event.event constructor: reading time {}'.format(e)+cend)
-
-            print(f"MSM {file} {data.shape}")
+                logging.exception(red+'Error in CIMP.Event.event constructor : {} : reading time {}'.format(file, e)+cend)
+                time = datetime.datetime(datetime.MAXYEAR,1,1)
 
             if len(self._frames) == 0:
                 self._frames.append(data.astype(float))
@@ -134,12 +131,19 @@ class event:
     @classmethod
     def fromtime(cls, instrument = a.Instrument.lasco, detector = a.Detector.c2, 
                  timerange = a.Time('2016/09/06 9:00:00', '2016/09/06 12:00:00'),
-                 dir = os.path.expanduser('~')+'/sunpy/data'):
+                 source = None, dir = os.path.expanduser('~')+'/sunpy/data'):
         """This is an alternative constructor that creates an event object based on a selected time interval, specified as a sunpy time range."""
 
-        dbpath = dir + '/' + instrument.value + '_' + detector.value + '/'
+        dbpath = dir + '/' + instrument.value.lower() + '_' + detector.value.lower() + '/'
 
-        qr = Fido.search(timerange, instrument, detector)
+        if (instrument.value.lower() == 'secchi' and source is None):
+            source = 'STEREO_A'
+
+        if source is None:
+            qr = Fido.search(timerange, instrument, detector)
+        else:
+            qr = Fido.search(timerange, a.Source(source), instrument, detector)
+
 
         files = Fido.fetch(qr, path = dbpath)
         files.sort()
@@ -148,7 +152,7 @@ class event:
         for file in files:
             print(file)
 
-        return cls(instrument, detector, files)
+        return cls(instrument, detector, files, source)
 
     def duration(self):
         return (self.times[self.nframes-1] - self.times[0])
@@ -205,7 +209,7 @@ class event:
         Apply a normalized radial gradient filter to all frames > 0
         """
         
-        myfov = fov[self.instrument.value+'-'+self.detector.value]
+        myfov = fov[self.instrument.value.lower()+'-'+self.detector.value.lower()]
         
         edges = equally_spaced_bins(myfov[0], myfov[1])
         edges *= u.R_sun

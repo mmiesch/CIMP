@@ -8,7 +8,7 @@ from sunpy.net import attrs as a
 
 #---------------------------------------------------
 
-plotcase = 8
+plotcase = 10
 
 if plotcase == 1:
     testcase = 1
@@ -80,6 +80,32 @@ elif plotcase == 8:
     scale = (0, 4.0)
     clip = scale
 
+elif plotcase == 9:
+    # Event 22 in NASA/NOAA MOU Annex Final Report (Mays et al 2015)
+    testcase = 4
+    instrument = a.Instrument.lasco
+    detector = a.Detector.c3
+    timerange = a.Time('2013/05/17 9:30:00', '2013/05/17 13:30:00')
+    nrgf = True
+    enhance = True
+    plotframes = (4, 8, 12, 18)
+    #scale = (0, 100.0)
+    scale = (0, 4.0)
+    clip = scale
+
+elif plotcase == 10:
+    # Event 22 in NASA/NOAA MOU Annex Final Report (Mays et al 2015)
+    testcase = None
+    instrument = a.Instrument.secchi
+    detector = a.Detector.cor1
+    timerange = a.Time('2013/05/17 9:30:00', '2013/05/17 13:30:00')
+    nrgf = False
+    enhance = False
+    plotframes = None
+    scale = (0, 100.0)
+    #scale = (0, 4.0)
+    clip = scale
+
 else:
     print("specify a valid plotcase")
     exit()    
@@ -141,7 +167,6 @@ if scale is None:
 print(f"image scale: {scale[0]} to {scale[1]}")
 
 for i in np.arange(0,4):
-    print(f"MSM {type(i)} {type(plotframes[i])}")
     amap = x.map(plotframes[i])
     ax = fig.add_subplot(2,3,i+2,projection=amap)
     pplot = amap.plot(vmin = scale[0], vmax = scale[1])
