@@ -129,7 +129,7 @@ class event:
                  dir = os.path.expanduser('~')+'/sunpy/data'):
         """This is an alternative constructor that creates an event object based on a selected time interval, specified as a sunpy time range."""
 
-        dbpath = dir + '/' + instrument.value
+        dbpath = dir + '/' + instrument.value + '_' + detector.value + '/'
 
         qr = Fido.search(timerange, instrument, detector)
 

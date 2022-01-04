@@ -6,7 +6,9 @@ import numpy as np
 from CIMP import Event as ev
 from sunpy.net import attrs as a
 
-plotcase = 6
+#---------------------------------------------------
+
+plotcase = 7
 
 if plotcase == 1:
     testcase = 1
@@ -54,17 +56,31 @@ elif plotcase == 6:
     scale = (0.0, 100.0)
     clip = scale
 
+elif plotcase == 7:
+    testcase = None
+    instrument = a.Instrument.lasco
+    detector = a.Detector.c2
+    timerange = a.Time('2013/05/17 9:00:00', '2013/05/17 11:30:00')
+    nrgf = False
+    enhance = False
+    plotframes = None
+    scale = None
+    clip = scale
+
 else:
     print("specify a valid plotcase")
     exit()    
 
-x = ev.event.testcase(testcase)
+#---------------------------------------------------
+# Create event
 
-# for experimenting
-#timerange = a.Time('2016/09/06 8:00:00', '2016/09/06 12:00:00')
-#timerange = a.Time('2016/09/06 10:00:00', '2016/09/06 18:30:00')
-#x = ev.event.fromtime(a.Instrument.lasco, a.Detector.c3, timerange)
-#exit()
+if testcase is None:
+
+    # if testcase is not specified, you have to specify an instrument, detector, and time range
+    x = ev.event.fromtime(instrument, detector, timerange)
+
+else:
+   x = ev.event.testcase(testcase)
 
 print(80*'-')
 print(x)
@@ -72,6 +88,7 @@ print(80*'-')
 print(repr(x))
 print(80*'-')
 
+#---------------------------------------------------
 # pick 4 frames to plot
 if plotframes == None:
     n = np.uint16((x.nframes - 1)/4)
@@ -79,7 +96,7 @@ if plotframes == None:
 
 print(f"PLOTFRAMES: {plotframes}")
 
-# ===================
+#---------------------------------------------------
 # Optionally Apply a filter
 
 if nrgf:

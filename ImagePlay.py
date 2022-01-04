@@ -34,20 +34,29 @@ elif plotcase == 2:
 elif plotcase == 3:
     snapshot = True
     testcase = 1
-    nrgf = False
-    scale = (600, 4000)
+    nrgf = True
+    #scale = (600, 4000)
+    scale = (0,4)
+
+
 
 else:
     print("specify a valid plotcase")
     exit()    
 
+# ===================
+
 if snapshot:
     x = snap.snapshot.testcase(testcase)
+    if nrgf:
+        x.nrgf()
     a = x.data
     amap = x.map()
     header = x.header
 else:
     x = ev.event.testcase(testcase)
+    if nrgf:
+        x.nrgf()
     a = x[idx]
     amap = x.map(idx)
     header = x.header[idx]
@@ -63,6 +72,7 @@ print(repr(x))
 print(80*'-')
 
 # ===================
+
 
 amin = np.amin(a)
 amax = np.amax(a)
