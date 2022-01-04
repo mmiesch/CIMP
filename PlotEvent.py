@@ -8,7 +8,7 @@ from sunpy.net import attrs as a
 
 #---------------------------------------------------
 
-plotcase = 7
+plotcase = 8
 
 if plotcase == 1:
     testcase = 1
@@ -57,14 +57,27 @@ elif plotcase == 6:
     clip = scale
 
 elif plotcase == 7:
-    testcase = None
+    # Event 22 in NASA/NOAA MOU Annex Final Report (Mays et al 2015)
+    testcase = 3
     instrument = a.Instrument.lasco
     detector = a.Detector.c2
     timerange = a.Time('2013/05/17 9:00:00', '2013/05/17 11:30:00')
     nrgf = False
-    enhance = False
-    plotframes = None
-    scale = None
+    enhance = True
+    plotframes = (1, 2, 4, 6)
+    scale = (0, 100.0)
+    clip = scale
+
+elif plotcase == 8:
+    # Event 22 in NASA/NOAA MOU Annex Final Report (Mays et al 2015)
+    testcase = 3
+    instrument = a.Instrument.lasco
+    detector = a.Detector.c2
+    timerange = a.Time('2013/05/17 9:00:00', '2013/05/17 11:30:00')
+    nrgf = True
+    enhance = True
+    plotframes = (1, 2, 4, 6)
+    scale = (0, 4.0)
     clip = scale
 
 else:
@@ -122,7 +135,7 @@ amap.plot(clip_interval=[10,90]*u.percent)
 ref = x.map(plotframes[3])
 print(f"Reference data range: {ref.min()} to {ref.max()}")
 
-if len(scale) != 2:
+if scale is None:
     scale = (ref.min(), ref.max())
 
 print(f"image scale: {scale[0]} to {scale[1]}")

@@ -15,11 +15,16 @@ detector = a.Detector.c2
 timerange = a.Time('2013/05/17 9:00:00', '2013/05/17 11:30:00')
 
 #------------------------------------------------------------------------------
+basedir = '/home/mark.miesch/sunpy/data/'
 
-dbpath = dir + '/' + instrument.value + '_' + detector.value + '/'
+#dbpath = basedir + instrument.value + '_' + detector.value + '/'
+dbpath = basedir + 'beta'
 
 qr = Fido.search(timerange, instrument, detector)
 files = Fido.fetch(qr, path = dbpath)
+files.sort()
+
+print(files)
 
 file = files[0]
 data, header = sunpy.io.fits.read(file)[0]

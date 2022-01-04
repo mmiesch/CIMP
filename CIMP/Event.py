@@ -29,7 +29,7 @@ testevent = {
     1: {
     'instrument': a.Instrument.lasco,
     'detector': a.Detector.c2,
-    'dir': '/home/mark.miesch/sunpy/data/LASCO/',
+    'dir': '/home/mark.miesch/sunpy/data/lasco_c2/',
     'files': ['22605555.fts','22605556.fts','22605557.fts',
               '22605558.fts','22605562.fts','22605563.fts','22605564.fts','22605565.fts',
               '22605566.fts','22605567.fts', '22605568.fts','22605569.fts','22605570.fts']
@@ -37,13 +37,19 @@ testevent = {
     2: {
     'instrument': a.Instrument.lasco,
     'detector': a.Detector.c3,
-    'dir': '/home/mark.miesch/sunpy/data/LASCO/',
+    'dir': '/home/mark.miesch/sunpy/data/lasco_c3/',
     'files': ['32473914.fts', '32473915.fts','32473916.fts','32473917.fts','32473918.fts',
               '32473919.fts', '32473920.fts','32473921.fts','32473922.fts','32473923.fts',
               '32473924.fts', '32473925.fts','32473926.fts','32473927.fts','32473928.fts',
               '32473929.fts', '32473930.fts','32473931.fts','32473932.fts','32473933.fts',
               '32473934.fts', '32473935.fts','32473936.fts','32473937.fts','32473938.fts',
               '32473939.fts', '32473940.fts','32473941.fts','32473942.fts','32473943.fts']
+    },
+    3: {
+    'instrument': a.Instrument.lasco,
+    'detector': a.Detector.c2,
+    'dir': '/home/mark.miesch/sunpy/data/lasco_c2/',
+    'files': list(str(num)+'.fts' for num in np.arange(22459503, 22459510))
     }
 }
 
@@ -104,6 +110,8 @@ class event:
             except Exception as e:
                 logging.exception(red+'Fatal error in CIMP.Event.event constructor: reading time {}'.format(e)+cend)
 
+            print(f"MSM {file} {data.shape}")
+
             if len(self._frames) == 0:
                 self._frames.append(data.astype(float))
             else:
@@ -134,6 +142,7 @@ class event:
         qr = Fido.search(timerange, instrument, detector)
 
         files = Fido.fetch(qr, path = dbpath)
+        files.sort()
 
         print(f"CIMP Event constructor downloaded the following files:")
         for file in files:
