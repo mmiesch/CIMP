@@ -8,7 +8,7 @@ from sunpy.net import attrs as a
 
 #---------------------------------------------------
 
-plotcase = 10
+plotcase = 11
 
 if plotcase == 1:
     testcase = 1
@@ -95,14 +95,27 @@ elif plotcase == 9:
 
 elif plotcase == 10:
     # Event 22 in NASA/NOAA MOU Annex Final Report (Mays et al 2015)
-    testcase = None
+    testcase = 5
     instrument = a.Instrument.secchi
     detector = a.Detector.cor1
-    timerange = a.Time('2013/05/17 9:30:00', '2013/05/17 13:30:00')
+    timerange = a.Time('2013/05/17 9:00:00', '2013/05/17 11:00:00')
     nrgf = False
-    enhance = False
+    enhance = True
     plotframes = None
     scale = (0, 100.0)
+    #scale = (0, 4.0)
+    clip = scale
+
+elif plotcase == 11:
+    # Event 22 in NASA/NOAA MOU Annex Final Report (Mays et al 2015)
+    testcase = 6
+    instrument = a.Instrument.secchi
+    detector = a.Detector.cor2
+    timerange = a.Time('2013/05/17 9:30:00', '2013/05/17 13:00:00')
+    nrgf = False
+    enhance = False
+    plotframes = (1,2,3,5)
+    scale = (0, 300.0)
     #scale = (0, 4.0)
     clip = scale
 
@@ -155,7 +168,8 @@ fig = plt.figure(figsize=[18,10])
 # plot the first frame, not as a diff image
 amap = x.map(0)
 ax = fig.add_subplot(2,3,1,projection=amap)
-amap.plot(clip_interval=[10,90]*u.percent)
+#amap.plot(clip_interval=[10,90]*u.percent)
+amap.plot()
 
 # pick a scale from one of the middle images
 ref = x.map(plotframes[3])
