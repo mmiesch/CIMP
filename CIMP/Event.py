@@ -70,6 +70,23 @@ testevent = {
     'dir': '/home/mark.miesch/sunpy/data/secchi_cor2/',
     'files': list("20130517_"+t+"00_d4c2a.fts" for t in 
              ["0924","0954","1024","1054","1124","1154"])
+    },
+    7: {
+    'source': "STEREO_B",
+    'instrument': a.Instrument.secchi,
+    'detector': a.Detector.cor1,
+    'dir': '/home/mark.miesch/sunpy/data/secchi_cor1/',
+    'files': list("20130517_"+t+"00_s4c1b.fts" for t in 
+             ["0910","0915","0920","0925","0930","0935","0940","0945","0950","0955",
+              "1010","1015","1020","1025","1030","1035","1040","1045","1050","1055"])
+    },
+    8: {
+    'source': "STEREO_B",
+    'instrument': a.Instrument.secchi,
+    'detector': a.Detector.cor2,
+    'dir': '/home/mark.miesch/sunpy/data/secchi_cor2/',
+    'files': list("20130517_"+t+"00_d4c2b.fts" for t in 
+             ["0924","0954","1024","1054","1124","1154"])
     }
 }
 

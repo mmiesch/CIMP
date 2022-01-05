@@ -8,7 +8,7 @@ from sunpy.net import attrs as a
 
 #---------------------------------------------------
 
-plotcase = 11
+plotcase = 13
 
 if plotcase == 1:
     testcase = 1
@@ -103,7 +103,6 @@ elif plotcase == 10:
     enhance = True
     plotframes = None
     scale = (0, 100.0)
-    #scale = (0, 4.0)
     clip = scale
 
 elif plotcase == 11:
@@ -116,9 +115,31 @@ elif plotcase == 11:
     enhance = False
     plotframes = (1,2,3,5)
     scale = (0, 300.0)
-    #scale = (0, 4.0)
     clip = scale
 
+elif plotcase == 12:
+    # Event 22 in NASA/NOAA MOU Annex Final Report (Mays et al 2015)
+    testcase = 7
+    instrument = a.Instrument.secchi
+    detector = a.Detector.cor1
+    timerange = a.Time('2013/05/17 9:00:00', '2013/05/17 11:00:00')
+    nrgf = False
+    enhance = True
+    plotframes = None
+    scale = (0, 300.0)
+    clip = scale
+
+elif plotcase == 13:
+    # Event 22 in NASA/NOAA MOU Annex Final Report (Mays et al 2015)
+    testcase = 8
+    instrument = a.Instrument.secchi
+    detector = a.Detector.cor2
+    timerange = a.Time('2013/05/17 9:30:00', '2013/05/17 13:00:00')
+    nrgf = False
+    enhance = True
+    plotframes = (1,2,3,5)
+    scale = (0, 600.0)
+    clip = scale
 else:
     print("specify a valid plotcase")
     exit()    
