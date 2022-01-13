@@ -11,7 +11,7 @@ import sunpy.map
 #------------------------------------------------------------------------------
 # define instrument and time range
 
-dcase = 6
+dcase = 1
 
 if dcase == 1:
 
@@ -71,7 +71,8 @@ else:
 files = Fido.fetch(qr, path = dbpath)
 files.sort()
 
-print(files)
+for file in files:
+    print(file)
 
 file = files[0]
 data, header = sunpy.io.fits.read(file)[0]

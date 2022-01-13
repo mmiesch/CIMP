@@ -7,6 +7,8 @@ from CIMP import Event as ev
 import sunpy.map
 from sunpy.net import attrs as a
 import matplotlib.pyplot as plt
+import astroscrappy
+import noisegate as ng
 
 from skimage import exposure
 from skimage.filters.rank import median, enhance_contrast
@@ -17,13 +19,13 @@ from skimage.restoration import (denoise_tv_chambolle, denoise_bilateral,
 plotcase = 1
 
 if plotcase == 1:
-    testcase = 1
+    testcase = 4
     nrgf = False
     idx = 9
     scale = (0.0, 1000.0)
 
 elif plotcase == 2:
-    testcase = 1
+    testcase = 4
     nrgf = True
     idx = 3
     scale = (0.0, 4.0)
@@ -49,7 +51,7 @@ print(repr(x))
 print(80*'-')
 
 # ===================
-# pick an image to work with
+# pick an image to work with from an event
 
 a = x[idx]
 
@@ -102,7 +104,7 @@ pims.append(p)
 #p = (psc - np.amin(psc))/(np.amax(psc) - np.amin(psc))
 #pims.append(p)
 
-# bilateral filter
+# nlmeans
 titles.append('nlmeans')
 psc = denoise_nl_means(asc, patch_size=4)
 p = (psc - np.amin(psc))/(np.amax(psc) - np.amin(psc))
@@ -120,19 +122,25 @@ pims.append(p)
 #p = (psc - np.amin(psc))/(np.amax(psc) - np.amin(psc))
 #pims.append(p)
 
+# Astroscrappy cosmic ray removal
+titles.append('astroscrappy')
+mask, psc = astroscrappy.detect_cosmics(asc, sigclip=2, objlim=2, readnoise=4, verbose=True)
+p = (psc - np.amin(psc))/(np.amax(psc) - np.amin(psc))
+pims.append(p)
+
 #======================================================================
 # plot
 
-fig = plt.figure(figsize=[20,20])
+fig = plt.figure(figsize=[24,12])
 
-ax = fig.add_subplot(2,2,1,projection=amap)
+ax = fig.add_subplot(2,3,1,projection=amap)
 amap.plot(vmin = scale[0], vmax = scale[1])
 
 frame = 2
 for psc in pims:
    p = exposure.equalize_adapthist(psc)
    pmap = sunpy.map.Map(p, x.header[idx])
-   ax = fig.add_subplot(2,2,frame,projection=pmap)
+   ax = fig.add_subplot(2,3,frame,projection=pmap)
    pplot = pmap.plot(vmin = 0.0, vmax = 1.0, title=titles[frame-2])
    frame += 1
 
