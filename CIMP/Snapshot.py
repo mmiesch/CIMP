@@ -94,7 +94,7 @@ class snapshot:
         except Exception as e:
             logging.exception(red+'Fatal error in CIMP.Event.event constructor: reading time {}'.format(e)+cend)
 
-        self.data = data
+        self.data = data.astype('float')
         self.header = header 
         self.time = time
 
@@ -109,6 +109,22 @@ class snapshot:
 
     def map(self):
         return sunpy.map.Map(self.data, self.header)
+
+    def background_normalize(self, bgfile = None):
+        """
+        Given a filename that contains a background image, this method will compute a ratio relative to the background image and re-scale.  This is similar to NRL's pipeline for creating the daily "pretties" for LASCO, STERO, and PSP/WISPR.
+        """
+        
+        # Currently a filename is a required parameter
+        if (bgfile is None):
+            print("Error in Snapshot.background_normalize(): you must specify a filename that contains the background image")
+            exit()
+        
+        self.background, bheader = sunpy.io.fits.read(bgfile)[0]
+
+        rat = np.where(self.background <= 0.0, 0.0, self.data/self.background)
+        self.data = exposure.rescale_intensity(rat)
+
 
     def enhance(self, clip = None, noise_removal = 'tv'):
         """

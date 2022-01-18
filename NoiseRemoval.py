@@ -11,7 +11,8 @@ import astroscrappy
 import noisegate as ng
 
 from skimage import exposure
-from skimage.filters.rank import median, enhance_contrast
+from skimage.filters import median
+from skimage.filters.rank import enhance_contrast
 from skimage.morphology import disk, remove_small_objects, white_tophat
 from skimage.restoration import (denoise_tv_chambolle, denoise_bilateral,
                                  denoise_wavelet, estimate_sigma, denoise_nl_means)
@@ -122,7 +123,7 @@ titles = []
 
 titles.append('median')
 psc = median(asc, disk(1))
-p = (psc - np.amin(psc))/(np.amax(psc) - np.amin(psc))
+p = exposure.rescale_intensity(psc)
 pims.append(p)
 
 # wavelet filter
@@ -145,25 +146,25 @@ pims.append(p)
 
 titles.append('outliers1')
 psc = remove_outliers(asc,radius=5,threshold=100)
-p = (psc - np.amin(psc))/(np.amax(psc) - np.amin(psc))
+p = exposure.rescale_intensity(psc)
 pims.append(p)
 
 titles.append('outliers2')
 psc = remove_outliers(asc,radius=3,threshold=20)
-p = (psc - np.amin(psc))/(np.amax(psc) - np.amin(psc))
+p = exposure.rescale_intensity(psc)
 pims.append(p)
 
 titles.append('top hat')
 rob = white_tophat(asc,disk(2))
 psc = asc - rob
-p = (psc - np.amin(psc))/(np.amax(psc) - np.amin(psc))
+p = exposure.rescale_intensity(psc)
 pims.append(p)
 
 titles.append('small objects')
 bsc = asc > 0
 rob = remove_small_objects(bsc,min_size=200,connectivity=20)
 psc = asc * rob.astype('float')
-p = (psc.astype('float') - np.amin(psc))/(np.amax(psc) - np.amin(psc))
+p = exposure.rescale_intensity(psc)
 pims.append(p)
 
 

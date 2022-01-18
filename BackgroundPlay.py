@@ -63,24 +63,12 @@ pmap.plot(clip_interval=[10,90]*u.percent)
 #======================================================================
 # ratio in third column
 
-rat = np.zeros(dimg.shape)
-idx = np.nonzero(dimg)
-for n in np.arange(0,len(idx[0])):
-     i = idx[0][n]
-     j = idx[1][n]
-     rat[i,j] = data[i,j] / dimg[i,j]
-
+rat = np.where(dimg <= 0.0, 0.0, data/dimg)
 rmap = sunpy.map.Map(rat,header)
 ax = fig.add_subplot(2,3,3,projection=rmap)
 rmap.plot(clip_interval=[10,90]*u.percent)
 
-rat = np.zeros(bkg.shape)
-idx = np.nonzero(bkg)
-for n in np.arange(0,len(idx[0])):
-     i = idx[0][n]
-     j = idx[1][n]
-     rat[i,j] = data[i,j] / bkg[i,j]
-
+rat = np.where(bkg <= 0.0, 0.0, data/bkg)
 rmap = sunpy.map.Map(rat,header)
 ax = fig.add_subplot(2,3,6,projection=rmap)
 rmap.plot(clip_interval=[0,70]*u.percent)
