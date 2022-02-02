@@ -31,7 +31,8 @@ testevent = {
     'instrument': a.Instrument.lasco,
     'detector': a.Detector.c2,
     'dir': '/home/mark.miesch/sunpy/data/lasco_c2/',
-    'files': list(str(num)+'.fts' for num in np.arange(22605555, 22605571))
+    'files': list('226055'+num+'.fts' for num in ['55','56','57','58',
+      '62','63','64','65','66','67','68','69','70','71'])
     },
     2: {
     'source': None,
