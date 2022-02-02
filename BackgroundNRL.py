@@ -15,6 +15,40 @@ import sunkit_image.utils.utils
 
 from scipy import interpolate
 
+#======================================================================
+def radial_cut(r,a,N=100):
+    """
+    extract a curve vs theta at a selected radius
+    radius is given in terms of the size of the image, assuming
+    the range of the image goes from -1 to 1
+    """
+
+    ny, nx = data.shape[:2]
+
+    x = np.arange(nx)
+    y = np.arange(ny)
+
+    theta = np.linspace(0.,2*np.pi,N)
+
+    ainterp = interpolate.interp2d(x, y, a, kind='linear')    
+
+    acut = np.array([])
+
+    for th in theta:
+        xp = (1.0 + r1 * np.cos(th)) * nx/2
+        yp = (1.0 + r1 * np.sin(th)) * ny/2
+    
+        ap = ainterp(xp,yp)
+    
+        acut = np.append(acut,ap[0])
+
+    # theta in degrees
+    thdeg = theta * 180.0 / np.pi
+
+    return acut, thdeg
+
+#======================================================================
+
 # threshold to block out the occulter
 thresh = 1.4
 
@@ -25,7 +59,6 @@ file = '/home/mark.miesch/sunpy/data/lasco_c3/32305543.fts'
 
 #file = '/home/mark.miesch/sunpy/data/lasco_c3/35473945.fts'
 #file = '/home/mark.miesch/sunpy/data/lasco_c3/35383449.fts'
-
 
 data, header = sunpy.io.fits.read(file)[0]
 data = data.clip(min=thresh*np.min(data))
@@ -63,46 +96,25 @@ bmap.plot(clip_interval=[10,90]*u.percent)
 #======================================================================
 # polar intensity plots at a particular radius
 
-ny, nx = data.shape[:2]
 
-print(f"Image resolution: {nx} {ny}")
-
-#x, y = np.meshgrid(np.arange(nx), np.arange(ny))
-
-x = np.arange(nx)
-y = np.arange(ny)
-
-r1 = .6
-
-N = 100
-theta = np.linspace(0.,2*np.pi,N)
-
-ainterp = interpolate.interp2d(x, y, data, kind='linear')    
-binterp = interpolate.interp2d(x, y, bkg, kind='linear')    
-
-acut = np.array([])
-bcut = np.array([])
-
-for th in theta:
-    xp = (1.0 + r1 * np.cos(th)) * nx/2
-    yp = (1.0 + r1 * np.sin(th)) * ny/2
-
-    ap = ainterp(xp,yp)
-    bp = binterp(xp,yp)
-
-    acut = np.append(acut,ap[0])
-    bcut = np.append(bcut,bp[0])
-
-thd = theta * 180.0 / np.pi
+r1 = 0.2
+acut, theta = radial_cut(r1,data)
+bcut, theta = radial_cut(r1,bkg)
 
 ax = fig.add_subplot(2,3,2)
-#ax2.set_ylim([0,amap.max()])
-plt.plot(thd,acut)
-plt.plot(thd,bcut,'b')
+plt.plot(theta,acut,'black')
+plt.plot(theta,bcut,'blue')
+plt.title("r = 0.2")
 
-#ax5 = fig.add_subplot(2,3,5)
-#ax5.set_ylim([0,amap.max()])
-#plt.plot(thd, bcut)
+r1 = 0.8
+acut, theta = radial_cut(r1,data)
+bcut, theta = radial_cut(r1,bkg)
+
+ax = fig.add_subplot(2,3,5)
+plt.plot(theta,acut,'black')
+plt.plot(theta,bcut,'blue')
+plt.title("r = 0.8")
+
 
 #======================================================================
 # difference
