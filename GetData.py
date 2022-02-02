@@ -11,7 +11,7 @@ import sunpy.map
 #------------------------------------------------------------------------------
 # define instrument and time range
 
-dcase = 1
+dcase = 2
 
 if dcase == 1:
 
@@ -26,7 +26,7 @@ elif dcase == 2:
    source = None
    instrument = a.Instrument.lasco
    detector = a.Detector.c3
-   timerange = a.Time('2013/05/17 9:30:00', '2013/05/17 11:00:00')
+   timerange = a.Time('2016/07/30 9:30:00', '2016/07/30 11:00:00')
 
 elif dcase == 3:
    source = "STEREO_A"

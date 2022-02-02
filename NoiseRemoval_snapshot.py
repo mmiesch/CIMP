@@ -34,7 +34,8 @@ if plotcase == 1:
     instrument = a.Instrument.lasco
     detector = a.Detector.c3
     file = '/home/mark.miesch/sunpy/data/lasco_c3/32305543.fts'
-    bgfile = '/home/mark.miesch/data/lasco_ssw/3m_clcl_120716.fts'
+    #bgfile = '/home/mark.miesch/data/lasco_ssw/3m_clcl_120716.fts'
+    bgfile = '/home/mark.miesch/data/sswdb/lasco/monthly/3m_clcl_120716.fts'
     nrgf = False
     scale = None
 

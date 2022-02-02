@@ -120,9 +120,11 @@ class snapshot:
             print("Error in Snapshot.background_normalize(): you must specify a filename that contains the background image")
             exit()
         
-        self.background, bheader = sunpy.io.fits.read(bgfile)[0]
+        bkg, bheader = sunpy.io.fits.read(bgfile)[0]
 
-        rat = np.where(self.background <= 0.0, 0.0, self.data/self.background)
+        self.background = bkg - np.min(bkg)
+        a = self.data - np.min(self.data)
+        rat = np.where(self.background <= 0.0, 0.0, a/self.background)
         self.data = exposure.rescale_intensity(rat)
 
 
