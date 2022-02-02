@@ -32,20 +32,19 @@ def radial_cut(r,a,N=100):
 
     ainterp = interpolate.interp2d(x, y, a, kind='linear')    
 
-    acut = np.array([])
+    acut = np.zeros(N)
 
-    for th in theta:
-        xp = (1.0 + r1 * np.cos(th)) * nx/2
-        yp = (1.0 + r1 * np.sin(th)) * ny/2
+    for idx in np.arange(N):
+        xp = (1.0 + r1 * np.cos(theta[idx])) * nx/2
+        yp = (1.0 + r1 * np.sin(theta[idx])) * ny/2
     
         ap = ainterp(xp,yp)
     
-        acut = np.append(acut,ap[0])
+        acut[idx] = ap[0]
 
-    # theta in degrees
-    thdeg = theta * 180.0 / np.pi
+    theta_deg = theta * 180.0 / np.pi
 
-    return acut, thdeg
+    return acut, theta_deg
 
 #======================================================================
 
