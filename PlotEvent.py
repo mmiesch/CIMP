@@ -8,7 +8,7 @@ from sunpy.net import attrs as a
 
 #---------------------------------------------------
 
-plotcase = 13
+plotcase = 9
 
 if plotcase == 1:
     testcase = 1
@@ -89,9 +89,8 @@ elif plotcase == 9:
     nrgf = True
     enhance = True
     plotframes = (4, 8, 12, 18)
-    #scale = (0, 100.0)
-    scale = (0, 4.0)
-    clip = scale
+    scale = (0,1)
+    clip = (0,3.0)
 
 elif plotcase == 10:
     # Event 22 in NASA/NOAA MOU Annex Final Report (Mays et al 2015)
@@ -204,7 +203,10 @@ print(f"image scale: {scale[0]} to {scale[1]}")
 for i in np.arange(0,4):
     amap = x.map(plotframes[i])
     ax = fig.add_subplot(2,3,i+2,projection=amap)
-    pplot = amap.plot(vmin = scale[0], vmax = scale[1])
+    if scale is None:
+       pplot = amap.plot()
+    else:
+       pplot = amap.plot(vmin = scale[0], vmax = scale[1])
     print(f"color table {pplot.get_clim()}")
 
 # plot sum in last frame

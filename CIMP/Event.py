@@ -13,7 +13,7 @@ import sunpy.io
 
 from io import RawIOBase
 from skimage import exposure
-from skimage.filters.rank import median, enhance_contrast_percentile
+from skimage.filters import median
 from skimage.morphology import disk
 from skimage.restoration import (denoise_tv_chambolle, denoise_nl_means)
 from sunkit_image.utils import equally_spaced_bins
@@ -97,6 +97,12 @@ fov = {
     'secchi-cor1': (1.5,  4.0),
     'secchi-cor2': (3.0, 15.0)
 }
+
+def point_filter(im, threshold = 2.0, radius = 20):
+    amag = np.absolute(im)
+    amed = median(amag, disk(radius))
+    rob = amag < (1.0+threshold) * amed
+    return im * rob.astype('float')
 
 class event:
     """An event is defined as a series of coronagraph images for a particular instrument, detector, and time interval"""
@@ -205,39 +211,38 @@ class event:
             s += self._frames[i]
         return sunpy.map.Map(s, self.header[0])
 
-    def enhance(self, clip = None, noise_removal = 'tv'):
+    def enhance(self, clip = None, noise_filter = 'tv'):
         """
         Enhance image frames for plotting
         clip (optional): 2-element tuple specifying the range to clip the data
         """
-        vmin = clip[0]
-        vmax = clip[1]
 
-        # contrast stretching via clipping
         for i in np.arange(1,self.nframes):
 
-            if clip is None:
-                a = self._frames[i]
-            else:
-                a = self._frames[i].clip(min = vmin, max = vmax)
+            # filter out bright points
+            a = point_filter(self._frames[i])
 
-            im = (a - vmin)/(vmax - vmin)
+            # contrast stretching via clipping
+            if clip is not None:
+                a = a.clip(min = clip[0], max = clip[1])
 
-            # remove noise
-            if noise_removal == 'tv':
-                imdn = denoise_tv_chambolle(im, weight = 0.2)
-            elif noise_removal == 'mediam':
-                imdn = median(disk(1))
-            else:
-                imdn = denoise_nl_means(im, patch_size = 4)
+            # optionally remove noise
+            if noise_filter == 'tv':
+                a = denoise_tv_chambolle(a, weight = 0.2)
+            elif noise_removal == 'median':
+                a = median(a,disk(1))
+            elif noise_filter == 'nl_means"':
+                a = denoise_nl_means(a, patch_size = 4)             
 
-            imdn = (imdn - np.amin(imdn))/(np.amax(imdn) - np.amin(imdn))
-            imc = enhance_contrast_percentile(imdn,disk(2), p0=.1, p1=.9)
+            # increase sharpness
+            #im = exposure.rescale_intensity(a)
+            #imc = enhance_contrast_percentile(im,disk(2), p0=.1, p1=.9)
 
             # adaptive equalization
-            imeq = exposure.equalize_adapthist(imc)
+            im = exposure.rescale_intensity(a)
+            imeq = exposure.equalize_adapthist(im)
             
-            self._frames[i] = (vmax - vmin)*imeq + vmin
+            self._frames[i] = exposure.rescale_intensity(imeq)
 
     def nrgf(self):
         """
@@ -252,6 +257,8 @@ class event:
         for i in np.arange(1, self.nframes):
             map = radial.nrgf(self.map(i), edges)
             self._frames[i] = map.data
+
+
 
     def __len__(self):
         return self.nframes
