@@ -14,14 +14,16 @@ import sunkit_image.enhance
 import astroscrappy
 import noisegate as ng
 
-from sunkit_image.radial import fnrgf
+import sunkit_image.radial as radial
+from sunkit_image.utils import equally_spaced_bins
 
 from skimage import exposure
 from skimage.filters import median
 from skimage.filters.rank import enhance_contrast, enhance_contrast_percentile
 from skimage.morphology import disk, remove_small_objects, remove_small_holes
 from skimage.restoration import (denoise_tv_chambolle, denoise_bilateral,
-                                 denoise_wavelet, estimate_sigma, denoise_nl_means)
+                                 denoise_wavelet, estimate_sigma, denoise_nl_means,
+                                 denoise_tv_bregman)
 
 from savitzkygolay import filter2D
 
@@ -30,7 +32,7 @@ os.environ.pop("QT_QPA_PLATFORM_PLUGIN_PATH")
 
 #---------------------------------------------------
 
-tcase = 1
+tcase = 2
 
 if tcase == 1:
     testcase = 1
@@ -40,7 +42,7 @@ if tcase == 1:
 elif tcase == 2:
     testcase = 8
     plotframe = 3
-    scale = (0.0, 1000.0)
+    scale = (0.0, 500.0)
 
 else:
     print("specify a valid tcase")
@@ -96,7 +98,7 @@ print(f"Data range: {amap.min()} {amap.max()}")
 #---------------------------------------------------
 # Choose your battle
 
-comp = (0,15)
+comp = (0,19)
 
 tag = None
 
@@ -201,19 +203,18 @@ if comp.count(7) > 0:
   
     b = a.clip(min = scale[0], max = scale[1])
     
-    p = sunkit_image.enhance.mgn(b); tag='a'
+    #p = sunkit_image.enhance.mgn(b); tag='a'
     #p = sunkit_image.enhance.mgn(b,h=0.1); tag='b'
     #p = sunkit_image.enhance.mgn(b,h=1.0); tag='c'
     #p = sunkit_image.enhance.mgn(b,h=1.0,k=2.0); tag='d'
     #p = sunkit_image.enhance.mgn(b,h=1.0,k=0.1); tag='e'
     #p = sunkit_image.enhance.mgn(b,h=0.8,gamma=2.5); tag='f'
-    p = sunkit_image.enhance.mgn(b,k=0.8,h=0.7,sigma=[1.25, 2.5, 5, 10, 20, 40],
-                                weights=[0.5,0.5,0.5,0.5,0.5,10.0],gamma=2); tag='g'
+    p = sunkit_image.enhance.mgn(b,h=0.9,gamma=1.0); tag='f'
+    #p = sunkit_image.enhance.mgn(b,h=0.9,gamma=1.0, 
+    #                            sigma = [1.25, 2.5],
+    #                            weights=[1, 1]); tag='i'
 
-    b = exposure.rescale_intensity(p)
-    #beq = exposure.equalize_adapthist(b)
-    beq = exposure.equalize_hist(b)
-    images.append(beq)
+    images.append(p)
     scales.append(None)
 
 if comp.count(8) > 0:
@@ -284,13 +285,14 @@ if comp.count(12) > 0:
     edges = equally_spaced_bins(myfov[0], myfov[1])
     edges *= u.R_sun
 
-    map = radial.nrgf(bmap, edges)
+    order = 20
+    coefs = radial.set_attenuation_coefficients(order)
 
-    p = map.data
+    cmap = radial.fnrgf(bmap, edges, order, coefs)
 
-    b = exposure.rescale_intensity(p)
-    #beq = exposure.equalize_adapthist(p)
-    images.append(p)
+    b = exposure.rescale_intensity(cmap.data)
+    beq = exposure.equalize_adapthist(b)
+    images.append(beq)
     scales.append((0,1))
 
 if comp.count(13) > 0:
@@ -318,13 +320,74 @@ if comp.count(15) > 0:
     titles.append("point_filter_med + clip + adeq") 
   
     b = point_filter_med(a)
-    
+
+    b = b.clip(scale[0], scale[1])
+
     p = exposure.rescale_intensity(b)
     beq = exposure.equalize_adapthist(p)
 
     images.append(beq)
     scales.append([0,1])
        
+if comp.count(16) > 0:
+    titles.append("point + mgn + tv") 
+  
+    p = point_filter_med(a)
+
+    b = p.clip(min = scale[0], max = scale[1])
+    
+    p = sunkit_image.enhance.mgn(b,h=0.7,gamma=1.5); tag='a'
+
+    psc = exposure.rescale_intensity(p)
+    #b = denoise_tv_chambolle(psc, weight=0.1); tag='a'
+    b = denoise_tv_chambolle(psc, weight=0.2); tag='b'
+
+    images.append(b)
+    scales.append(None)
+
+if comp.count(17) > 0:
+    titles.append("point + mgn + median") 
+  
+    p = point_filter_med(a)
+
+    b = p.clip(min = scale[0], max = scale[1])
+    
+    p = sunkit_image.enhance.mgn(b,h=0.7,gamma=1.5)
+
+    b = median(p,disk(2))
+
+    images.append(b)
+    scales.append(None)
+
+if comp.count(18) > 0:
+    titles.append("point + mgn + wavelet") 
+  
+    p = point_filter_med(a)
+
+    b = p.clip(min = scale[0], max = scale[1])
+    
+    p = sunkit_image.enhance.mgn(b,h=0.7,gamma=1.5)
+
+    sigma = estimate_sigma(p)
+    b = denoise_wavelet(p,sigma=sigma,mode='hard')
+
+    images.append(b)
+    scales.append(None)
+
+if comp.count(19) > 0:
+    titles.append("point + mgn + bregman") 
+  
+    p = point_filter_med(a)
+
+    b = p.clip(min = scale[0], max = scale[1])
+    
+    p = sunkit_image.enhance.mgn(b,h=0.7,gamma=1.5)
+
+    b = denoise_tv_bregman(p)
+
+    images.append(b)
+    scales.append(None)
+
 
 # ===================
 
