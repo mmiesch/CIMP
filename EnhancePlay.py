@@ -1,5 +1,5 @@
 """
-Use this to 
+Use this to assess and refine image enhancement strategies 
 """
 
 from http.server import BaseHTTPRequestHandler
@@ -34,7 +34,7 @@ os.environ.pop("QT_QPA_PLATFORM_PLUGIN_PATH")
 
 #---------------------------------------------------
 
-tcase = 3
+tcase = 5
 
 if tcase == 1:
     testcase = 1
@@ -45,7 +45,7 @@ elif tcase == 2:
     testcase = 4
     #plotframe = 8
     plotframe = 12
-    scale = (0.0, 1000.0)
+    scale = (0.0, 500.0)
 
 elif tcase == 3:
     testcase = 8
@@ -53,8 +53,11 @@ elif tcase == 3:
     scale = (10.0, 500.0)
 
 elif tcase == 4:
-    testcase = 6
-    plotframe = 2
+    testcase = 2; plotframe = 22
+    scale = (0.0, 500.0)
+
+elif tcase == 5:
+    testcase = 3; plotframe = 5
     scale = (0.0, 1000.0)
 
 else:
@@ -88,9 +91,9 @@ def point_filter_med(im, threshold=2.0, radius=20):
     amag = np.absolute(im)
     amag -= np.min(amag)
     amed = median(amag, disk(radius))
-    rob = amag <= (1.0+threshold) * amed
+    rob = amag < (1.0+threshold) * amed
     p = im * rob.astype('float')
-    return p
+    return np.where(amag > 0, p, amag)
 
 #---------------------------------------------------
 # Define base image
@@ -113,7 +116,7 @@ print(f"Data range: {amap.min()} {amap.max()}")
 #---------------------------------------------------
 # Choose your battle
 
-comp = (0,21)
+comp = (0,12)
 
 tag = None
 
@@ -286,29 +289,49 @@ if comp.count(11) > 0:
 if comp.count(12) > 0:
     titles.append("FNRGF") 
     fov = {
-       'lasco-c2'   : (1.5,  6.0),
+       'lasco-c2'   : (1.5,  7.0),
        'lasco-c3'   : (3.7, 30.0),
-       'secchi-cor1': (1.5,  4.0),
-       'secchi-cor2': (3.0, 15.0)
+       'stereo_a/secchi-cor1': (1.5,  4.0),
+       'stereo_a/secchi-cor2': (3.0, 15.0),
+       'stereo_b/secchi-cor1': (1.5,  4.0),
+       'stereo_b/secchi-cor2': (3.0, 15.0)
     }
-    
-    b = a.clip(min = scale[0], max = scale[1])
+
+    #order = 2; rmix = [15,1]; nbins = 100; nabs = 130; tag='a'
+    #order = 20; rmix = [15,1]; nbins = 100; nabs = 130; tag='b'
+    #order = 20; rmix = [1,1]; nbins = 100; nabs = 130; tag='c'
+    #order = 20; rmix = [.94,.06]; nbins = 100; nabs = 130; tag='c'
+    #order = 20; rmix = [0.0,1.0]; nbins = 100; nabs = 130; tag='c'
+    #order = 20; rmix = [0.04,0.96]; nbins = 100; nabs = 130; tag='d'
+    order = 20; rmix = [1,15]; nbins = 100; nabs = 130; tag='d'
+
+    b = a.clip(min=0.0)
+    #p = point_filter_med(b)
+
+    #b = a.clip(min = scale[0], max = scale[1]) - scale[0]
+
     bmap = sunpy.map.Map(b,header)
 
     myfov = fov[x.instrument.lower()+'-'+x.detector.lower()]
         
-    edges = equally_spaced_bins(myfov[0], myfov[1])
+    edges = equally_spaced_bins(myfov[0], myfov[1], nbins=nbins)
     edges *= u.R_sun
 
-    order = 20
     coefs = radial.set_attenuation_coefficients(order)
 
-    cmap = radial.fnrgf(bmap, edges, order, coefs)
+    print(f"FNRGF in range {bmap.min()} {bmap.max()}")
+    cmap = radial.fnrgf(bmap, edges, order, coefs, 
+                        number_angular_segments=nabs, ratio_mix=rmix)
+    print(f"FNRGF out range {cmap.min()} {cmap.max()}")
 
-    b = exposure.rescale_intensity(cmap.data)
-    beq = exposure.equalize_adapthist(b)
-    images.append(beq)
-    scales.append((0,1))
+    #b = exposure.rescale_intensity(cmap.data, out_range=(0,1))
+
+    p = point_filter_med(cmap.data,threshold=8)
+    #p = cmap.data
+
+    images.append(p)
+    #scales.append((0,rmix[0]*scale[1]))
+    scales.append(scale)
 
 if comp.count(13) > 0:
     titles.append("remove small objects + clip + adeq") 
@@ -411,11 +434,8 @@ if comp.count(20) > 0:
     b = point_filter_med(aa)
 
     bsc=exposure.rescale_intensity(b)
-    print(f"MSM in range {np.min(bsc)} {np.max(bsc)}")
     
     p = sunkit_image.enhance.mgn(bsc,h=0.9,gamma=1.0,sigma=[20,40])
-
-    print(f"MSM out range {np.min(p)} {np.max(p)}")
 
     psc = p.clip(min=0.1,max=1)
     #psc=exposure.rescale_intensity(p)
