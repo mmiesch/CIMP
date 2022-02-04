@@ -16,6 +16,8 @@ import noisegate as ng
 
 import sunkit_image.radial as radial
 from sunkit_image.utils import equally_spaced_bins
+from sunkit_image.trace import smooth
+from skimage.transform import downscale_local_mean
 
 from skimage import exposure
 from skimage.filters import median
@@ -32,7 +34,7 @@ os.environ.pop("QT_QPA_PLATFORM_PLUGIN_PATH")
 
 #---------------------------------------------------
 
-tcase = 2
+tcase = 3
 
 if tcase == 1:
     testcase = 1
@@ -40,9 +42,20 @@ if tcase == 1:
     scale = (0.0, 1000.0)
 
 elif tcase == 2:
+    testcase = 4
+    #plotframe = 8
+    plotframe = 12
+    scale = (0.0, 1000.0)
+
+elif tcase == 3:
     testcase = 8
-    plotframe = 3
-    scale = (0.0, 500.0)
+    plotframe = 2
+    scale = (10.0, 500.0)
+
+elif tcase == 4:
+    testcase = 6
+    plotframe = 2
+    scale = (0.0, 1000.0)
 
 else:
     print("specify a valid tcase")
@@ -59,6 +72,7 @@ def remove_outliers(im, radius = 2, threshold = 50):
 def point_filter(im, threshold=None, min_size=64, connectivity=2):
 
     amag = np.absolute(im)
+    amag -= np.min(amag)
 
     if threshold is None:
         threshold = 0.1 * np.max(amag)
@@ -72,8 +86,9 @@ def point_filter(im, threshold=None, min_size=64, connectivity=2):
 def point_filter_med(im, threshold=2.0, radius=20):
 
     amag = np.absolute(im)
+    amag -= np.min(amag)
     amed = median(amag, disk(radius))
-    rob = amag < (1.0+threshold) * amed
+    rob = amag <= (1.0+threshold) * amed
     p = im * rob.astype('float')
     return p
 
@@ -98,7 +113,7 @@ print(f"Data range: {amap.min()} {amap.max()}")
 #---------------------------------------------------
 # Choose your battle
 
-comp = (0,19)
+comp = (0,21)
 
 tag = None
 
@@ -386,8 +401,52 @@ if comp.count(19) > 0:
     b = denoise_tv_bregman(p)
 
     images.append(b)
+    scales.append((0,1))
+
+if comp.count(20) > 0:
+    titles.append("point + mgn + bregman (cor2)") 
+
+    aa = a.clip(min=scale[0]) - scale[0]
+
+    b = point_filter_med(aa)
+
+    bsc=exposure.rescale_intensity(b)
+    print(f"MSM in range {np.min(bsc)} {np.max(bsc)}")
+    
+    p = sunkit_image.enhance.mgn(bsc,h=0.9,gamma=1.0,sigma=[20,40])
+
+    print(f"MSM out range {np.min(p)} {np.max(p)}")
+
+    psc = p.clip(min=0.1,max=1)
+    #psc=exposure.rescale_intensity(p)
+
+    #b = denoise_tv_bregman(psc)
+
+    images.append(psc)
     scales.append(None)
 
+if comp.count(21) > 0:
+    titles.append("point + mgn + bregman") 
+  
+    p = point_filter_med(a)
+
+    b = downscale_local_mean(p,(2,2))
+    
+    #c = b.clip(min=20)
+    #b = np.log(c)
+
+    #c = p.clip(min = 20, max = scale[1]) - 20
+
+    ps = smooth(b,width=11)
+    
+    p = sunkit_image.enhance.mgn(ps,h=0.7,gamma=1.5)
+
+    b = p.clip(min=0,max=1)
+
+    #b = denoise_tv_bregman(p)
+
+    images.append(b)
+    scales.append((0,1))
 
 # ===================
 
@@ -410,6 +469,7 @@ if scales[1] is None:
 else:
    print(f"image 2 scale: {scales[1][0]} to {scales[1][1]}")
    map2.plot(vmin=scales[1][0], vmax=scales[1][1], title=titles[1])
+   #plt.imshow(images[1],vmin=scales[1][0],vmax=scales[1][1])
 
 # ===================
 # save to a file
@@ -422,5 +482,8 @@ else:
    file = dir + f"Enhance_t{testcase}_{comp[0]}_vs_{comp[1]}_{tag}.png"
 
 plt.savefig(file)
+
+#for i in np.arange(1024):
+#    print(f"{images[1][i,1024]}")
 
 plt.show()

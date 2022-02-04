@@ -269,6 +269,7 @@ class event:
     def __str__(self):
         return (f'Instrument = {self.instrument} \n'
                f'Detector   = {self.detector}\n'
+               f'Resolution = {self._frames[0].shape}\n'
                f'Start time = {self.times[0]}\n'
                f'End time   = {self.times[self.nframes-1]}\n'
                f'Duration   = {self.duration()}\n'
@@ -278,5 +279,6 @@ class event:
         return (f'Instrument = {self.instrument} \n'
                f'Detector = {self.detector}\n'
                f'Nframes = {self.nframes}\n'
+               f'Resolution = {self._frames[0].shape}\n'
                f'files = {self._files}\n'
                f'times = {self.times}')
