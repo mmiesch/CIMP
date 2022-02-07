@@ -258,7 +258,23 @@ class event:
             map = radial.nrgf(self.map(i), edges)
             self._frames[i] = map.data
 
+    def noise_gate(self, cubesize = (3, 12, 12), model = 'shot',
+                   factor = 2.0):
+        """
+        Noise Gate filter from DeForest, C.E. 2017, ApJ, 838:155 (10pp)
+        """
 
+        dcube = np.zeros((self.nframes, self._frames[0].shape[0], 
+                          self._frames[0].shape[1]))
+    
+        for i in np.arange(1, self.nframes):
+            dcube[i-1,:,:] = self._frames[i]
+
+        ng.noise_gate_batch(dcube, cubesize=cubesize, model=model, 
+                            factor = factor)
+
+        for i in np.arange(1, self.nframes):
+            self._frames[i] = dcube[i-1,:,:]
 
     def __len__(self):
         return self.nframes
