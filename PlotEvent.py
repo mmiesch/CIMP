@@ -8,14 +8,15 @@ from sunpy.net import attrs as a
 
 #---------------------------------------------------
 
-plotcase = 13
+plotcase = 3
 
 if plotcase == 1:
     testcase = 1
     nrgf = False
     enhance = False
     plotframes = (3, 6, 9, 12)
-    scale = (0.0, 1000.0)
+    clip = (0.0, 1000.0)
+    scale = None
 
 elif plotcase == 2:
     testcase = 1
@@ -175,9 +176,9 @@ if nrgf:
    x.nrgf()
 
 if enhance:
-    x.enhance(clip = clip, detail='mgn')
+    #x.enhance(clip = clip, detail='mgn')
     #x.enhance(clip = clip, detail='contrast')
-    #x.enhance(clip = clip, detail='fnrgf')
+    x.enhance(clip = clip, detail='fnrgf')
     #x.noise_gate(cubesize=(3,12,12)); scale=(0,100)
 
 # ===================

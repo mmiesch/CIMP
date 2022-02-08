@@ -7,20 +7,12 @@ import datetime
 import logging
 import numpy as np
 import os
-import sunkit_image.radial as radial
 import sunpy.map
 import sunpy.io
 import noisegate as ng
-import sunkit_image.enhance
 
+from CIMP import Enhance
 from io import RawIOBase
-from skimage import exposure
-from skimage.filters import median
-from skimage.filters.rank import enhance_contrast_percentile
-from skimage.morphology import disk
-from skimage.restoration import (denoise_tv_chambolle, denoise_tv_bregman, 
-                                 denoise_nl_means)
-from sunkit_image.utils import equally_spaced_bins
 from sunpy.net import Fido
 from sunpy.net import attrs as a
 
@@ -101,14 +93,6 @@ fov = {
     'secchi-cor1': (1.5,  4.0),
     'secchi-cor2': (3.0, 15.0)
 }
-
-def point_filter(im, threshold = 2.0, radius = 20):
-    amag = np.absolute(im)
-    amag -= np.min(amag)
-    amed = median(amag, disk(radius))
-    rob = amag < (1.0+threshold) * amed
-    p = im * rob.astype('float')
-    return np.where(amag > 0, p, 0.0)
 
 class event:
     """An event is defined as a series of coronagraph images for a particular instrument, detector, and time interval"""
@@ -229,71 +213,23 @@ class event:
 
         for i in np.arange(1,self.nframes):
 
-            # filter out bright points
-            a = point_filter(self._frames[i])
-
-            # contrast stretching via clipping
-            if clip is not None:
-                a = a.clip(min = clip[0], max = clip[1])
-
-            # various techniques to bring out detail
-            if detail == 'mgn':
-                """
-                Multiscale Gaussian Noise filter (Morgan & Druckmuller 2014)
-                """
-                b = sunkit_image.enhance.mgn(a, h = 0.7, gamma = 1.5)
-            elif detail == 'fnrgf':
-                """
-                Fourier Normaling Radial Gradient Filter (Druckmullerova et al 2011)
-                """
-                myfov = fov[self.instrument.lower()+'-'+self.detector.lower()]
-                
-                edges = equally_spaced_bins(myfov[0], myfov[1])
-                edges *= u.R_sun
-
-                order = 20
-                coefs = radial.set_attenuation_coefficients(order)
-                amap = sunpy.map.Map(a, self.header[i])
-                bmap = radial.fnrgf(amap, edges, order, coefs, ratio_mix = rmix)
-                b = bmap.data.clip(min=0.0)
-            elif detail == 'contrast':
-                asc = exposure.rescale_intensity(a)
-                b = enhance_contrast_percentile(asc, disk(2), p0=.1, p1=.9)
-            else:
-                b = a
-
-            ## optionally remove noise
-            if noise_filter == 'tv':
-                c = denoise_tv_chambolle(b, weight = 0.2)
-            elif noise_filter == 'bregman':
-                c = denoise_tv_bregman(b)
-            elif noise_removal == 'median':
-                c = median(a,disk(1))
-            elif noise_filter == 'nl_means"':
-                c = denoise_nl_means(b, patch_size = 4)
-            else:
-                c = b
-
-            # adaptive equalization
-            if (detail != 'mgn'):
-                csc = exposure.rescale_intensity(c, out_range=(0,1))
-                ceq = exposure.equalize_adapthist(csc)
-                c = exposure.rescale_intensity(ceq, out_range=(0,1))
+            image = Enhance.enhance(self.map(i),
+                                    instrument = self.instrument,
+                                    detector = self.detector, 
+                                    clip = clip, 
+                                    noise_filter = noise_filter, 
+                                    detail = detail, 
+                                    rmix = rmix)
             
-            self._frames[i] = c
+            self._frames[i] = image
 
     def nrgf(self):
         """
         Apply a normalized radial gradient filter to all frames > 0
         """
         
-        myfov = fov[self.instrument.lower()+'-'+self.detector.lower()]
-        
-        edges = equally_spaced_bins(myfov[0], myfov[1])
-        edges *= u.R_sun
-
         for i in np.arange(1, self.nframes):
-            map = radial.nrgf(self.map(i), edges)
+            map = Enhance.nrgf(self.map(i))
             self._frames[i] = map.data
 
     def noise_gate(self, cubesize = (3, 12, 12), model = 'hybrid',

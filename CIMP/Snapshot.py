@@ -13,10 +13,6 @@ import sunpy.io
 
 from CIMP import Enhance
 from io import RawIOBase
-from skimage import exposure
-from skimage.filters.rank import median, enhance_contrast_percentile
-from skimage.morphology import disk
-from skimage.restoration import (denoise_tv_chambolle, denoise_nl_means)
 from sunpy.net import Fido
 from sunpy.net import attrs as a
 
@@ -52,8 +48,8 @@ class snapshot:
             detector = s['detector']
             file = s['dir'] + s['file']
 
-        self.instrument = instrument
-        self.detector = detector
+        self.instrument = instrument.value
+        self.detector = detector.value
         self.file = file
 
         # Now read in the data from files.  The assumption here is that there is one image per file.
@@ -121,39 +117,26 @@ class snapshot:
         rat = np.where(self.background <= 0.0, 0.0, a/self.background)
         self.data = exposure.rescale_intensity(rat)
 
-
-    def enhance(self, clip = None, noise_removal = 'tv'):
+    def enhance(self, clip = None, noise_filter = 'bregman', detail = 'mgn',
+                rmix = [1,15]):
         """
         Enhance image frames for plotting
         clip (optional): 2-element tuple specifying the range to clip the data
         """
-        vmin = clip[0]
-        vmax = clip[1]
 
-        # contrast stretching via clipping
+        print(f"Detail Enhancement: {detail}")
+        print(f"Noise filter: {noise_filter}")
 
-        if clip is None:
-            a = self.data
-        else:
-            a = self.data.clip(min = vmin, max = vmax)
+        for i in np.arange(1,self.nframes):
 
-        im = (a - vmin)/(vmax - vmin)
-
-        # remove noise
-        if noise_removal == 'tv':
-            imdn = denoise_tv_chambolle(im, weight = 0.2)
-        elif noise_removal == 'mediam':
-            imdn = median(disk(1))
-        else:
-            imdn = denoise_nl_means(im, patch_size = 4)
-
-        imdn = (imdn - np.amin(imdn))/(np.amax(imdn) - np.amin(imdn))
-        imc = enhance_contrast_percentile(imdn, disk(2), p0=.1, p1=.9)
-
-        # adaptive equalization
-        imeq = exposure.equalize_adapthist(imc)
-        
-        self.data = (vmax - vmin)*imeq + vmin
+            image = Enhance.enhance(self.data,
+                                    instrument = self.instrument,
+                                    detector = self.detector, 
+                                    clip = clip, 
+                                    noise_filter = noise_filter, 
+                                    detail = detail, 
+                                    rmix = rmix)
+            self.data = image
 
     def nrgf(self):
         """
@@ -170,12 +153,12 @@ class snapshot:
         """
         
         amap = Enhance.fnrgf(self.map(), self.instrument.value, 
-                             self.detector.value), order, rmix)
+                             self.detector.value, order, rmix)
         self.data = amap.data
 
     def __str__(self):
-        return (f'Instrument = {self.instrument.value} \n'
-               f'Detector   = {self.detector.value}\n'
+        return (f'Instrument = {self.instrument} \n'
+               f'Detector   = {self.detector}\n'
                f'Time = {self.time}\n')
 
     def __repr__(self):
