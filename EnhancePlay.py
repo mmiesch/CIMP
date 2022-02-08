@@ -34,7 +34,7 @@ os.environ.pop("QT_QPA_PLATFORM_PLUGIN_PATH")
 
 #---------------------------------------------------
 
-tcase = 1
+tcase = 5
 
 if tcase == 1:
     testcase = 1
@@ -471,12 +471,20 @@ if comp.count(21) > 0:
 if comp.count(22) > 0:
     titles.append("wiener-hunt deconvolution") 
   
-    psf = np.ones((5,5))/25
+    b = point_filter_med(a)
 
-    b = wiener(a, psf, 1100)
+    p = b.clip(min = scale[0], max = scale[1])
+
+    psc = exposure.rescale_intensity(p,out_range=(0,1))
+
+    #psf = np.ones((5,5))/25
+    psf = np.ones((7,7))/49
+    #psf = np.ones((10,10))/100
+
+    b, _ = unsupervised_wiener(psc, psf)
 
     images.append(b)
-    scales.append(None)
+    scales.append((0,1))
 
 # ===================
 
