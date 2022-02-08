@@ -8,16 +8,15 @@ import logging
 from astropy.utils import data_info
 import numpy as np
 import os
-import sunkit_image.radial as radial
 import sunpy.map
 import sunpy.io
 
+from CIMP import Enhance
 from io import RawIOBase
 from skimage import exposure
 from skimage.filters.rank import median, enhance_contrast_percentile
 from skimage.morphology import disk
 from skimage.restoration import (denoise_tv_chambolle, denoise_nl_means)
-from sunkit_image.utils import equally_spaced_bins
 from sunpy.net import Fido
 from sunpy.net import attrs as a
 
@@ -39,11 +38,6 @@ testsnap = {
     'dir': '/home/mark.miesch/sunpy/data/LASCO/',
     'file': '32473914.fts'
     }
-}
-
-fov = {
-    'LASCO-C2' : (1.5, 6.0),
-    'LASCO-C3' : (3.7, 30.0)
 }
 
 class snapshot:
@@ -163,16 +157,21 @@ class snapshot:
 
     def nrgf(self):
         """
-        Apply a normalized radial gradient filter to all frames > 0
+        Apply a normalized radial gradient filter
         """
         
-        myfov = fov[self.instrument.value+'-'+self.detector.value]
-        
-        edges = equally_spaced_bins(myfov[0], myfov[1])
-        edges *= u.R_sun
+        amap = Enhance.nrgf(self.map(), self.instrument.value, 
+                                        self.detector.value)
+        self.data = amap.data
 
-        map = radial.nrgf(self.map(), edges)
-        self.data = map.data
+    def fnrgf(self, order = 20, rmix = [1,15]):
+        """
+        Apply a Fourier normalized radial gradient filter
+        """
+        
+        amap = Enhance.fnrgf(self.map(), self.instrument.value, 
+                             self.detector.value), order, rmix)
+        self.data = amap.data
 
     def __str__(self):
         return (f'Instrument = {self.instrument.value} \n'

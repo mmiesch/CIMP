@@ -2,6 +2,8 @@
 Experiment with different types of background images and see how they affect the generation of "pretties"
 """
 
+from CIMP import Enhance
+
 import math
 import astropy.units as u
 import matplotlib.pyplot as plt
@@ -47,34 +49,56 @@ def radial_cut(r,a,N=100):
     return acut, theta_deg
 
 #======================================================================
+pcase = 2
 
-# threshold to block out the occulter
-thresh = 1.4
+thresh = None
 
+if pcase == 1:
+
+    instrument = 'lasco'
+    detector = 'c3'
+    file = '/home/mark.miesch/sunpy/data/lasco_c3/32305543.fts'
+    bgfile = '/home/mark.miesch/data/sswdb/lasco/monthly/3m_clcl_120716.fts'
+    thresh = 1.4
+
+elif pcase == 2:
+    instrument = 'lasco'
+    detector = 'c3'
+    file = '/home/mark.miesch/data/lasco_ssw/32305543.fts'
+    bgfile = '/home/mark.miesch/data/lasco_ssw/32305543_bkg.fts'
+    #thresh = 1.4
+
+else:
+    instrument = 'lasco'
+    detector = 'c3'
+    file = '/home/mark.miesch/data/lasco_ssw/32352249.fts'
+    bgfile = '/home/mark.miesch/data/lasco_ssw/32352249_bkg.fts'
+    thresh = 1.4
+
+
+#======================================================================
 # basic image to work with
-#file = '/home/mark.miesch/data/lasco_ssw/32352255.fts'
-#file = '/home/mark.miesch/sunpy/data/lasco_c3/32305540.fts'
-file = '/home/mark.miesch/sunpy/data/lasco_c3/32305543.fts'
-
-#file = '/home/mark.miesch/sunpy/data/lasco_c3/35473945.fts'
-#file = '/home/mark.miesch/sunpy/data/lasco_c3/35383449.fts'
 
 data, header = sunpy.io.fits.read(file)[0]
-data = data.clip(min=thresh*np.min(data))
-vmask = thresh*np.min(data)
-a = np.where(data <= vmask, 0, data)
-data = a
+
+if thresh is not None:
+
+    # threshold to block out the occulter
+    data = data.clip(min=thresh*np.min(data))
+    vmask = thresh*np.min(data)
+    a = np.where(data <= vmask, 0, data)
+    data = a
+
 amap = sunpy.map.Map(data,header)
 print(f"data range: {amap.min()}, {amap.max()}")
 
 # Background file provided by NRL
-#bfile = '/home/mark.miesch/data/lasco_ssw/3m_clcl_130910.fts'
-#bfile = '/home/mark.miesch/data/lasco_ssw/3m_clcl_120716.fts'
-bfile = '/home/mark.miesch/data/sswdb/lasco/monthly/3m_clcl_120716.fts'
-#bfile = '/home/mark.miesch/data/sswdb/lasco/monthly/3m_clcl_140624.fts'
-bkg, bheader = sunpy.io.fits.read(bfile)[0]
-bkg = bkg.clip(min=thresh*np.min(bkg))
-#bmap = sunpy.map.Map(bkg,bheader)
+
+bkg, bheader = sunpy.io.fits.read(bgfile)[0]
+
+if thresh is not None:
+    bkg = bkg.clip(min=thresh*np.min(bkg))
+
 bmap = sunpy.map.Map(bkg,header)
 print(f"bkg range: {bmap.min()}, {bmap.max()}")
 
@@ -94,7 +118,6 @@ bmap.plot(clip_interval=[10,90]*u.percent)
 
 #======================================================================
 # polar intensity plots at a particular radius
-
 
 r1 = 0.2
 acut, theta = radial_cut(r1,data)
@@ -120,6 +143,7 @@ plt.title("r = 0.8")
 
 pa = data - bkg
 pmap = sunpy.map.Map(pa,header)
+
 ax = fig.add_subplot(2,3,3,projection=pmap)
 pmap.plot(clip_interval=[20,90]*u.percent)
 
@@ -128,7 +152,10 @@ pmap.plot(clip_interval=[20,90]*u.percent)
 
 rat = np.where(bkg <= 0.0, 0.0, data/bkg)
 rmap = sunpy.map.Map(rat,header)
-ax = fig.add_subplot(2,3,6,projection=rmap)
-rmap.plot(clip_interval=[20,90]*u.percent)
+
+emap = Enhance.fnrgf(rmap, instrument, detector)
+
+ax = fig.add_subplot(2,3,6,projection=pmap)
+pmap.plot(clip_interval=[20,90]*u.percent)
 
 plt.show()
