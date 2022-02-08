@@ -8,7 +8,7 @@ from sunpy.net import attrs as a
 
 #---------------------------------------------------
 
-plotcase = 9
+plotcase = 13
 
 if plotcase == 1:
     testcase = 1
@@ -30,7 +30,7 @@ elif plotcase == 3:
     enhance = True
     plotframes = (3, 6, 9, 12)
     clip = (0.0, 1000.0)
-    scale = (0.0, 1000.0)
+    scale = None
 
 elif plotcase == 4:
     testcase = 1
@@ -53,8 +53,8 @@ elif plotcase == 6:
     nrgf = False
     enhance = True
     plotframes = (7, 14, 21, 29)
-    scale = (0.0, 100.0)
-    clip = scale
+    scale = None
+    clip = (0.0,200)
 
 elif plotcase == 7:
     # Event 22 in NASA/NOAA MOU Annex Final Report (Mays et al 2015)
@@ -86,11 +86,11 @@ elif plotcase == 9:
     instrument = a.Instrument.lasco
     detector = a.Detector.c3
     timerange = a.Time('2013/05/17 9:30:00', '2013/05/17 13:30:00')
-    nrgf = True
+    nrgf = False
     enhance = True
     plotframes = (4, 8, 12, 18)
-    scale = (0,1)
-    clip = (0,3.0)
+    scale = None
+    clip = (0,100.0)
 
 elif plotcase == 10:
     # Event 22 in NASA/NOAA MOU Annex Final Report (Mays et al 2015)
@@ -137,8 +137,8 @@ elif plotcase == 13:
     nrgf = False
     enhance = True
     plotframes = (1,2,3,5)
-    scale = (0, 600.0)
-    clip = scale
+    scale = None
+    clip = (0,600)
 else:
     print("specify a valid plotcase")
     exit()    
@@ -175,7 +175,10 @@ if nrgf:
    x.nrgf()
 
 if enhance:
-    x.enhance(clip = clip)
+    x.enhance(clip = clip, detail='mgn')
+    #x.enhance(clip = clip, detail='contrast')
+    #x.enhance(clip = clip, detail='fnrgf')
+    #x.noise_gate(cubesize=(3,12,12)); scale=(0,100)
 
 # ===================
 import matplotlib.pyplot as plt

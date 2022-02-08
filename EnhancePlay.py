@@ -25,7 +25,7 @@ from skimage.filters.rank import enhance_contrast, enhance_contrast_percentile
 from skimage.morphology import disk, remove_small_objects, remove_small_holes
 from skimage.restoration import (denoise_tv_chambolle, denoise_bilateral,
                                  denoise_wavelet, estimate_sigma, denoise_nl_means,
-                                 denoise_tv_bregman)
+                                 denoise_tv_bregman,wiener,unsupervised_wiener)
 
 from savitzkygolay import filter2D
 
@@ -34,7 +34,7 @@ os.environ.pop("QT_QPA_PLATFORM_PLUGIN_PATH")
 
 #---------------------------------------------------
 
-tcase = 5
+tcase = 1
 
 if tcase == 1:
     testcase = 1
@@ -116,7 +116,7 @@ print(f"Data range: {amap.min()} {amap.max()}")
 #---------------------------------------------------
 # Choose your battle
 
-comp = (0,12)
+comp = (0,22)
 
 tag = None
 
@@ -467,6 +467,16 @@ if comp.count(21) > 0:
 
     images.append(b)
     scales.append((0,1))
+
+if comp.count(22) > 0:
+    titles.append("wiener-hunt deconvolution") 
+  
+    psf = np.ones((5,5))/25
+
+    b = wiener(a, psf, 1100)
+
+    images.append(b)
+    scales.append(None)
 
 # ===================
 
