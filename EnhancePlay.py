@@ -34,7 +34,7 @@ os.environ.pop("QT_QPA_PLATFORM_PLUGIN_PATH")
 
 #---------------------------------------------------
 
-tcase = 5
+tcase = 3
 
 if tcase == 1:
     testcase = 1
@@ -116,7 +116,7 @@ print(f"Data range: {amap.min()} {amap.max()}")
 #---------------------------------------------------
 # Choose your battle
 
-comp = (0,22)
+comp = (0,19)
 
 tag = None
 
@@ -419,7 +419,11 @@ if comp.count(19) > 0:
 
     b = p.clip(min = scale[0], max = scale[1])
     
-    p = sunkit_image.enhance.mgn(b,h=0.7,gamma=1.5)
+    # This is what I was using for lasco
+    #p = sunkit_image.enhance.mgn(b,h=0.7,gamma=1.5)
+
+    # This is better, particularly for stereo
+    p = sunkit_image.enhance.mgn(b,h=1.0,gamma=1.5)
 
     b = denoise_tv_bregman(p)
 

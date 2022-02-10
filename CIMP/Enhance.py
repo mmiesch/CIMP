@@ -68,7 +68,7 @@ def enhance(imap, instrument = 'lasco', detector = 'c3', clip = None,
         """
         Multiscale Gaussian Noise filter (Morgan & Druckmuller 2014)
         """
-        b = sunkit_image.enhance.mgn(a, h = 0.7, gamma = 1.5)
+        b = sunkit_image.enhance.mgn(a, h = 1.0, gamma = 1.5)
 
     elif detail == 'fnrgf':
         """
