@@ -19,5 +19,3 @@ from CIMP import Event as ev
 x = ev.event()
 ```
 
----
-test git submodules
