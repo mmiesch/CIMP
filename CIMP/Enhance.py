@@ -20,7 +20,8 @@ fov = {
     'lasco-c2'   : (1.5,  6.0),
     'lasco-c3'   : (3.7, 30.0),
     'secchi-cor1': (1.5,  4.0),
-    'secchi-cor2': (3.0, 15.0)
+    'secchi-cor2': (3.0, 15.0),
+    'cme-model1' : (6.0, 120.0)
 }
 
 def point_filter(im, threshold = 2.0, radius = 20):

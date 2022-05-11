@@ -41,15 +41,23 @@ class snapshot:
 
     def __init__(self, instrument = None, detector = None, file = None):
 
-        if (instrument is None or detector is None or file is None):
+        if (file is None):
             print("Incomplete argument list: Using default test case")
             s = testsnap[1]
             instrument = s['instrument']
             detector = s['detector']
             file = s['dir'] + s['file']
 
-        self.instrument = instrument.value
-        self.detector = detector.value
+        if instrument is None:
+            self.instrument = 'None'
+        else:
+            self.instrument = instrument.value
+
+        if detector is None:
+            self.detector = 'None'
+        else:
+            self.detector = detector.value
+
         self.file = file
 
         # Now read in the data from files.  The assumption here is that there is one image per file.
@@ -78,11 +86,12 @@ class snapshot:
             #    t = header['DATE-OBS'].replace('T',' ')
             #    time = datetime.datetime.fromisoformat(t)
         except KeyError as key_err:
-            logging.exception(red+"Fatal Error in CIMP.Event.event constructor: header key error {}".format(key_err)+cend)
+            logging.exception(red+"Warning in CIMP.Event.event constructor: header key error {}".format(key_err)+cend)
+            time = datetime.datetime.now()
         except ValueError as val_err:
-            logging.exception(red+"Fatal error in CIMP.Event.event constructor: time conversion {} : {}".format(t, val_err)+cend)
+            logging.exception(red+"Warning in CIMP.Event.event constructor: time conversion {} : {}".format(t, val_err)+cend)
         except Exception as e:
-            logging.exception(red+'Fatal error in CIMP.Event.event constructor: reading time {}'.format(e)+cend)
+            logging.exception(red+'Warning in CIMP.Event.event constructor: reading time {}'.format(e)+cend)
 
         self.data = data.astype('float')
         self.header = header 
@@ -98,6 +107,10 @@ class snapshot:
         return cls(s['instrument'], s['detector'], file)
 
     def map(self):
+        if not 'cunit1' in self.header.keys():
+            self.header['cunit1'] = 'arcsec'
+            self.header['cunit2'] = 'arcsec'
+
         return sunpy.map.Map(self.data, self.header)
 
     def background_normalize(self, bgfile = None):
