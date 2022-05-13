@@ -12,6 +12,9 @@ import sunpy.visualization.colormaps as cm
 dir = '/home/mark.miesch/data/anny/CME0/pos-30/dcmer_030W_bang_0000_fits/tB/'
 file = dir+'frame_0050.fits'
 
+#cmap_lasco_c2 = plt.get_cmap('soholasco2')
+cmap_stereo_cor2 = plt.get_cmap('stereocor2')
+
 data, header = sunpy.io.fits.read(file)[0]
 
 nx = data.shape[0]
@@ -33,9 +36,11 @@ for i in np.arange(0,nx):
 #except:
 #    plt.imshow(data)
 
-cmap_lasco_c2 = plt.get_cmap('soholasco2')
-cmap_stereo_cor2 = plt.get_cmap('stereocor2')
+header['CUNIT1'] = 'arcsec'
+header['CUNIT2'] = 'arcsec'
+dmap = sunpy.map.Map(data, header)
+dmap.plot(cmap = cmap_stereo_cor2)
 
-plt.imshow(data, cmap = cmap_stereo_cor2)
+#plt.imshow(data, cmap = cmap_stereo_cor2)
 
 plt.show()
