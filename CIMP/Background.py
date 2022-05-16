@@ -117,7 +117,6 @@ class background:
         # as before, choose the header in the first file for now
         self.header = None
         self.background = None
-        self.zero = None
 
         for subdir in os.listdir(self.dir):
             ddir = self.dir+'/'+subdir
@@ -130,12 +129,11 @@ class background:
                         self.background = data
                         self.zero = self.background <= 0.0
                     else:
-                        mask = data > 0.0
                         np.fmin(self.background, data, \
-                            where = mask,
+                            where = data > 0.0,
                             out = self.background)
-                        self.background[self.zero] = data[self.zero]
-                        self.zero = self.background <= 0.0
+                        self.background = np.where(self.background <= 0.0, \
+                                          data, self.background)
                 except:
                     print(yellow+f"skipping {subdir}"+cend)
 
