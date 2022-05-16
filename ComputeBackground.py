@@ -13,5 +13,7 @@ dir = '/home/mark.miesch/data/lasco_monthly/c3/2012_04'
 
 bg = bg.background(dir)
 
-bg.daily_medians()
+#bg.daily_medians()
+bg.minimize_medians()
+
 

@@ -106,3 +106,37 @@ class background:
 
         print(f" minmaxmed: {np.nanmin(med_im)} {np.nanmax(med_im)}")
         fits.write(ddir+'daily_median.fts', med_im, header0, overwrite = True)
+
+    def minimize_medians(self):
+        """
+        This is intended to be executed after daily_medians.
+        It takes the daily median file from all the subdirectories
+        and computes a background based on the minimum non-zero value
+        in each pixel.
+        """
+
+        self.background = None
+        self.zero = None
+
+        for subdir in os.listdir(self.dir):
+            ddir = self.dir+'/'+subdir
+            if os.path.isdir(ddir):
+                file = ddir+'/'+ 'daily_median.fts'
+                try:
+                    data, header = fits.read(file)[0]
+                    if self.background is None:
+                        self.background = data
+                        self.zero = data <= 0.0
+                    else:
+                        mask = data > 0.0
+                        np.fmin(self.background, data, \
+                            where = mask,
+                            out = self.background)
+                        self.background[self.zero] = data[self.zero]
+                        self.zero = self.background <= 0.0
+                except:
+                    print(yellow+f"skipping {subdir}"+cend)
+
+        mask = self.background < 0.0
+        self.background[mask] = 0.0
+
