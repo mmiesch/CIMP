@@ -5,6 +5,6 @@ __author__ = 'mmiesch'
 # variables with double-quoted values will be available in setup.py
 __version__ = "0.0"
 
-__all__=['Event', 'Snapshot']
+__all__=['Event', 'Snapshot', 'Enhance', 'Background']
 
-from . import Event, Snapshot
+from . import Event, Snapshot, Enhance, Background
