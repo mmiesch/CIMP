@@ -104,7 +104,6 @@ class background:
         # record the number of images used in the header
         header0['NIMAGES'] = Nimages
 
-        print(f" minmaxmed: {np.nanmin(med_im)} {np.nanmax(med_im)}")
         fits.write(ddir+'daily_median.fts', med_im, header0, overwrite = True)
 
     def minimize_medians(self):
@@ -115,6 +114,8 @@ class background:
         in each pixel.
         """
 
+        # as before, choose the header in the first file for now
+        self.header = None
         self.background = None
         self.zero = None
 
@@ -125,8 +126,9 @@ class background:
                 try:
                     data, header = fits.read(file)[0]
                     if self.background is None:
+                        self.header = header
                         self.background = data
-                        self.zero = data <= 0.0
+                        self.zero = self.background <= 0.0
                     else:
                         mask = data > 0.0
                         np.fmin(self.background, data, \
@@ -139,4 +141,8 @@ class background:
 
         mask = self.background < 0.0
         self.background[mask] = 0.0
+
+    def write_background(self):
+        bg_file = self.dir + '/' + 'background.fts'
+        fits.write(bg_file, self.background, self.header, overwrite = True)
 

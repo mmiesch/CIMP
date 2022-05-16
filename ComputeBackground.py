@@ -15,5 +15,6 @@ bg = bg.background(dir)
 
 #bg.daily_medians()
 bg.minimize_medians()
+bg.write_background()
 
 

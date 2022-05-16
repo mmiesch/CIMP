@@ -6,12 +6,15 @@ import sunpy.io
 import sunpy.visualization.colormaps as cm
 
 
-dir = '/home/mark.miesch/data/lasco_monthly/c3/2012_04/'
-#file = dir+'03/32295364.fts'
-file = dir+'02/daily_median.fts'
+#dir = '/home/mark.miesch/data/lasco_monthly/c3/2012_04/'
+##file = dir+'03/32295364.fts'
+#file = dir+'02/daily_median.fts'
 
 #dir = '/home/mark.miesch/data/anny/CME0/pos-30/dcmer_030W_bang_0000_fits/tB/'
 #file = dir+'frame_0050.fits'
+
+dir = '/home/mark.miesch/data/lasco_monthly/c3/2012_04/'
+file = dir+'background.fts'
 
 #cmap_lasco_c2 = plt.get_cmap('soholasco2')
 cmap_stereo_cor2 = plt.get_cmap('stereocor2')
