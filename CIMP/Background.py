@@ -4,7 +4,8 @@ CIMP Background module
 
 import numpy as np
 import os
-import sunpy.io
+
+from sunpy.io import fits
 
 # for warning / error statements; print red, yellow text to terminal
 red = '\033[91m'
@@ -43,6 +44,12 @@ class background:
 
         ddir = self.dir + '/' + daydir + '/'
 
+        # for now use the header of the first valid file as a basis for 
+        # creating the header for the daily median image file.  So, it will 
+        # have the date of the first image - we may want to change this in 
+        # the future
+        header0 = None
+
         nx = None
         ny = None
 
@@ -50,7 +57,8 @@ class background:
         # make sure they all hve the same resolution
         for file in os.listdir(ddir):
             try:
-                data, header = sunpy.io.fits.read(ddir+file)[0]
+                assert("median" not in file)
+                data, header = fits.read(ddir+file)[0]
                 if nx is None:
                     nx = header['NAXIS1']
                 else:
@@ -61,10 +69,13 @@ class background:
                 else:
                     assert(ny == header['NAXIS1'])
 
+                if header0 is None:
+                    header0 = header
+
                 Nimages += 1
 
             except:
-                pass
+                print(yellow+f"skipping {file}"+cend)
 
         print(f"{daydir} : {Nimages} : {nx} {ny}")
 
@@ -75,12 +86,23 @@ class background:
         x = np.empty((nx,ny,Nimages),dtype='float32')
         x[:,:,:] = np.nan
 
-        idx = 1
+        idx = 0
         for file in os.listdir(ddir):
             try:
-                data, header = sunpy.io.fits.read(ddir+file)[0]
+                assert("median" not in file)
+                data, header = fits.read(ddir+file)[0]
                 assert(nx == header['NAXIS1'])
-                assert(ny == header('NAXIS2'))
+                assert(ny == header['NAXIS2'])
+                x[:,:,idx] = data
+                idx += 1
             except:
                 pass
 
+        # compute median image
+        med_im = np.nanmedian(x, axis=2)
+
+        # record the number of images used in the header
+        header0['NIMAGES'] = Nimages
+
+        print(f" minmaxmed: {np.nanmin(med_im)} {np.nanmax(med_im)}")
+        fits.write(ddir+'daily_median.fts', med_im, header0, overwrite = True)
