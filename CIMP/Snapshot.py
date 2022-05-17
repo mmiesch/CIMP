@@ -24,22 +24,18 @@ cend = '\033[0m'
 testsnap = {
     1: {
     'instrument': a.Instrument.lasco,
-    'detector': a.Detector.c2,
-    'dir': '/home/mark.miesch/sunpy/data/LASCO/',
-    'file': '22605555.fts'
-    },
-    2: {
-    'instrument': a.Instrument.lasco,
     'detector': a.Detector.c3,
-    'dir': '/home/mark.miesch/sunpy/data/LASCO/',
-    'file': '32473914.fts'
+    'dir': '/home/mark.miesch/data/lasco_monthly/c3/2012_04/',
+    'file': '/15/32296650.fts',
+    'bgfile': 'background.fts'
     }
 }
 
 class snapshot:
     """A snapshot is defined as a single coronagraph images for a particular instrument, detector, and time"""
 
-    def __init__(self, instrument = None, detector = None, file = None):
+    def __init__(self, file = None, bgfile = None, instrument = None, \
+                       detector = None):
 
         if (file is None):
             print("Incomplete argument list: Using default test case")
@@ -59,6 +55,7 @@ class snapshot:
             self.detector = detector.value
 
         self.file = file
+        self.bgfile = bgfile
 
         # Now read in the data from files.  The assumption here is that there is one image per file.
         # If that is not the case, then we can generalize this as needed.
@@ -74,28 +71,17 @@ class snapshot:
             logging.exception(red+"Fatal Error in CIMP.Event.event constructor: reading file {} : {}".format(file, err)+cend)
             raise
 
-        try:
-            print(f"HEADER TIME {file} {header['DATE-OBS']}")
-            #if (self.instrument.value == 'LASCO' and self.detector.value == 'C2'): 
-            t = header['DATE-OBS'].replace('/','-') + ' ' + header['TIME-OBS']
-            time = datetime.datetime.fromisoformat(t)
-            #else:
-            #    """
-            #    Careful here - it looks like the time stamp on C3 files can be different - like C2 or not
-            #    """
-            #    t = header['DATE-OBS'].replace('T',' ')
-            #    time = datetime.datetime.fromisoformat(t)
-        except KeyError as key_err:
-            logging.exception(red+"Warning in CIMP.Event.event constructor: header key error {}".format(key_err)+cend)
-            time = datetime.datetime.now()
-        except ValueError as val_err:
-            logging.exception(red+"Warning in CIMP.Event.event constructor: time conversion {} : {}".format(t, val_err)+cend)
-        except Exception as e:
-            logging.exception(red+'Warning in CIMP.Event.event constructor: reading time {}'.format(e)+cend)
-
         self.data = data.astype('float')
-        self.header = header 
-        self.time = time
+        self.header = header
+
+        # adjustments for simulation data
+        if not 'cunit1' in self.header.keys():
+            self.header['cunit1'] = 'arcsec'
+            self.header['cunit2'] = 'arcsec'
+
+        self.dmap = sunpy.map.Map(self.data, self.header)
+
+        self.time = self.dmap.date
 
     @classmethod
     def testcase(cls, case = 1):
@@ -103,15 +89,12 @@ class snapshot:
 
         s = testsnap[case]
         file = s['dir'] + s['file']
+        bgfile = s['dir'] + s['bgfile']
 
-        return cls(s['instrument'], s['detector'], file)
+        return cls(file, bgfile, s['instrument'], s['detector'])
 
     def map(self):
-        if not 'cunit1' in self.header.keys():
-            self.header['cunit1'] = 'arcsec'
-            self.header['cunit2'] = 'arcsec'
-
-        return sunpy.map.Map(self.data, self.header)
+        return self.map
 
     def background_normalize(self, bgfile = None):
         """
