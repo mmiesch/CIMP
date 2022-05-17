@@ -1,5 +1,5 @@
 """
-CIMP Event module  
+CIMP Event module
 """
 
 import astropy.units as u
@@ -15,6 +15,7 @@ from CIMP import Enhance
 from io import RawIOBase
 from sunpy.net import Fido
 from sunpy.net import attrs as a
+from skimage import exposure
 
 # for warning / error statements; print red, yellow text to terminal
 red = '\033[91m'
@@ -71,7 +72,8 @@ class snapshot:
             logging.exception(red+"Fatal Error in CIMP.Event.event constructor: reading file {} : {}".format(file, err)+cend)
             raise
 
-        self.data = data.astype('float')
+        self.rawdata = data.astype('float')
+        self.data = exposure.rescale_intensity(self.rawdata, out_range=(0,1))
         self.header = header
 
         # adjustments for simulation data
@@ -83,6 +85,11 @@ class snapshot:
 
         self.time = self.dmap.date
 
+        if self.bgfile is None:
+            self.background = None
+        else:
+            self.background, bgheader = sunpy.io.fits.read(bgfile)[0]
+
     @classmethod
     def testcase(cls, case = 1):
         """This is an alternative constructor that creates an Event object based on predefined reference cases.  It takes a single integer as an input, which is the number of the desired test case"""
@@ -93,25 +100,33 @@ class snapshot:
 
         return cls(file, bgfile, s['instrument'], s['detector'])
 
+    def clip(self,limits):
+        print(f"MSM clip {limits} {np.min(self.data)} {np.max(self.data)}")
+        self.data = self.data.clip(min = limits[0], max = limits[1])
+        print(f"MSM clipped {np.min(self.data)} {np.max(self.data)}")
+        self.data = exposure.rescale_intensity(self.data, out_range = (0,1))
+
     def map(self):
-        return self.map
+        return sunpy.map.Map(self.data, self.header)
 
-    def background_normalize(self, bgfile = None):
+    def subtract_background(self):
+        self.data = self.rawdata - self.background
+        self.data = exposure.rescale_intensity(self.data, out_range = (0,1))
+
+    def background_normalize(self):
         """
-        Given a filename that contains a background image, this method will compute a ratio relative to the background image and re-scale.  This is similar to NRL's pipeline for creating the daily "pretties" for LASCO, STERO, and PSP/WISPR.
+        This method will compute a ratio relative to the background image and re-scale.  This is similar to NRL's pipeline for creating the daily "pretties" for LASCO, STERO, and PSP/WISPR.
         """
-        
+
         # Currently a filename is a required parameter
-        if (bgfile is None):
+        if (self.bgfile is None):
             print("Error in Snapshot.background_normalize(): you must specify a filename that contains the background image")
-            exit()
-        
-        bkg, bheader = sunpy.io.fits.read(bgfile)[0]
+            raise
 
-        self.background = bkg - np.min(bkg)
-        a = self.data - np.min(self.data)
+        bkg = self.background - np.min(self.background)
+        a = self.rawdata - np.min(self.rawdata)
         rat = np.where(self.background <= 0.0, 0.0, a/self.background)
-        self.data = exposure.rescale_intensity(rat)
+        self.data = exposure.rescale_intensity(rat, out_range = (0,1))
 
     def enhance(self, clip = None, noise_filter = 'bregman', detail = 'mgn',
                 rmix = [1,15]):
@@ -127,29 +142,34 @@ class snapshot:
 
             image = Enhance.enhance(self.data,
                                     instrument = self.instrument,
-                                    detector = self.detector, 
-                                    clip = clip, 
-                                    noise_filter = noise_filter, 
-                                    detail = detail, 
+                                    detector = self.detector,
+                                    clip = clip,
+                                    noise_filter = noise_filter,
+                                    detail = detail,
                                     rmix = rmix)
             self.data = image
+
+    def point_filter(self, threshold = 2.0, radius = 20):
+        self.data = Enhance.bright_point_filter(self.data, \
+                    threshold = threshold, radius = radius)
+        self.data = exposure.rescale_intensity(self.data, out_range=(0,1))
 
     def nrgf(self):
         """
         Apply a normalized radial gradient filter
         """
-        
-        amap = Enhance.nrgf(self.map(), self.instrument.value, 
-                                        self.detector.value)
+
+        amap = Enhance.nrgf(self.map(), self.instrument,
+                                        self.detector)
         self.data = amap.data
 
     def fnrgf(self, order = 20, rmix = [1,15]):
         """
         Apply a Fourier normalized radial gradient filter
         """
-        
-        amap = Enhance.fnrgf(self.map(), self.instrument.value, 
-                             self.detector.value, order, rmix)
+
+        amap = Enhance.fnrgf(self.map(), self.instrument,
+                             self.detector, order, rmix)
         self.data = amap.data
 
     def __str__(self):

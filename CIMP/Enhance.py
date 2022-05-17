@@ -32,6 +32,14 @@ def point_filter(im, threshold = 2.0, radius = 20):
     p = im * rob.astype('float')
     return np.where(amag > 0, p, 0.0)
 
+def bright_point_filter(im, threshold = 2.0, radius = 20):
+    """
+    Simpler version for just bright points
+    """
+    amed = median(im, disk(radius))
+    rob = im > threshold * amed
+    return np.where(rob, amed, im)
+
 def nrgf(imap, instrument = 'lasco', detector = 'c3'):
 
     myfov = fov[instrument.lower()+'-'+detector.lower()]

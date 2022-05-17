@@ -4,14 +4,24 @@ This is similar to EnhancePlay.py but it is a simplification, focusing on the de
 
 import numpy as np
 import matplotlib.pyplot as plt
+import sunpy.map
+import sunpy.visualization.colormaps as cm
 
 from CIMP import Snapshot as snap
 
 pcase = 1
 
+# dcase = 1: subtract the background
+# dcase = 2: take a ratio with the background
+dcase = 1
+
+scales = None
+
 if pcase == 1:
     testcase = 1
-    scale = None
+    dcase = 1
+    pointfilter = True
+    scales = [(0,1),(0.05,4.0)]
 else:
     print("specify a valid test case")
     exit()
@@ -20,3 +30,87 @@ else:
 
 x = snap.snapshot.testcase(testcase)
 
+if dcase == 2:
+    x.background_normalize()
+else:
+    x.subtract_background()
+
+#------------------------------------------------------------------------------
+# choose your battle
+
+comp = (0,1)
+
+tag = None
+
+images = []
+titles = []
+
+# default scales can be overridden
+dscales = []
+
+if comp.count(0) > 0:
+    titles.append("Base image")
+    images.append(x.data)
+    dscales.append((0.0,1.0))
+
+if comp.count(1) > 0:
+    titles.append("Point filter")
+    x.point_filter()
+    images.append(x.data)
+    dscales.append((0.0,1.0))
+
+if comp.count(2) > 0:
+    titles.append("NRGF")
+    x.nrgf()
+    images.append(x.data)
+    dscales.append((0.0,4.0))
+
+#------------------------------------------------------------------------------
+
+if scales is None:
+   scales = dscales
+else:
+    if scales[0] is None:
+        scales[0] = dscales[0]
+    if scales[1] is None:
+        scales[1] = dscales[1]
+
+#------------------------------------------------------------------------------
+# plot
+
+cmap = plt.get_cmap('stereocor2')
+
+fig = plt.figure(figsize=[16,8])
+
+map1 = sunpy.map.Map(images[0],x.header)
+print(f"image 1 range: {map1.min()} {map1.max()}")
+ax = fig.add_subplot(1,2,1,projection=map1)
+if scales[0] is None:
+    map1.plot(title=titles[0],cmap=cmap)
+else:
+   print(f"image 1 scale: {scales[0][0]} to {scales[0][1]}")
+   map1.plot(vmin=scales[0][0], vmax=scales[0][1], title=titles[0],cmap=cmap)
+
+map2 = sunpy.map.Map(images[1],x.header)
+print(f"image 2 range: {map2.min()} {map2.max()}")
+ax = fig.add_subplot(1,2,2,projection=map2)
+if scales[1] is None:
+    map2.plot(title=titles[1],cmap=cmap)
+else:
+   print(f"image 2 scale: {scales[1][0]} to {scales[1][1]}")
+   map2.plot(vmin=scales[1][0], vmax=scales[1][1], title=titles[1],cmap=cmap)
+   #plt.imshow(images[1],vmin=scales[1][0],vmax=scales[1][1])
+
+# ===================
+# save to a file
+# ===================
+dir = '/home/mark.miesch/Products/image_processing/images/Enhance_snap/'
+
+if tag is None:
+   file = dir + f"Enhance_t{testcase}_{comp[0]}_vs_{comp[1]}.png"
+else:
+   file = dir + f"Enhance_t{testcase}_{comp[0]}_vs_{comp[1]}_{tag}.png"
+
+plt.savefig(file)
+
+plt.show()
