@@ -12,7 +12,7 @@ from skimage import exposure
 from skimage.filters import median
 from skimage.filters.rank import enhance_contrast_percentile
 from skimage.morphology import disk
-from skimage.restoration import (denoise_tv_chambolle, denoise_tv_bregman, 
+from skimage.restoration import (denoise_tv_chambolle, denoise_tv_bregman,
                                  denoise_nl_means)
 from sunkit_image.utils import equally_spaced_bins
 
@@ -35,7 +35,7 @@ def point_filter(im, threshold = 2.0, radius = 20):
 def nrgf(imap, instrument = 'lasco', detector = 'c3'):
 
     myfov = fov[instrument.lower()+'-'+detector.lower()]
-    
+
     edges = equally_spaced_bins(myfov[0], myfov[1])
     edges *= u.R_sun
 
@@ -46,16 +46,44 @@ def fnrgf(imap, instrument = 'lasco', detector = 'c3', order = 20, rmix = [1,15]
     Fourier Normaling Radial Gradient Filter (Druckmullerova et al 2011)
     """
     myfov = fov[instrument.lower()+'-'+detector.lower()]
-    
+
     edges = equally_spaced_bins(myfov[0], myfov[1])
     edges *= u.R_sun
 
     coefs = radial.set_attenuation_coefficients(order)
-    
+
     return radial.fnrgf(imap, edges, order, coefs, ratio_mix = rmix)
 
-def enhance(imap, instrument = 'lasco', detector = 'c3', clip = None, 
+def powerlaw(im, n = 2.0, center = None):
+    """
+    Offsetting the radial gradient with a simple power law
+    """
+
+    nover2 = n / 2.0
+
+    nx = im.shape[0]
+    ny = im.shape[1]
+
+    norm = (0.25*float(nx))**2
+
+    if center is None:
+        center = (0.5*float(nx), 0.5*float(ny))
+
+    f = np.zeros((nx,ny),dtype='float32')
+
+    for i in np.arange(0,nx):
+        for j in np.arange(0,ny):
+            r2 = (float(i)-center[0])**2 + (float(j)-center[1])**2
+            if r2 > 0:
+                f[i,j] = im[i,j] * (r2/norm)**nover2
+
+    return f
+
+def enhance(imap, instrument = 'lasco', detector = 'c3', clip = None,
             noise_filter = 'bregman', detail = 'mgn', rmix = [1,15]):
+    """
+    A combination of actions that works pretty well
+    """
 
     # filter out bright points
     a = point_filter(imap.data)

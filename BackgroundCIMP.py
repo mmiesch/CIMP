@@ -57,6 +57,8 @@ pcase = 1
 
 if pcase == 1:
 
+    instrument = 'lasco'
+    detector = 'c3'
     dir = '/home/mark.miesch/data/lasco_monthly/c3/2012_04'
     file = dir+'/15/32296650.fts'
     bgfile = dir+'/'+'background.fts'
@@ -84,16 +86,10 @@ cmap = plt.get_cmap('stereocor2')
 fig = plt.figure(figsize=[16,12])
 
 ax = fig.add_subplot(2,3,1,projection=amap)
-#amap.plot(clip_interval=[10,90]*u.percent,cmap=cmap)
 amap.plot(cmap=cmap)
 
 ax = fig.add_subplot(2,3,4,projection=bmap)
-#bmap.plot(clip_interval=[10,90]*u.percent,cmap=cmap)
 bmap.plot(cmap=cmap)
-
-#ax = fig.add_subplot(2,3,3,projection=dmap)
-#dmap.plot(clip_interval=[10,90]*u.percent)
-#dmap.plot(clip_interval=[10,90]*u.percent)
 
 #======================================================================
 # polar intensity plots at a particular radius
@@ -116,27 +112,40 @@ plt.plot(theta,acut,'black')
 plt.plot(theta,bcut,'blue')
 plt.title("r = 0.8")
 
-
 #======================================================================
 # difference
 
 pa = data - bkg
-pmap = sunpy.map.Map(pa,header)
+pb = Enhance.powerlaw(pa)
+pmap = sunpy.map.Map(pb,header)
+
+#dmap = Enhance.nrgf(pmap, instrument, detector)
 
 ax = fig.add_subplot(2,3,3,projection=pmap)
-#pmap.plot(clip_interval=[20,90]*u.percent,cmap=cmap)
-pmap.plot(cmap=cmap)
+
+print(f"Difference minmax: {pmap.min()} {pmap.max()}")
+
+pmap.plot(cmap=cmap,vmin=0,vmax=1.0e3)
+#pmap.plot(cmap=cmap)
+#dmap.plot(cmap=cmap,clip_interval=(1,99)*u.percent)
 
 #======================================================================
 # ratio
 
 rat = np.where(bkg <= 0.0, 0.0, data/bkg)
+
 rmap = sunpy.map.Map(rat,header)
 
-#emap = Enhance.fnrgf(rmap, instrument, detector)
+#pa = Enhance.powerlaw(rat,n=1.0)
+#rmap = sunpy.map.Map(pa,header)
 
-ax = fig.add_subplot(2,3,6,projection=pmap)
-#pmap.plot(clip_interval=[20,90]*u.percent,cmap=cmap)
-pmap.plot(cmap=cmap)
+#emap = Enhance.fnrgf(rmap, instrument, detector)
+emap = Enhance.nrgf(rmap, instrument, detector)
+
+ax = fig.add_subplot(2,3,6,projection=rmap)
+
+print(f"Ratio minmax: {rmap.min()} {rmap.max()}")
+
+rmap.plot(cmap=cmap,vmin=1.0,vmax=3)
 
 plt.show()

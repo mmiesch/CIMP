@@ -2,9 +2,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import sunpy.map
-import sunpy.io
 import sunpy.visualization.colormaps as cm
 
+from sunpy.io import fits
 
 #dir = '/home/mark.miesch/data/lasco_monthly/c3/2012_04/'
 ##file = dir+'03/32295364.fts'
@@ -19,29 +19,9 @@ file = dir+'background.fts'
 #cmap_lasco_c2 = plt.get_cmap('soholasco2')
 cmap_stereo_cor2 = plt.get_cmap('stereocor2')
 
-data, header = sunpy.io.fits.read(file)[0]
+data, header = fits.read(file)[0]
 
-nx = data.shape[0]
-ny = data.shape[0]
-
-# simple r^2 scaling
-x0 = 0.5 * nx
-y0 = 0.5 * ny
-
-#for i in np.arange(0,nx):
-#    for j in np.arange(0,ny):
-#        r2 = (float(i)-x0)**2 + (float(j)-y0)**2
-#        if r2 > 1:
-#            data[i,j] = data[i,j] * r2
-
-#for h in header.keys():
-#    print(f"{h} : {header[h]}")
-
-#try:
-#    dmap = sunpy.map.Map(data, header)
-#    dmap.plot()
-#except:
-#    plt.imshow(data)
+# experimenting with the model field
 
 #header['CUNIT1'] = 'arcsec'
 #header['CUNIT2'] = 'arcsec'
