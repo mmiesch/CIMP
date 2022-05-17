@@ -18,10 +18,17 @@ dcase = 1
 scales = None
 
 if pcase == 1:
+    comp = (0,1)
     testcase = 1
     dcase = 1
     pointfilter = True
     scales = [(0,1),(0.05,4.0)]
+elif pcase == 2:
+    comp = (0,2)
+    testcase = 1
+    dcase = 1
+    pointfilter = True
+    scales = [(0,1),(0.0,20.0)]
 else:
     print("specify a valid test case")
     exit()
@@ -38,8 +45,6 @@ else:
 #------------------------------------------------------------------------------
 # choose your battle
 
-comp = (0,1)
-
 tag = None
 
 images = []
@@ -53,9 +58,11 @@ if comp.count(0) > 0:
     images.append(x.data)
     dscales.append((0.0,1.0))
 
+if pointfilter:
+    x.point_filter()
+
 if comp.count(1) > 0:
     titles.append("Point filter")
-    x.point_filter()
     images.append(x.data)
     dscales.append((0.0,1.0))
 
@@ -99,17 +106,24 @@ if scales[1] is None:
 else:
    print(f"image 2 scale: {scales[1][0]} to {scales[1][1]}")
    map2.plot(vmin=scales[1][0], vmax=scales[1][1], title=titles[1],cmap=cmap)
-   #plt.imshow(images[1],vmin=scales[1][0],vmax=scales[1][1])
 
 # ===================
 # save to a file
 # ===================
 dir = '/home/mark.miesch/Products/image_processing/images/Enhance_snap/'
 
-if tag is None:
-   file = dir + f"Enhance_t{testcase}_{comp[0]}_vs_{comp[1]}.png"
-else:
-   file = dir + f"Enhance_t{testcase}_{comp[0]}_vs_{comp[1]}_{tag}.png"
+fname = f"Snap_t{testcase}_{comp[0]}_vs_{comp[1]}"
+
+if dcase == 2:
+    fname += "_rat"
+
+if pointfilter:
+    fname += "_pf"
+
+if tag is not None:
+    fname += f"_{tag}"
+
+file = dir + fname + ".png"
 
 plt.savefig(file)
 
