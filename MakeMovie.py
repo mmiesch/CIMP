@@ -15,8 +15,10 @@ if pcase == 1:
     bgfile = dir+'/frame_0000.fits'
     colormap = 'lasco'
 
-outfile = outdir + f"/cimp_p{pcase}"
+outfile = outdir + f"/cimp_p{pcase}.mpg"
 
 x = an.movie(dir, bgfile = bgfile, outfile = outfile, \
              instrument = instrument, detector = detector, cmap = colormap)
+
+x.daymovie()
 
