@@ -9,7 +9,7 @@ import sunpy.visualization.colormaps as cm
 
 from CIMP import Snapshot as snap
 
-pcase = 7
+pcase = 9
 
 # dcase = 1: subtract the background
 # dcase = 2: take a ratio with the background
@@ -72,6 +72,24 @@ elif pcase == 7:
     rmask = 1.05
     clip=(0.0, 0.1)
     scales = [(0.005,0.04),(0.2,0.8)]
+elif pcase == 8:
+    comp = (0,5)
+    testcase = 1
+    dcase = 2
+    pointfilter = False
+    colormap = 'lasco'
+    rmask = 1.05
+    clip=(0.0, 0.1)
+    scales = [(0.005,0.04),(0.2,0.9)]
+elif pcase == 9:
+    comp = (0,6)
+    testcase = 1
+    dcase = 2
+    pointfilter = True
+    colormap = 'lasco'
+    #rmask = 1.05
+    clip=(0.0, 0.1)
+    scales = [(0.005,0.04),(0.2,1.0)]
 else:
     print("specify a valid test case")
     exit()
@@ -132,6 +150,13 @@ if comp.count(5) > 0:
     x.enhance(detail = 'fnrgf')
     images.append(x.data)
     dscales.append((0.0,1.0))
+
+if comp.count(6) > 0:
+    titles.append("Adaptive equalization")
+    x.equalize()
+    images.append(x.data)
+    dscales.append((0.0,1.0))
+
 
 if rmask is not None:
     x.mask_annulus(rmax = rmask)

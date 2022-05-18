@@ -149,6 +149,9 @@ class snapshot:
 
         self.data = a
 
+    def equalize(self):
+        self.data = Enhance.equalize(self.data)
+
     def rescale(self):
         self.data = exposure.rescale_intensity(self.data, out_range=(0,1))
 
