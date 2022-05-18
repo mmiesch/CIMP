@@ -9,13 +9,14 @@ import sunpy.visualization.colormaps as cm
 
 from CIMP import Snapshot as snap
 
-pcase = 4
+pcase = 7
 
 # dcase = 1: subtract the background
 # dcase = 2: take a ratio with the background
 dcase = 1
 
 scales = None
+rmask = None
 colormap = 'stereo'
 
 if pcase == 1:
@@ -44,6 +45,8 @@ elif pcase == 4:
     dcase = 1
     pointfilter = False
     colormap = 'lasco'
+    rmask = 1.05
+    clip=(0.01, 0.12)
     scales = [(0.01,.12),(0.0,1.0)]
 elif pcase == 5:
     comp = (0,5)
@@ -51,7 +54,24 @@ elif pcase == 5:
     dcase = 1
     pointfilter = False
     colormap = 'lasco'
-    scales = [(0.01,.12),(0.0,1.0)]
+    rmask = 1.05
+    scales = [(0.01,.12),(0.1,1.0)]
+elif pcase == 6:
+    comp = (0,1)
+    testcase = 1
+    dcase = 2
+    pointfilter = True
+    colormap = 'lasco'
+    scales = [(0.005,0.04),(0.1,0.9)]
+elif pcase == 7:
+    comp = (0,4)
+    testcase = 1
+    dcase = 2
+    pointfilter = False
+    colormap = 'lasco'
+    rmask = 1.05
+    clip=(0.0, 0.1)
+    scales = [(0.005,0.04),(0.2,0.8)]
 else:
     print("specify a valid test case")
     exit()
@@ -103,8 +123,7 @@ if comp.count(3) > 0:
 
 if comp.count(4) > 0:
     titles.append("enhance(mgn)")
-    x.enhance(clip=(0.01, 0.12))
-    x.mask_annulus(rmax = 1.05)
+    x.enhance(clip = clip)
     images.append(x.data)
     dscales.append((0.0,1.0))
 
@@ -113,6 +132,10 @@ if comp.count(5) > 0:
     x.enhance(detail = 'fnrgf')
     images.append(x.data)
     dscales.append((0.0,1.0))
+
+if rmask is not None:
+    x.mask_annulus(rmax = rmask)
+
 
 #------------------------------------------------------------------------------
 

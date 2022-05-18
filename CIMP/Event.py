@@ -218,7 +218,7 @@ class event:
 
             # contrast stretching via clipping
             if clip is not None:
-                a = a.clip(min = clip[0], max = clip[1])
+                a = Enhance.clip(a, min = clip[0], max = clip[1])
 
             # various techniques to bring out detail
             a = Enhance.detail(a, self.header[i], detail)

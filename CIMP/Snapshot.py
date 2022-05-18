@@ -116,14 +116,9 @@ class snapshot:
         This method will compute a ratio relative to the background image and re-scale.  This is similar to NRL's pipeline for creating the daily "pretties" for LASCO, STERO, and PSP/WISPR.
         """
 
-        # Currently a filename is a required parameter
-        if (self.bgfile is None):
-            print("Error in Snapshot.background_normalize(): you must specify a filename that contains the background image")
-            raise
+        self.data = np.where(self.background <= 0.0, 0.0, \
+                             self.rawdata / self.background)
 
-        bkg = self.background - np.min(self.background)
-        a = self.rawdata - np.min(self.rawdata)
-        rat = np.where(self.background <= 0.0, 0.0, a/self.background)
         self.rescale()
 
     def enhance(self, clip = None, detail = 'mgn', noise_filter = 'bregman'):
