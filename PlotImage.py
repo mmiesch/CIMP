@@ -6,12 +6,13 @@ import sunpy.visualization.colormaps as cm
 
 from sunpy.io import fits
 
-dir = '/home/mark.miesch/data/lasco_monthly/c3/2012_04/'
-file = dir+'03/32295364.fts'
+#dir = '/home/mark.miesch/data/lasco_monthly/c3/2012_04/'
+#file = dir+'03/32295364.fts'
 #file = dir+'02/daily_median.fts'
 
 dir = '/home/mark.miesch/data/anny/CME0/pos-30/dcmer_030W_bang_0000_fits/tB/'
-file = dir+'frame_0050.fits'
+#file = dir+'frame_0050.fits'
+file = dir+'frame_0000.fits'
 
 #dir = '/home/mark.miesch/data/lasco_monthly/c3/2012_04/'
 #dir = '/home/mark.miesch/data/lasco_monthly/c3/2014_01/'
@@ -40,6 +41,5 @@ dmap = sunpy.map.Map(data, header)
 plt.imshow(data, cmap = cmap_stereo_cor2)
 
 print(f" minmax: {np.nanmin(data)} {np.nanmax(data)}")
-
 
 plt.show()

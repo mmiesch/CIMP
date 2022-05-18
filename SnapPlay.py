@@ -9,12 +9,13 @@ import sunpy.visualization.colormaps as cm
 
 from CIMP import Snapshot as snap
 
-pcase = 15
+pcase = 18
 
 # dcase = 1: subtract the background
 # dcase = 2: take a ratio with the background
 dcase = 1
 
+clip = None
 scales = None
 rmask = None
 colormap = 'stereo'
@@ -143,12 +144,29 @@ elif pcase == 15:
     pointfilter = False
     scales = [(0,1),(0,1)]
 elif pcase == 16:
-    # testcase 3 (CME model) with just a point filter
-    comp = (0,1)
+    # testcase 3 (CME model) with adaptive equalization
+    comp = (0,6)
     testcase = 3
-    dcase = 0
-    pointfilter = True
-    scales = [(0,1),(0,1)]
+    dcase = 2
+    pointfilter = False
+    colormap = 'lasco'
+    scales = [(0,1),(0,1.0)]
+elif pcase == 17:
+    # testcase 3 (CME model) with mgn enhance
+    comp = (0,4)
+    testcase = 3
+    dcase = 2
+    pointfilter = False
+    colormap = 'lasco'
+    scales = [(0,1),(0,1.0)]
+elif pcase == 18:
+    # testcase 3 (CME model) with fnrgf enhance
+    comp = (0,5)
+    testcase = 3
+    dcase = 2
+    pointfilter = False
+    colormap = 'lasco'
+    scales = [(0,1),(0,1.0)]
 else:
     print("specify a valid test case")
     exit()

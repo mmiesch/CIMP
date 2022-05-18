@@ -42,7 +42,7 @@ testsnap = {
     'detector': 'original', # the detector field is used to specify the FOV
     'dir': '/home/mark.miesch/data/anny/CME0/pos-30/dcmer_030W_bang_0000_fits/tB/',
     'file': 'frame_0050.fits',
-    'bgfile': None
+    'bgfile': 'frame_0000.fits'
     }
 }
 
