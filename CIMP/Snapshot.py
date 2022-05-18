@@ -135,7 +135,7 @@ class snapshot:
         print(f"Detail Enhancement: {detail}")
         print(f"Noise filter: {noise_filter}")
 
-        a = Enhance.bright_point_filter(self.data)
+        a = Enhance.bright_point_filter(self.data, rescaleim = False)
 
         # contrast stretching via clipping
         if clip is not None:
@@ -179,6 +179,9 @@ class snapshot:
         amap = Enhance.fnrgf(self.map(), self.instrument,
                              self.detector, order, rmix)
         self.data = amap.data
+
+    def mask_annulus(self, rmin = 0.0, rmax = None):
+        Enhance.mask_annulus(self.data, rmin = rmin, rmax = rmax)
 
     def __str__(self):
         return (f'Instrument = {self.instrument} \n'

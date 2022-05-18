@@ -44,7 +44,14 @@ elif pcase == 4:
     dcase = 1
     pointfilter = False
     colormap = 'lasco'
-    scales = [(0.01,.12),(0.2,0.9)]
+    scales = [(0.01,.12),(0.0,1.0)]
+elif pcase == 5:
+    comp = (0,5)
+    testcase = 1
+    dcase = 1
+    pointfilter = False
+    colormap = 'lasco'
+    scales = [(0.01,.12),(0.0,1.0)]
 else:
     print("specify a valid test case")
     exit()
@@ -95,8 +102,15 @@ if comp.count(3) > 0:
     dscales.append((0.0,4.0))
 
 if comp.count(4) > 0:
-    titles.append("Enhance.enhance()")
-    x.enhance()
+    titles.append("enhance(mgn)")
+    x.enhance(clip=(0.01, 0.12))
+    x.mask_annulus(rmax = 1.05)
+    images.append(x.data)
+    dscales.append((0.0,1.0))
+
+if comp.count(5) > 0:
+    titles.append("enhance(fnrgf)")
+    x.enhance(detail = 'fnrgf')
     images.append(x.data)
     dscales.append((0.0,1.0))
 
