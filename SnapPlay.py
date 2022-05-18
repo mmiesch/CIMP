@@ -9,7 +9,7 @@ import sunpy.visualization.colormaps as cm
 
 from CIMP import Snapshot as snap
 
-pcase = 14
+pcase = 15
 
 # dcase = 1: subtract the background
 # dcase = 2: take a ratio with the background
@@ -135,6 +135,20 @@ elif pcase == 14:
     rmask = 1.05
     clip=(0.0, 0.1)
     scales = [(0.005,0.03),(0.1,0.9)]
+elif pcase == 15:
+    # testcase 3 (CME model) with an r^2 filter
+    comp = (0,7)
+    testcase = 3
+    dcase = 0
+    pointfilter = False
+    scales = [(0,1),(0,1)]
+elif pcase == 16:
+    # testcase 3 (CME model) with just a point filter
+    comp = (0,1)
+    testcase = 3
+    dcase = 0
+    pointfilter = True
+    scales = [(0,1),(0,1)]
 else:
     print("specify a valid test case")
     exit()
@@ -143,10 +157,11 @@ else:
 
 x = snap.snapshot.testcase(testcase)
 
-if dcase == 2:
-    x.background_normalize()
-else:
+# set dcase to 0 if there is no background
+if dcase == 1:
     x.subtract_background()
+elif dcase == 2:
+    x.background_normalize()
 
 #------------------------------------------------------------------------------
 # choose your battle
@@ -201,6 +216,13 @@ if comp.count(6) > 0:
     x.equalize()
     images.append(x.data)
     dscales.append((0.0,1.0))
+
+if comp.count(7) > 0:
+    titles.append("r^2 filter")
+    x.powerlaw()
+    images.append(x.data)
+    dscales.append((0.0,1.0))
+
 
 
 if rmask is not None:

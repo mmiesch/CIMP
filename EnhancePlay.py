@@ -1,5 +1,5 @@
 """
-Use this to assess and refine image enhancement strategies 
+Use this to assess and refine image enhancement strategies
 """
 
 from http.server import BaseHTTPRequestHandler
@@ -62,7 +62,7 @@ elif tcase == 5:
 
 else:
     print("specify a valid tcase")
-    exit()    
+    exit()
 
 #---------------------------------------------------
 def remove_outliers(im, radius = 2, threshold = 50):
@@ -146,8 +146,8 @@ if comp.count(2) > 0:
 
 if comp.count(3) > 0:
     # median filter with adaptive equalization
-    titles.append("3 = clip + median + ad-eq-hist") 
-  
+    titles.append("3 = clip + median + ad-eq-hist")
+
     b = a.clip(min = scale[0], max = scale[1])
     p = exposure.rescale_intensity(b)
     b = median(p, disk(1))
@@ -157,8 +157,8 @@ if comp.count(3) > 0:
 
 if comp.count(4) > 0:
     # median filter with adaptive equalization
-    titles.append("4 = 3 + en_con_per") 
-  
+    titles.append("4 = 3 + en_con_per")
+
     b = a.clip(min = scale[0], max = scale[1])
     p = exposure.rescale_intensity(b)
     b = median(p, disk(1))
@@ -170,8 +170,8 @@ if comp.count(4) > 0:
 
 if comp.count(5) > 0:
     # noise gate filter with adaptive equalization
-    titles.append("5 = ng + clip + ad-eq-hist") 
-  
+    titles.append("5 = ng + clip + ad-eq-hist")
+
     N = 12
     dcube = np.zeros((N,a.shape[0],a.shape[1]))
 
@@ -181,7 +181,7 @@ if comp.count(5) > 0:
     print(f"dcube shape: {dcube.shape}")
 
     ng.noise_gate_batch(dcube, cubesize=(6,12,12), model='hybrid', factor = 2.0)
- 
+
     b = a
     b[:,:] = dcube[plotframe,:,:]
     b = b.clip(min=scale[0], max=scale[1])
@@ -193,8 +193,8 @@ if comp.count(5) > 0:
 
 if comp.count(6) > 0:
     # noise gate filter with adaptive equalization
-    titles.append("5 = ng + clip + median + ad-eq-hist") 
-  
+    titles.append("5 = ng + clip + median + ad-eq-hist")
+
     N = 12
     dcube = np.zeros((N,a.shape[0],a.shape[1]))
 
@@ -204,7 +204,7 @@ if comp.count(6) > 0:
     print(f"dcube shape: {dcube.shape}")
 
     ng.noise_gate_batch(dcube, cubesize=(6,12,12), model='hybrid', factor = 2.0)
- 
+
     b = a
     b[:,:] = dcube[plotframe,:,:]
     p = median(b, disk(1))
@@ -217,10 +217,10 @@ if comp.count(6) > 0:
 
 if comp.count(7) > 0:
     # median filter with adaptive equalization
-    titles.append("sunkit_image.enhance.mgn") 
-  
+    titles.append("sunkit_image.enhance.mgn")
+
     b = a.clip(min = scale[0], max = scale[1])
-    
+
     #p = sunkit_image.enhance.mgn(b); tag='a'
     #p = sunkit_image.enhance.mgn(b,h=0.1); tag='b'
     #p = sunkit_image.enhance.mgn(b,h=1.0); tag='c'
@@ -228,7 +228,7 @@ if comp.count(7) > 0:
     #p = sunkit_image.enhance.mgn(b,h=1.0,k=0.1); tag='e'
     #p = sunkit_image.enhance.mgn(b,h=0.8,gamma=2.5); tag='f'
     p = sunkit_image.enhance.mgn(b,h=0.9,gamma=1.0); tag='f'
-    #p = sunkit_image.enhance.mgn(b,h=0.9,gamma=1.0, 
+    #p = sunkit_image.enhance.mgn(b,h=0.9,gamma=1.0,
     #                            sigma = [1.25, 2.5],
     #                            weights=[1, 1]); tag='i'
 
@@ -236,8 +236,8 @@ if comp.count(7) > 0:
     scales.append(None)
 
 if comp.count(8) > 0:
-    titles.append("astroscrappy") 
-  
+    titles.append("astroscrappy")
+
     b = a.clip(min = scale[0], max = scale[1])
     p = exposure.rescale_intensity(b)
 
@@ -249,8 +249,8 @@ if comp.count(8) > 0:
     scales.append(None)
 
 if comp.count(9) > 0:
-    titles.append("outliers") 
-  
+    titles.append("outliers")
+
     b = a.clip(min = scale[0], max = scale[1])
 
     p = exposure.rescale_intensity(b)
@@ -262,8 +262,8 @@ if comp.count(9) > 0:
     scales.append([0,1])
 
 if comp.count(10) > 0:
-    titles.append("remove small objects") 
-  
+    titles.append("remove small objects")
+
     mx = scale[1]
 
     #b = point_filter(a, threshold = 0.1*mx, min_size=64, connectivity=2); tag='a'
@@ -275,8 +275,8 @@ if comp.count(10) > 0:
     scales.append(scale)
 
 if comp.count(11) > 0:
-    titles.append("Savitzky-Golay") 
-  
+    titles.append("Savitzky-Golay")
+
     b = a.clip(min = scale[0], max = scale[1])
 
     p = filter2D(b,mu=5,poly=3,order=1)
@@ -287,7 +287,7 @@ if comp.count(11) > 0:
     scales.append([.2,.7])
 
 if comp.count(12) > 0:
-    titles.append("FNRGF") 
+    titles.append("FNRGF")
     fov = {
        'lasco-c2'   : (1.5,  7.0),
        'lasco-c3'   : (3.7, 30.0),
@@ -313,14 +313,14 @@ if comp.count(12) > 0:
     bmap = sunpy.map.Map(b,header)
 
     myfov = fov[x.instrument.lower()+'-'+x.detector.lower()]
-        
+
     edges = equally_spaced_bins(myfov[0], myfov[1], nbins=nbins)
     edges *= u.R_sun
 
     coefs = radial.set_attenuation_coefficients(order)
 
     print(f"FNRGF in range {bmap.min()} {bmap.max()}")
-    cmap = radial.fnrgf(bmap, edges, order, coefs, 
+    cmap = radial.fnrgf(bmap, edges, order, coefs,
                         number_angular_segments=nabs, ratio_mix=rmix)
     print(f"FNRGF out range {cmap.min()} {cmap.max()}")
 
@@ -334,8 +334,8 @@ if comp.count(12) > 0:
     scales.append(scale)
 
 if comp.count(13) > 0:
-    titles.append("remove small objects + clip + adeq") 
-  
+    titles.append("remove small objects + clip + adeq")
+
     mx = scale[1]
 
     b = point_filter(a, threshold = 0.05*mx)
@@ -347,16 +347,16 @@ if comp.count(13) > 0:
     scales.append([0,1])
 
 if comp.count(14) > 0:
-    titles.append("point_filter_med") 
-  
+    titles.append("point_filter_med")
+
     b = point_filter_med(a); tag='a'
-    
+
     images.append(b)
     scales.append(scale)
 
 if comp.count(15) > 0:
-    titles.append("point_filter_med + clip + adeq") 
-  
+    titles.append("point_filter_med + clip + adeq")
+
     b = point_filter_med(a)
 
     b = b.clip(scale[0], scale[1])
@@ -366,14 +366,14 @@ if comp.count(15) > 0:
 
     images.append(beq)
     scales.append([0,1])
-       
+
 if comp.count(16) > 0:
-    titles.append("point + mgn + tv") 
-  
+    titles.append("point + mgn + tv")
+
     p = point_filter_med(a)
 
     b = p.clip(min = scale[0], max = scale[1])
-    
+
     p = sunkit_image.enhance.mgn(b,h=0.7,gamma=1.5); tag='a'
 
     psc = exposure.rescale_intensity(p)
@@ -384,12 +384,12 @@ if comp.count(16) > 0:
     scales.append(None)
 
 if comp.count(17) > 0:
-    titles.append("point + mgn + median") 
-  
+    titles.append("point + mgn + median")
+
     p = point_filter_med(a)
 
     b = p.clip(min = scale[0], max = scale[1])
-    
+
     p = sunkit_image.enhance.mgn(b,h=0.7,gamma=1.5)
 
     b = median(p,disk(2))
@@ -398,12 +398,12 @@ if comp.count(17) > 0:
     scales.append(None)
 
 if comp.count(18) > 0:
-    titles.append("point + mgn + wavelet") 
-  
+    titles.append("point + mgn + wavelet")
+
     p = point_filter_med(a)
 
     b = p.clip(min = scale[0], max = scale[1])
-    
+
     p = sunkit_image.enhance.mgn(b,h=0.7,gamma=1.5)
 
     sigma = estimate_sigma(p)
@@ -413,12 +413,12 @@ if comp.count(18) > 0:
     scales.append(None)
 
 if comp.count(19) > 0:
-    titles.append("point + mgn + bregman") 
-  
+    titles.append("point + mgn + bregman")
+
     p = point_filter_med(a)
 
     b = p.clip(min = scale[0], max = scale[1])
-    
+
     # This is what I was using for lasco
     #p = sunkit_image.enhance.mgn(b,h=0.7,gamma=1.5)
 
@@ -431,14 +431,14 @@ if comp.count(19) > 0:
     scales.append((0,1))
 
 if comp.count(20) > 0:
-    titles.append("point + mgn + bregman (cor2)") 
+    titles.append("point + mgn + bregman (cor2)")
 
     aa = a.clip(min=scale[0]) - scale[0]
 
     b = point_filter_med(aa)
 
     bsc=exposure.rescale_intensity(b)
-    
+
     p = sunkit_image.enhance.mgn(bsc,h=0.9,gamma=1.0,sigma=[20,40])
 
     psc = p.clip(min=0.1,max=1)
@@ -450,19 +450,19 @@ if comp.count(20) > 0:
     scales.append(None)
 
 if comp.count(21) > 0:
-    titles.append("point + mgn + bregman") 
-  
+    titles.append("point + mgn + bregman")
+
     p = point_filter_med(a)
 
     b = downscale_local_mean(p,(2,2))
-    
+
     #c = b.clip(min=20)
     #b = np.log(c)
 
     #c = p.clip(min = 20, max = scale[1]) - 20
 
     ps = smooth(b,width=11)
-    
+
     p = sunkit_image.enhance.mgn(ps,h=0.7,gamma=1.5)
 
     b = p.clip(min=0,max=1)
@@ -473,8 +473,8 @@ if comp.count(21) > 0:
     scales.append((0,1))
 
 if comp.count(22) > 0:
-    titles.append("wiener-hunt deconvolution") 
-  
+    titles.append("wiener-hunt deconvolution")
+
     b = point_filter_med(a)
 
     p = b.clip(min = scale[0], max = scale[1])

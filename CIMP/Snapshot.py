@@ -36,6 +36,13 @@ testsnap = {
     'dir': '/home/mark.miesch/data/lasco_monthly/c3/2014_01/',
     'file': '/17/33385593.fts',
     'bgfile': 'background.fts'
+    },
+    3: { # CME model 0 from E. Provornikova & A. Malanushenko
+    'instrument': 'ModelHAO0',
+    'detector': 'original', # the detector field is used to specify the FOV
+    'dir': '/home/mark.miesch/data/anny/CME0/pos-30/dcmer_030W_bang_0000_fits/tB/',
+    'file': 'frame_0050.fits',
+    'bgfile': None
     }
 }
 
@@ -55,12 +62,18 @@ class snapshot:
         if instrument is None:
             self.instrument = 'None'
         else:
-            self.instrument = instrument.value
+            try:
+                self.instrument = instrument.value
+            except:
+                self.instrument = instrument
 
         if detector is None:
             self.detector = 'None'
         else:
-            self.detector = detector.value
+            try:
+                self.detector = detector.value
+            except:
+                self.detector = detector
 
         self.file = file
         self.bgfile = bgfile
@@ -84,7 +97,7 @@ class snapshot:
         self.header = header
 
         # adjustments for simulation data
-        if not 'cunit1' in self.header.keys():
+        if 'modelhao' in self.instrument.lower():
             self.header['cunit1'] = 'arcsec'
             self.header['cunit2'] = 'arcsec'
 
@@ -103,7 +116,11 @@ class snapshot:
 
         s = testsnap[case]
         file = s['dir'] + s['file']
-        bgfile = s['dir'] + s['bgfile']
+
+        if s['bgfile'] is None:
+            bgfile = None
+        else:
+            bgfile = s['dir'] + s['bgfile']
 
         return cls(file, bgfile, s['instrument'], s['detector'])
 
@@ -184,6 +201,10 @@ class snapshot:
         amap = Enhance.fnrgf(self.map(), self.instrument,
                              self.detector, order, rmix)
         self.data = amap.data
+
+    def powerlaw(self):
+        self.data = Enhance.powerlaw(self.data)
+        self.rescale()
 
     def mask_annulus(self, rmin = 0.0, rmax = None):
         Enhance.mask_annulus(self.data, rmin = rmin, rmax = rmax)
