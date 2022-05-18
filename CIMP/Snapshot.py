@@ -10,7 +10,6 @@ import numpy as np
 import os
 import sunpy.map
 import sunpy.io
-import sunkit_image
 
 from CIMP import Enhance
 from io import RawIOBase
@@ -127,32 +126,33 @@ class snapshot:
         rat = np.where(self.background <= 0.0, 0.0, a/self.background)
         self.rescale()
 
-    def enhance(self, clip = None, noise_filter = 'bregman', detail = 'mgn',
-                rmix = [1,15]):
+    def enhance(self, clip = None, detail = 'mgn', noise_filter = 'bregman'):
         """
-        Enhance image frames for plotting
+        Combination of multiple processing steps for plotting
         clip (optional): 2-element tuple specifying the range to clip the data
         """
 
         print(f"Detail Enhancement: {detail}")
-        #print(f"Noise filter: {noise_filter}")
-
-        #self.data = Enhance.enhance(self.data,
-        #                        instrument = self.instrument,
-        #                        detector = self.detector,
-        #                        clip = clip,
-        #                        noise_filter = noise_filter,
-        #                        detail = detail,
-        #                        rmix = rmix,
-        #                        brightpf = True)
+        print(f"Noise filter: {noise_filter}")
 
         a = Enhance.bright_point_filter(self.data)
 
-        b = sunkit_image.enhance.mgn(a, h = 0.7, gamma = 3.2)
+        # contrast stretching via clipping
+        if clip is not None:
+            a = Enhance.clip(a, min = clip[0], max = clip[1])
 
-        self.data = b
+        # various techniques to bring out detail
+        a = Enhance.detail(a, self.header, filter = 'mgn', \
+                           params = [0.8, 1.5])
 
-        self.rescale()
+        # optionally remove noise
+        a = Enhance.denoise(a, noise_filter)
+
+        # adaptive equalization
+        if (detail != 'mgn'):
+            a = Enhance.equalize(a)
+
+        self.data = a
 
     def rescale(self):
         self.data = exposure.rescale_intensity(self.data, out_range=(0,1))

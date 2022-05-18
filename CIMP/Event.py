@@ -1,5 +1,5 @@
 """
-CIMP Event module  
+CIMP Event module
 """
 
 import astropy.units as u
@@ -56,7 +56,7 @@ testevent = {
     'instrument': a.Instrument.secchi,
     'detector': a.Detector.cor1,
     'dir': '/home/mark.miesch/sunpy/data/secchi_cor1/',
-    'files': list("20130517_"+t+"00_s4c1a.fts" for t in 
+    'files': list("20130517_"+t+"00_s4c1a.fts" for t in
              ["0910","0915","0920","0925","0930","0935","0940","0945","0950","0955",
               "1010","1015","1020","1025","1030","1035","1040","1045","1050","1055"])
     },
@@ -65,7 +65,7 @@ testevent = {
     'instrument': a.Instrument.secchi,
     'detector': a.Detector.cor2,
     'dir': '/home/mark.miesch/sunpy/data/secchi_cor2/',
-    'files': list("20130517_"+t+"00_d4c2a.fts" for t in 
+    'files': list("20130517_"+t+"00_d4c2a.fts" for t in
              ["0924","0954","1024","1054","1124","1154"])
     },
     7: {
@@ -73,7 +73,7 @@ testevent = {
     'instrument': a.Instrument.secchi,
     'detector': a.Detector.cor1,
     'dir': '/home/mark.miesch/sunpy/data/secchi_cor1/',
-    'files': list("20130517_"+t+"00_s4c1b.fts" for t in 
+    'files': list("20130517_"+t+"00_s4c1b.fts" for t in
              ["0910","0915","0920","0925","0930","0935","0940","0945","0950","0955",
               "1010","1015","1020","1025","1030","1035","1040","1045","1050","1055"])
     },
@@ -82,7 +82,7 @@ testevent = {
     'instrument': a.Instrument.secchi,
     'detector': a.Detector.cor2,
     'dir': '/home/mark.miesch/sunpy/data/secchi_cor2/',
-    'files': list("20130517_"+t+"00_d4c2b.fts" for t in 
+    'files': list("20130517_"+t+"00_d4c2b.fts" for t in
              ["0924","0954","1024","1054","1124","1154"])
     }
 }
@@ -143,7 +143,7 @@ class event:
         # different instruments have different headers.  Let Sunpy sort it out with maps
         for i in np.arange(0, self.nframes):
             m = self.map(i)
-            try: 
+            try:
                 time = datetime.datetime.fromisoformat(m.date.value)
             except Exception as e:
                 logging.exception(red+'Error in CIMP.Event.event constructor : {} : reading time {}'.format(self._file[i], e)+cend)
@@ -160,7 +160,7 @@ class event:
         return cls(e['instrument'], e['detector'], files, e['source'])
 
     @classmethod
-    def fromtime(cls, instrument = a.Instrument.lasco, detector = a.Detector.c2, 
+    def fromtime(cls, instrument = a.Instrument.lasco, detector = a.Detector.c2,
                  timerange = a.Time('2016/09/06 9:00:00', '2016/09/06 12:00:00'),
                  source = None, dir = os.path.expanduser('~')+'/sunpy/data'):
         """This is an alternative constructor that creates an event object based on a selected time interval, specified as a sunpy time range."""
@@ -236,7 +236,7 @@ class event:
         """
         Apply a normalized radial gradient filter to all frames > 0
         """
-        
+
         for i in np.arange(1, self.nframes):
             map = Enhance.nrgf(self.map(i))
             self._frames[i] = map.data
@@ -248,13 +248,13 @@ class event:
         """
 
         print(f"Applying noise gate filter: {cubesize} {model} {factor}")
-        dcube = np.zeros((self.nframes, self._frames[0].shape[0], 
+        dcube = np.zeros((self.nframes, self._frames[0].shape[0],
                           self._frames[0].shape[1]))
-    
+
         for i in np.arange(1, self.nframes):
             dcube[i-1,:,:] = self._frames[i]
 
-        ng.noise_gate_batch(dcube, cubesize=cubesize, model=model, 
+        ng.noise_gate_batch(dcube, cubesize=cubesize, model=model,
                             factor = factor)
 
         for i in np.arange(1, self.nframes):

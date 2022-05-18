@@ -44,7 +44,7 @@ elif pcase == 4:
     dcase = 1
     pointfilter = False
     colormap = 'lasco'
-    scales = [(0.01,.12),(0.3,0.7)]
+    scales = [(0.01,.12),(0.2,0.9)]
 else:
     print("specify a valid test case")
     exit()
