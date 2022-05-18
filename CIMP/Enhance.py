@@ -87,61 +87,54 @@ def powerlaw(im, n = 2.0, center = None):
 
     return f
 
-def enhance(imap, instrument = 'lasco', detector = 'c3', clip = None,
-            noise_filter = 'bregman', detail = 'mgn', rmix = [1,15],
-            brightpf = False):
+def rescale(im):
+    return exposure.rescale_intensity(im, out_range=(0,1))
+
+def equalize(im):
+    ceq = exposure.equalize_adapthist(im)
+    return rescale(ceq)
+
+def detail(im, header, filter = 'mgn', instrument = None, detector = None):
     """
-    A combination of actions that works pretty well
+    specification of instrument and detector are only needed if the filter is nrgf or fnrgf.  It is used to determine the field of view.
     """
 
-    # filter out bright points
-    if brightpf:
-        a = point_filter(imap.data)
-    else:
-        a = bright_point_filter(imap.data)
-
-     # contrast stretching via clipping
-    if clip is not None:
-        a = a.clip(min = clip[0], max = clip[1])
-
-    # various techniques to bring out detail
-    if detail == 'mgn':
+    if filter == 'mgn':
         """
         Multiscale Gaussian Noise filter (Morgan & Druckmuller 2014)
         """
-        b = sunkit_image.enhance.mgn(a, h = 0.7, gamma = 1.5)
+        b = sunkit_image.enhance.mgn(im, h = 0.7, gamma = 1.5)
 
-    elif detail == 'fnrgf':
+    elif filter == 'fnrgf':
         """
         Fourier Normaling Radial Gradient Filter (Druckmullerova et al 2011)
         """
-        amap = sunpy.map.Map(a, imap.meta)
+        amap = sunpy.map.Map(im, header)
         bmap = fnrgf(amap, instrument, detector, order = 20, rmix = rmix)
-        b = bmap.data.clip(min=0.0)
+        b = bmap.data
 
-    elif detail == 'contrast':
-        asc = exposure.rescale_intensity(a)
+    elif filter == 'contrast':
+        asc = rescale(a)
         b = enhance_contrast_percentile(asc, disk(2), p0=.1, p1=.9)
     else:
         b = a
 
-     ## optionally remove noise
-    if noise_filter == 'tv':
-        c = denoise_tv_chambolle(b, weight = 0.2)
-    elif noise_filter == 'bregman':
-        c = denoise_tv_bregman(b)
+    return rescale(b)
+
+def denoise(im, filter = 'bregman'):
+
+    if filter == 'tv':
+        c = denoise_tv_chambolle(im, weight = 0.2)
+    elif filter == 'bregman':
+        c = denoise_tv_bregman(im)
     elif noise_removal == 'median':
-        c = median(a,disk(1))
-    elif noise_filter == 'nl_means"':
-        c = denoise_nl_means(b, patch_size = 4)
+        c = median(im, disk(1))
+    elif filter == 'nl_means"':
+        c = denoise_nl_means(a, patch_size = 4)
     else:
-        c = b
+        print(yellow+"Warning: no noise filter applied")
+        c = im
 
-     # adaptive equalization
-    if (detail != 'mgn'):
-        csc = exposure.rescale_intensity(c, out_range=(0,1))
-        ceq = exposure.equalize_adapthist(csc)
-        c = exposure.rescale_intensity(ceq, out_range=(0,1))
+    return rescale(c)
 
-    return c
 

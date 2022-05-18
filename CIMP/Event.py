@@ -204,6 +204,7 @@ class event:
     def enhance(self, clip = None, noise_filter = 'bregman', detail = 'mgn',
                 rmix = [1,15]):
         """
+        A combination of actions that works pretty well for difference images
         Enhance image frames for plotting
         clip (optional): 2-element tuple specifying the range to clip the data
         """
@@ -213,15 +214,23 @@ class event:
 
         for i in np.arange(1,self.nframes):
 
-            image = Enhance.enhance(self.map(i),
-                                    instrument = self.instrument,
-                                    detector = self.detector, 
-                                    clip = clip, 
-                                    noise_filter = noise_filter, 
-                                    detail = detail, 
-                                    rmix = rmix)
-            
-            self._frames[i] = image
+            a = Enhance.point_filter(self.map(i))
+
+            # contrast stretching via clipping
+            if clip is not None:
+                a = a.clip(min = clip[0], max = clip[1])
+
+            # various techniques to bring out detail
+            a = Enhance.detail(a, self.header[i], detail)
+
+            ## optionally remove noise
+            a = Enhance.denoise(a, noise_filter)
+
+            # adaptive equalization
+            if (detail != 'mgn'):
+                a = Enhance.equalize(a)
+
+            self._frames[i] = c
 
     def nrgf(self):
         """
