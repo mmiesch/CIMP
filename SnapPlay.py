@@ -9,13 +9,14 @@ import sunpy.visualization.colormaps as cm
 
 from CIMP import Snapshot as snap
 
-pcase = 1
+pcase = 4
 
 # dcase = 1: subtract the background
 # dcase = 2: take a ratio with the background
 dcase = 1
 
 scales = None
+colormap = 'stereo'
 
 if pcase == 1:
     comp = (0,1)
@@ -29,6 +30,21 @@ elif pcase == 2:
     dcase = 1
     pointfilter = True
     scales = [(0,1),(0.0,20.0)]
+elif pcase == 3:
+    comp = (0,3)
+    testcase = 1
+    dcase = 1
+    pointfilter = True
+    #scales = [(0,1),(-25,400.0)]
+    colormap = 'lasco'
+    scales = [(0.01,.12),(0,100.0)]
+elif pcase == 4:
+    comp = (0,4)
+    testcase = 1
+    dcase = 1
+    pointfilter = False
+    colormap = 'lasco'
+    scales = [(0.01,.12),(0.3,0.7)]
 else:
     print("specify a valid test case")
     exit()
@@ -72,6 +88,18 @@ if comp.count(2) > 0:
     images.append(x.data)
     dscales.append((0.0,4.0))
 
+if comp.count(3) > 0:
+    titles.append("FNRGF")
+    x.fnrgf()
+    images.append(x.data)
+    dscales.append((0.0,4.0))
+
+if comp.count(4) > 0:
+    titles.append("Enhance.enhance()")
+    x.enhance()
+    images.append(x.data)
+    dscales.append((0.0,1.0))
+
 #------------------------------------------------------------------------------
 
 if scales is None:
@@ -85,7 +113,10 @@ else:
 #------------------------------------------------------------------------------
 # plot
 
-cmap = plt.get_cmap('stereocor2')
+if colormap == 'stereo':
+    cmap = plt.get_cmap('stereocor2')
+else:
+    cmap = plt.get_cmap('soholasco2')
 
 fig = plt.figure(figsize=[16,8])
 

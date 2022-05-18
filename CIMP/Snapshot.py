@@ -10,6 +10,7 @@ import numpy as np
 import os
 import sunpy.map
 import sunpy.io
+import sunkit_image
 
 from CIMP import Enhance
 from io import RawIOBase
@@ -101,17 +102,15 @@ class snapshot:
         return cls(file, bgfile, s['instrument'], s['detector'])
 
     def clip(self,limits):
-        print(f"MSM clip {limits} {np.min(self.data)} {np.max(self.data)}")
         self.data = self.data.clip(min = limits[0], max = limits[1])
-        print(f"MSM clipped {np.min(self.data)} {np.max(self.data)}")
-        self.data = exposure.rescale_intensity(self.data, out_range = (0,1))
+        self.rescale()
 
     def map(self):
         return sunpy.map.Map(self.data, self.header)
 
     def subtract_background(self):
         self.data = self.rawdata - self.background
-        self.data = exposure.rescale_intensity(self.data, out_range = (0,1))
+        self.rescale()
 
     def background_normalize(self):
         """
@@ -126,7 +125,7 @@ class snapshot:
         bkg = self.background - np.min(self.background)
         a = self.rawdata - np.min(self.rawdata)
         rat = np.where(self.background <= 0.0, 0.0, a/self.background)
-        self.data = exposure.rescale_intensity(rat, out_range = (0,1))
+        self.rescale()
 
     def enhance(self, clip = None, noise_filter = 'bregman', detail = 'mgn',
                 rmix = [1,15]):
@@ -136,23 +135,32 @@ class snapshot:
         """
 
         print(f"Detail Enhancement: {detail}")
-        print(f"Noise filter: {noise_filter}")
+        #print(f"Noise filter: {noise_filter}")
 
-        for i in np.arange(1,self.nframes):
+        #self.data = Enhance.enhance(self.data,
+        #                        instrument = self.instrument,
+        #                        detector = self.detector,
+        #                        clip = clip,
+        #                        noise_filter = noise_filter,
+        #                        detail = detail,
+        #                        rmix = rmix,
+        #                        brightpf = True)
 
-            image = Enhance.enhance(self.data,
-                                    instrument = self.instrument,
-                                    detector = self.detector,
-                                    clip = clip,
-                                    noise_filter = noise_filter,
-                                    detail = detail,
-                                    rmix = rmix)
-            self.data = image
+        a = Enhance.bright_point_filter(self.data)
+
+        b = sunkit_image.enhance.mgn(a, h = 0.7, gamma = 3.2)
+
+        self.data = b
+
+        self.rescale()
+
+    def rescale(self):
+        self.data = exposure.rescale_intensity(self.data, out_range=(0,1))
 
     def point_filter(self, threshold = 2.0, radius = 20):
         self.data = Enhance.bright_point_filter(self.data, \
                     threshold = threshold, radius = radius)
-        self.data = exposure.rescale_intensity(self.data, out_range=(0,1))
+        self.rescale()
 
     def nrgf(self):
         """

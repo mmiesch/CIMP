@@ -88,13 +88,17 @@ def powerlaw(im, n = 2.0, center = None):
     return f
 
 def enhance(imap, instrument = 'lasco', detector = 'c3', clip = None,
-            noise_filter = 'bregman', detail = 'mgn', rmix = [1,15]):
+            noise_filter = 'bregman', detail = 'mgn', rmix = [1,15],
+            brightpf = False):
     """
     A combination of actions that works pretty well
     """
 
     # filter out bright points
-    a = point_filter(imap.data)
+    if brightpf:
+        a = point_filter(imap.data)
+    else:
+        a = bright_point_filter(imap.data)
 
      # contrast stretching via clipping
     if clip is not None:
@@ -105,7 +109,7 @@ def enhance(imap, instrument = 'lasco', detector = 'c3', clip = None,
         """
         Multiscale Gaussian Noise filter (Morgan & Druckmuller 2014)
         """
-        b = sunkit_image.enhance.mgn(a, h = 1.0, gamma = 1.5)
+        b = sunkit_image.enhance.mgn(a, h = 0.7, gamma = 1.5)
 
     elif detail == 'fnrgf':
         """
