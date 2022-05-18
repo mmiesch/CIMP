@@ -9,7 +9,7 @@ import sunpy.visualization.colormaps as cm
 
 from CIMP import Snapshot as snap
 
-pcase = 9
+pcase = 14
 
 # dcase = 1: subtract the background
 # dcase = 2: take a ratio with the background
@@ -64,6 +64,7 @@ elif pcase == 6:
     colormap = 'lasco'
     scales = [(0.005,0.04),(0.1,0.9)]
 elif pcase == 7:
+    # ratio with mgn enhance
     comp = (0,4)
     testcase = 1
     dcase = 2
@@ -73,6 +74,7 @@ elif pcase == 7:
     clip=(0.0, 0.1)
     scales = [(0.005,0.04),(0.2,0.8)]
 elif pcase == 8:
+    # ratio with fnrgf enhance
     comp = (0,5)
     testcase = 1
     dcase = 2
@@ -82,14 +84,57 @@ elif pcase == 8:
     clip=(0.0, 0.1)
     scales = [(0.005,0.04),(0.2,0.9)]
 elif pcase == 9:
+    # just a point filter and adaptive equalization
     comp = (0,6)
     testcase = 1
     dcase = 2
     pointfilter = True
     colormap = 'lasco'
-    #rmask = 1.05
     clip=(0.0, 0.1)
     scales = [(0.005,0.04),(0.2,1.0)]
+if pcase == 10:
+    # testcase 2 with just a point filter
+    comp = (0,1)
+    testcase = 2
+    dcase = 1
+    pointfilter = True
+    scales = [(0,1),(0.05,4.0)]
+if pcase == 11:
+    # same as pcase 10 but with a ratio instead of a difference
+    comp = (0,1)
+    testcase = 2
+    dcase = 2
+    pointfilter = True
+    scales = [(0,.2),(0.05,4.0)]
+elif pcase == 12:
+    # ratio with a point filter and adaptive equalization
+    comp = (0,6)
+    testcase = 2
+    dcase = 2
+    pointfilter = True
+    colormap = 'lasco'
+    clip=(0.0, 0.1)
+    scales = [(0.005,0.03),(0.2,1.0)]
+elif pcase == 13:
+    # ratio with mgn enhance
+    comp = (0,4)
+    testcase = 2
+    dcase = 2
+    pointfilter = False
+    colormap = 'lasco'
+    rmask = 1.05
+    clip=(0.0, 0.1)
+    scales = [(0.005,0.03),(0.1,0.9)]
+elif pcase == 14:
+    # ratio with fnrgf enhance
+    comp = (0,5)
+    testcase = 2
+    dcase = 2
+    pointfilter = False
+    colormap = 'lasco'
+    rmask = 1.05
+    clip=(0.0, 0.1)
+    scales = [(0.005,0.03),(0.1,0.9)]
 else:
     print("specify a valid test case")
     exit()

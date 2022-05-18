@@ -29,6 +29,13 @@ testsnap = {
     'dir': '/home/mark.miesch/data/lasco_monthly/c3/2012_04/',
     'file': '/15/32296650.fts',
     'bgfile': 'background.fts'
+    },
+    2: {
+    'instrument': a.Instrument.lasco,
+    'detector': a.Detector.c3,
+    'dir': '/home/mark.miesch/data/lasco_monthly/c3/2014_01/',
+    'file': '/17/33385593.fts',
+    'bgfile': 'background.fts'
     }
 }
 

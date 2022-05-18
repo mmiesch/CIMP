@@ -53,14 +53,20 @@ def radial_cut(r,a,N=100):
     return acut, theta_deg
 
 #======================================================================
-pcase = 1
+pcase = 2
 
 if pcase == 1:
-
     instrument = 'lasco'
     detector = 'c3'
     dir = '/home/mark.miesch/data/lasco_monthly/c3/2012_04'
     file = dir+'/15/32296650.fts'
+    bgfile = dir+'/'+'background.fts'
+
+if pcase == 2:
+    instrument = 'lasco'
+    detector = 'c3'
+    dir = '/home/mark.miesch/data/lasco_monthly/c3/2014_01'
+    file = dir+'/17/33385593.fts'
     bgfile = dir+'/'+'background.fts'
 
 else:

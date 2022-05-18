@@ -13,7 +13,8 @@ from sunpy.io import fits
 #dir = '/home/mark.miesch/data/anny/CME0/pos-30/dcmer_030W_bang_0000_fits/tB/'
 #file = dir+'frame_0050.fits'
 
-dir = '/home/mark.miesch/data/lasco_monthly/c3/2012_04/'
+#dir = '/home/mark.miesch/data/lasco_monthly/c3/2012_04/'
+dir = '/home/mark.miesch/data/lasco_monthly/c3/2014_01/'
 file = dir+'background.fts'
 
 #cmap_lasco_c2 = plt.get_cmap('soholasco2')
