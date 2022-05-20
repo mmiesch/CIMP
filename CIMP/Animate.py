@@ -10,6 +10,11 @@ import sunpy.visualization.colormaps as cm
 from CIMP import Snapshot as snap
 from sunpy.io import fits
 
+# for warning / error statements; print red, yellow text to terminal
+red = '\033[91m'
+yellow = '\033[93m'
+cend = '\033[0m'
+
 class movie:
     """
     Class for making movies from snapshots
@@ -49,7 +54,8 @@ class movie:
             self.nx = header['NAXIS1']
             self.ny = header['NAXIS2']
 
-    def process(self, snap, background = 'ratio', method = 'none'):
+    def process(self, snap, background = 'ratio', method = 'none', \
+                cliprange = 'image'):
         """
         Image processing to be performed for each snapshot
 
@@ -64,9 +70,12 @@ class movie:
         """
 
         if background == 'subtract':
-            snap.subtract_background()
+            snap.subtract_background(cliprange = cliprange)
         else:
-            snap.background_ratio()
+            snap.background_ratio(cliprange = cliprange)
+
+        if cliprange == 'image':
+            print(yellow+f"{file} data range: {x.min()} {x.max()}"+cend)
 
         if background == 'enhance mgn':
             snap.enhance(detail = 'mgn')
@@ -74,7 +83,7 @@ class movie:
             snap.enhance(detail = 'fnrgf')
 
     def daymovie(self, background = 'ratio', method = 'None', \
-                 scale = (0.0, 1.0), title = None):
+                 cliprange = 'image', scale = (0.0, 1.0), title = None):
         """
         loop over all valid files in a directory
         """
@@ -95,7 +104,8 @@ class movie:
                     detector = self.detector)
                 assert(x.nx == self.nx)
                 assert(x.ny == self.ny)
-                self.process(x, background = background, method = method)
+                self.process(x, background = background, method = method, \
+                             cliprange = cliprange)
                 if title is None:
                     im = x.map().plot(cmap = self.cmap, vmin = scale[0], \
                                       vmax = scale[1])

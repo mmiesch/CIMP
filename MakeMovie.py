@@ -20,6 +20,7 @@ if pcase == 1:
     background = 'ratio'
     method = 'none'
     colormap = 'soholasco2'
+    cliprange = 'image'
     scale = (0.0,1.0)
 
 elif pcase == 2:
@@ -31,8 +32,10 @@ elif pcase == 2:
     bgfile = '/home/mark.miesch/data/lasco_monthly/c3/2012_04/background.fts'
     background = 'ratio'
     method = 'none'
-    colormap = 'soholasco2'
-    scale = (0.01,0.04)
+    #colormap = 'soholasco2'
+    colormap = 'stereocor2'
+    cliprange = (1.0,2.0)
+    scale = (0.0,1.0)
 
 outfile = outdir + '/' + outfile 
 
@@ -40,6 +43,6 @@ x = an.movie(dir, bgfile = bgfile, outfile = outfile, \
              instrument = instrument, detector = detector, \
              cmap = colormap)
 
-x.daymovie(background = background, method = method, scale = scale, \
-           title=title)
+x.daymovie(background = background, method = method, cliprange = cliprange, \
+           scale = scale, title=title)
 

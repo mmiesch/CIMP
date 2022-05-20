@@ -93,7 +93,8 @@ class snapshot:
             raise
 
         self.rawdata = data.astype('float')
-        self.data = exposure.rescale_intensity(self.rawdata, out_range=(0,1))
+        self.data = exposure.rescale_intensity(self.rawdata, \
+                                               out_range=(0,1))
         self.header = header
 
         # adjustments for simulation data
@@ -127,6 +128,12 @@ class snapshot:
 
         return cls(file, bgfile, s['instrument'], s['detector'])
 
+    def min(self):
+        return np.min(self.data)
+
+    def max(self):
+        return np.max(self.data)
+
     def clip(self,limits):
         self.data = self.data.clip(min = limits[0], max = limits[1])
         self.rescale()
@@ -134,19 +141,20 @@ class snapshot:
     def map(self):
         return sunpy.map.Map(self.data, self.header)
 
-    def subtract_background(self):
+    def subtract_background(self, cliprange = 'image'):
         self.data = self.rawdata - self.background
-        self.rescale()
+        self.rescale(cliprange = cliprange)
 
-    def background_ratio(self):
+    def background_ratio(self, rescale = True, cliprange = 'image'):
         """
-        This method will compute a ratio relative to the background image and re-scale.  This is similar to NRL's pipeline for creating the daily "pretties" for LASCO, STERO, and PSP/WISPR.
+        This method will compute a ratio relative to the background image and optionally re-scale.  This is similar to NRL's pipeline for creating the daily "pretties" for LASCO, STERO, and PSP/WISPR.
         """
 
         self.data = np.where(self.background <= 0.0, 0.0, \
                              self.rawdata / self.background)
 
-        self.rescale()
+        if rescale:
+            self.rescale(cliprange = cliprange)
 
     def enhance(self, clip = None, detail = 'mgn', noise_filter = 'bregman'):
         """
@@ -179,8 +187,10 @@ class snapshot:
     def equalize(self):
         self.data = Enhance.equalize(self.data)
 
-    def rescale(self):
-        self.data = exposure.rescale_intensity(self.data, out_range=(0,1))
+    def rescale(self, cliprange = 'image'):
+        self.data = exposure.rescale_intensity(self.data, 
+                                               in_range = cliprange, \
+                                               out_range = (0,1))
 
     def point_filter(self, threshold = 2.0, radius = 20):
         self.data = Enhance.bright_point_filter(self.data, \
