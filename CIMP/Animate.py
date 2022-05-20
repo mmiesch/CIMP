@@ -74,7 +74,7 @@ class movie:
             snap.enhance(detail = 'fnrgf')
 
     def daymovie(self, background = 'ratio', method = 'None', \
-                 scale = (0.0, 1.0)):
+                 scale = (0.0, 1.0), title = None):
         """
         loop over all valid files in a directory
         """
@@ -86,6 +86,7 @@ class movie:
         for file in os.listdir(self.dir):
             fpath = self.dir+'/'+file
             try:
+                assert(os.path.isfile(fpath))
                 assert("median" not in file)
                 assert(fpath != self.bgfile)
                 x = snap.snapshot(file = fpath, \
@@ -95,8 +96,12 @@ class movie:
                 assert(x.nx == self.nx)
                 assert(x.ny == self.ny)
                 self.process(x, background = background, method = method)
-                im = x.map().plot(cmap = self.cmap, vmin = scale[0], \
-                                  vmax = scale[1])
+                if title is None:
+                    im = x.map().plot(cmap = self.cmap, vmin = scale[0], \
+                                      vmax = scale[1])
+                else:
+                    im = x.map().plot(cmap = self.cmap, vmin = scale[0], \
+                                      vmax = scale[1], title = title)
                 frames.append([im])
             except:
                 pass
