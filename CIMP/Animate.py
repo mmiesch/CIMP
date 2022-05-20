@@ -73,7 +73,8 @@ class movie:
         elif background == 'enhance fnrgf':
             snap.enhance(detail = 'fnrgf')
 
-    def daymovie(self, background = 'ratio', method = 'None'):
+    def daymovie(self, background = 'ratio', method = 'None', \
+                 scale = (0.0, 1.0)):
         """
         loop over all valid files in a directory
         """
@@ -94,7 +95,8 @@ class movie:
                 assert(x.nx == self.nx)
                 assert(x.ny == self.ny)
                 self.process(x, background = background, method = method)
-                im = plt.imshow(x.data, cmap = self.cmap)
+                im = x.map().plot(cmap = self.cmap, vmin = scale[0], \
+                                  vmax = scale[1])
                 frames.append([im])
             except:
                 pass
