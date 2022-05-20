@@ -5,7 +5,7 @@ Driver for the Movie class
 from CIMP import Animate as an
 from sunpy.net import attrs as a
 
-pcase = 2
+pcase = 3
 
 # default directory for movies
 outdir = '/home/mark.miesch/Products/image_processing/movies'
@@ -24,12 +24,26 @@ if pcase == 1:
     scale = (0.0,1.0)
 
 elif pcase == 2:
-    title = "LASCO April, 2012"
-    outfile = f"/lasco_c3_2012_04_p{pcase}.mp4"
+    title = "LASCO April 15, 2012"
+    outfile = f"/lasco_c3_2012_04_15_p{pcase}.mp4"
     instrument = a.Instrument.lasco
-    detector = a.Detector.c2
+    detector = a.Detector.c3
     dir = '/home/mark.miesch/data/lasco_monthly/c3/2012_04/15'
     bgfile = '/home/mark.miesch/data/lasco_monthly/c3/2012_04/background.fts'
+    background = 'ratio'
+    method = 'none'
+    #colormap = 'soholasco2'
+    colormap = 'stereocor2'
+    cliprange = (1.0,2.0)
+    scale = (0.0,1.0)
+
+elif pcase == 3:
+    title = "LASCO Jan 17, 2014"
+    outfile = f"/lasco_c3_2014_01_17_p{pcase}.mp4"
+    instrument = a.Instrument.lasco
+    detector = a.Detector.c3
+    dir = '/home/mark.miesch/data/lasco_monthly/c3/2014_01/17'
+    bgfile = '/home/mark.miesch/data/lasco_monthly/c3/2014_01/background.fts'
     background = 'ratio'
     method = 'none'
     #colormap = 'soholasco2'
