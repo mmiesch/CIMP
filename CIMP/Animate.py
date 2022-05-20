@@ -13,6 +13,9 @@ from sunpy.io import fits
 class movie:
     """
     Class for making movies from snapshots
+
+    Current options for 
+
     """
 
     def __init__(self, dir, bgfile = None, outfile = 'movie.mp4', \
@@ -57,17 +60,16 @@ class movie:
         # get data from all valid files
         for file in os.listdir(self.dir):
             fpath = self.dir+'/'+file
-            print(f"{file} {self.nx} {self.ny}")
-            #try:
-            #assert("median" not in file)
-            #assert(fpath != self.bgfile)
-            data, header = fits.read(fpath)[0]
-            #assert(header['NAXIS1'] == self.nx)
-            #assert(header['NAXIS2'] == self.ny)
-            im = plt.imshow(data, cmap = self.cmap)
-            frames.append([im])
-            #except:
-            #    pass
+            try:
+                assert("median" not in file)
+                assert(fpath != self.bgfile)
+                data, header = fits.read(fpath)[0]
+                assert(header['NAXIS1'] == self.nx)
+                assert(header['NAXIS2'] == self.ny)
+                im = plt.imshow(data, cmap = self.cmap)
+                frames.append([im])
+            except:
+                pass
 
         mov = animation.ArtistAnimation(fig, frames, interval = 50, blit = True,
               repeat = True, repeat_delay = 1000)
