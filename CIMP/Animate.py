@@ -3,11 +3,11 @@ This module is for making movies!
 """
 
 import os
+import matplotlib.animation as animation
 import matplotlib.pyplot as plt
 import sunpy.visualization.colormaps as cm
 
 from CIMP import Snapshot as snap
-from matplotlib.animation import FFMpegWriter
 from sunpy.io import fits
 
 class movie:
@@ -29,11 +29,6 @@ class movie:
             self.cmap = plt.get_cmap('soholasco2')
         else:
             self.cmap = cmap
-
-        metadata = dict(title="CIMP movie", 
-                        instrument = self.instrument,
-                        detector = self.detector)
-        self.writer = FFMpegWriter(fps = 15, metadata = metadata)
 
         if bgfile is None:
             self.background = None
@@ -57,24 +52,28 @@ class movie:
         """
 
         fig = plt.figure()
+        frames = []
 
         # get data from all valid files
-        self.nframes = 0
         for file in os.listdir(self.dir):
             fpath = self.dir+'/'+file
-            try:
-                assert("median" not in file)
-                assert(fpath != self.bgfile)
-                data, header = fits.read(fpath)[0]
-                assert(header['NAXIS1'] == self.nx)
-                assert(header['NAXIS2'] == self.ny)
+            print(f"{file} {self.nx} {self.ny}")
+            #try:
+            #assert("median" not in file)
+            #assert(fpath != self.bgfile)
+            data, header = fits.read(fpath)[0]
+            #assert(header['NAXIS1'] == self.nx)
+            #assert(header['NAXIS2'] == self.ny)
+            im = plt.imshow(data, cmap = self.cmap)
+            frames.append([im])
+            #except:
+            #    pass
 
-                im = plt.imshow(data, cmap = self.cmap)
-                frame = im.get_array()
-                self.writer.writeFrame(frame)
-                self.nframes += 1
-            except:
-                pass
+        mov = animation.ArtistAnimation(fig, frames, interval = 50, blit = True,
+              repeat = True, repeat_delay = 1000)
 
-        print(f"Nframes= {self.nframes}")
+        print(f"Nframes= {len(frames)}")
+
+        mov.save(self.outfile)
+
 
