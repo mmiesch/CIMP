@@ -141,9 +141,11 @@ class snapshot:
     def map(self):
         return sunpy.map.Map(self.data, self.header)
 
-    def subtract_background(self, cliprange = 'image'):
+    def subtract_background(self, rescale = True, cliprange = 'image'):
         self.data = self.rawdata - self.background
-        self.rescale(cliprange = cliprange)
+
+        if rescale:
+            self.rescale(cliprange = cliprange)
 
     def background_ratio(self, rescale = True, cliprange = 'image'):
         """

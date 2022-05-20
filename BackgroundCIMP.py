@@ -66,7 +66,7 @@ if pcase == 2:
     instrument = 'lasco'
     detector = 'c3'
     dir = '/home/mark.miesch/data/lasco_monthly/c3/2014_01'
-    file = dir+'/17/33385593.fts'
+    file = dir+'/17/33385479.fts'
     bgfile = dir+'/'+'background.fts'
 
 else:

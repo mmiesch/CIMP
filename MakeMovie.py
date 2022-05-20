@@ -49,7 +49,7 @@ elif pcase == 3:
     #colormap = 'soholasco2'
     colormap = 'stereocor2'
     cliprange = (1.0,2.0)
-    scale = (0.0,1.0)
+    scale = (1.0,2.0)
 
 outfile = outdir + '/' + outfile 
 
@@ -57,6 +57,6 @@ x = an.movie(dir, bgfile = bgfile, outfile = outfile, \
              instrument = instrument, detector = detector, \
              cmap = colormap)
 
-x.daymovie(background = background, method = method, cliprange = cliprange, \
+x.daymovie(background = background, method = method, \
            scale = scale, title=title)
 

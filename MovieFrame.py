@@ -24,7 +24,6 @@ if pcase == 1:
     background = 'ratio'
     method = 'none'
     colormap = 'soholasco2'
-    cliprange = 'image'
     scale = (0.0,1.0)
 
 elif pcase == 2:
@@ -38,7 +37,6 @@ elif pcase == 2:
     method = 'none'
     #colormap = 'soholasco2'
     colormap = 'stereocor2'
-    cliprange = (1.0,2.0)
     scale = (0.0,1.0)
 
 elif pcase == 3:
@@ -50,10 +48,9 @@ elif pcase == 3:
     bgfile = '/home/mark.miesch/data/lasco_monthly/c3/2014_01/background.fts'
     background = 'ratio'
     method = 'none'
-    #colormap = 'soholasco2'
+    colormap = 'soholasco2'
     colormap = 'stereocor2'
-    cliprange = (1.0,2.0)
-    scale = (0.0,1.0)
+    scale = (1.,2)
 
 outfile = outdir + '/' + outfile 
 
@@ -67,14 +64,14 @@ file1 = '33385479.fts'
 fpath = dir+'/'+file1
 x1 = snap.snapshot(file = fpath, bgfile = bgfile, \
     instrument = instrument, detector = detector)
-x1.background_ratio(cliprange = cliprange)
+x1.background_ratio(rescale = False)
 map1 = x1.map()
 
 file2 = '33385480.fts'
 fpath = dir+'/'+file2
 x2 = snap.snapshot(file = fpath, bgfile = bgfile, \
     instrument = instrument, detector = detector)
-x2.background_ratio(cliprange = cliprange)
+x2.background_ratio(rescale = False)
 map2 = x2.map()
 
 #-----------------------------------------------------------------

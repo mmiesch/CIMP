@@ -54,8 +54,7 @@ class movie:
             self.nx = header['NAXIS1']
             self.ny = header['NAXIS2']
 
-    def process(self, snap, background = 'ratio', method = 'none', \
-                cliprange = 'image'):
+    def process(self, snap, background = 'ratio', method = 'none'):
         """
         Image processing to be performed for each snapshot
 
@@ -70,12 +69,9 @@ class movie:
         """
 
         if background == 'subtract':
-            snap.subtract_background(cliprange = cliprange)
+            snap.subtract_background(rescale = False)
         else:
-            snap.background_ratio(cliprange = cliprange)
-
-        if cliprange == 'image':
-            print(yellow+f"{file} data range: {x.min()} {x.max()}"+cend)
+            snap.background_ratio(rescale = False)
 
         if background == 'enhance mgn':
             snap.enhance(detail = 'mgn')
@@ -83,7 +79,7 @@ class movie:
             snap.enhance(detail = 'fnrgf')
 
     def daymovie(self, background = 'ratio', method = 'None', \
-                 cliprange = 'image', scale = (0.0, 1.0), title = None):
+                 scale = (0.0, 1.0), title = None):
         """
         loop over all valid files in a directory
         """
@@ -104,8 +100,7 @@ class movie:
                     detector = self.detector)
                 assert(x.nx == self.nx)
                 assert(x.ny == self.ny)
-                self.process(x, background = background, method = method, \
-                             cliprange = cliprange)
+                self.process(x, background = background, method = method)
                 if title is None:
                     im = x.map().plot(cmap = self.cmap, vmin = scale[0], \
                                       vmax = scale[1])
