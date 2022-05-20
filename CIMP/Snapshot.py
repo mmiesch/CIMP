@@ -101,6 +101,9 @@ class snapshot:
             self.header['cunit1'] = 'arcsec'
             self.header['cunit2'] = 'arcsec'
 
+        self.nx = self.header['NAXIS1']
+        self.ny = self.header['NAXIS2']
+
         self.dmap = sunpy.map.Map(self.data, self.header)
 
         self.time = self.dmap.date
@@ -135,7 +138,7 @@ class snapshot:
         self.data = self.rawdata - self.background
         self.rescale()
 
-    def background_normalize(self):
+    def background_ratio(self):
         """
         This method will compute a ratio relative to the background image and re-scale.  This is similar to NRL's pipeline for creating the daily "pretties" for LASCO, STERO, and PSP/WISPR.
         """

@@ -49,7 +49,31 @@ class movie:
             self.nx = header['NAXIS1']
             self.ny = header['NAXIS2']
 
-    def daymovie(self):
+    def process(self, snap, background = 'ratio', method = 'none'):
+        """
+        Image processing to be performed for each snapshot
+
+        Current options for background are:
+        'subtract': subtract background
+        'ratio': ratio of image over background
+
+        Current options for method are:
+        'none': no processing
+        'enhance mgn': enhance method with mgn
+        'enhance fnrgf': enhance method with fnrgf
+        """
+
+        if background == 'subtract':
+            snap.subtract_background()
+        else:
+            snap.background_ratio()
+
+        if background == 'enhance mgn':
+            snap.enhance(detail = 'mgn')
+        elif background == 'enhance fnrgf':
+            snap.enhance(detail = 'fnrgf')
+
+    def daymovie(self, background = 'ratio', method = 'None'):
         """
         loop over all valid files in a directory
         """
@@ -63,10 +87,14 @@ class movie:
             try:
                 assert("median" not in file)
                 assert(fpath != self.bgfile)
-                data, header = fits.read(fpath)[0]
-                assert(header['NAXIS1'] == self.nx)
-                assert(header['NAXIS2'] == self.ny)
-                im = plt.imshow(data, cmap = self.cmap)
+                x = snap.snapshot(file = fpath, \
+                    bgfile = self.bgfile, \
+                    instrument = self.instrument, \
+                    detector = self.detector)
+                assert(x.nx == self.nx)
+                assert(x.ny == self.ny)
+                self.process(x, background = background, method = method)
+                im = plt.imshow(x.data, cmap = self.cmap)
                 frames.append([im])
             except:
                 pass

@@ -179,7 +179,7 @@ x = snap.snapshot.testcase(testcase)
 if dcase == 1:
     x.subtract_background()
 elif dcase == 2:
-    x.background_normalize()
+    x.background_ratio()
 
 #------------------------------------------------------------------------------
 # choose your battle
