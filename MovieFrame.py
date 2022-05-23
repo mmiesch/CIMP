@@ -104,9 +104,11 @@ map2 = x2.map()
 fig = plt.figure(figsize=[16,8])
 
 ax = fig.add_subplot(1,2,1,projection=map1)
-map1.plot(cmap = colormap, vmin = scale[0], vmax = scale[1])
+map1.plot(cmap = colormap, vmin = scale[0], vmax = scale[1], \
+          autoalign = True)
 
 ax = fig.add_subplot(1,2,2,projection=map2)
-map2.plot(cmap = colormap, vmin = scale[0], vmax = scale[1])
+map2.plot(cmap = colormap, vmin = scale[0], vmax = scale[1], \
+          autoalign = True)
 
 plt.show()

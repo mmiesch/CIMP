@@ -89,6 +89,7 @@ class movie:
 
         # get data from all valid files
         for file in os.listdir(self.dir):
+            print(yellow+f"{file}"+cend)
             fpath = self.dir+'/'+file
             try:
                 assert(os.path.isfile(fpath))
@@ -103,10 +104,11 @@ class movie:
                 self.process(x, background = background, method = method)
                 if title is None:
                     im = x.map().plot(cmap = self.cmap, vmin = scale[0], \
-                                      vmax = scale[1])
+                                      vmax = scale[1], autoalign = True)
                 else:
                     im = x.map().plot(cmap = self.cmap, vmin = scale[0], \
-                                      vmax = scale[1], title = title)
+                                      vmax = scale[1], autoalign = True, \
+                                      title = title)
                 frames.append([im])
             except:
                 pass

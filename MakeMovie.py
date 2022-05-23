@@ -5,7 +5,7 @@ Driver for the Movie class
 from CIMP import Animate as an
 from sunpy.net import attrs as a
 
-pcase = 5
+pcase = 1
 
 # default directory for movies
 outdir = '/home/mark.miesch/Products/image_processing/movies'
@@ -21,7 +21,7 @@ if pcase == 1:
     method = 'none'
     colormap = 'soholasco2'
     cliprange = 'image'
-    scale = (1.0,2.0)
+    scale = (0.5,3.0)
 
 elif pcase == 2:
     title = "LASCO April 15, 2012"
@@ -66,7 +66,7 @@ elif pcase == 4:
     scale = (0.0,1.0)
 
 elif pcase == 5:
-    title = "Testing"
+    title = "Model CME0 pos-30 mgn enhanced"
     outfile = f"/CME0_pos30_p{pcase}_mgn.mp4"
     instrument = 'ModelHAO0'
     detector = 'original'
@@ -74,6 +74,19 @@ elif pcase == 5:
     bgfile = dir+'/frame_0000.fits'
     background = 'ratio'
     method = 'enhance_mgn'
+    colormap = 'soholasco2'
+    cliprange = 'image'
+    scale = (0.0,1.0)
+
+elif pcase == 6:
+    title = "Model CME0 pos-30 fnrgf enhanced"
+    outfile = f"/CME0_pos30_p{pcase}_fnrgf.mp4"
+    instrument = 'ModelHAO0'
+    detector = 'original'
+    dir = '/home/mark.miesch/data/anny/CME0/pos-30/dcmer_030W_bang_0000_fits/tB'
+    bgfile = dir+'/frame_0000.fits'
+    background = 'ratio'
+    method = 'enhance_fnrgf'
     colormap = 'soholasco2'
     cliprange = 'image'
     scale = (0.0,1.0)
