@@ -5,7 +5,9 @@ Driver for the Movie class
 from CIMP import Animate as an
 from sunpy.net import attrs as a
 
-pcase = 1
+pcase = 7
+
+rmask = None
 
 # default directory for movies
 outdir = '/home/mark.miesch/Products/image_processing/movies'
@@ -91,6 +93,21 @@ elif pcase == 6:
     cliprange = 'image'
     scale = (0.0,1.0)
 
+elif pcase == 7:
+    title = "LASCO April 15, 2012: mgn enhanced"
+    outfile = f"/lasco_c3_2012_04_15_p{pcase}_mgn.mp4"
+    instrument = a.Instrument.lasco
+    detector = a.Detector.c3
+    dir = '/home/mark.miesch/data/lasco_monthly/c3/2012_04/15'
+    bgfile = '/home/mark.miesch/data/lasco_monthly/c3/2012_04/background.fts'
+    background = 'ratio'
+    method = 'enhance_mgn'
+    colormap = 'soholasco2'
+    #colormap = 'stereocor2'
+    rmask = 1.05
+    cliprange = (1.0,2.0)
+    scale = (0.0,1.0)
+
 outfile = outdir + '/' + outfile 
 
 x = an.movie(dir, bgfile = bgfile, outfile = outfile, \
@@ -98,5 +115,5 @@ x = an.movie(dir, bgfile = bgfile, outfile = outfile, \
              cmap = colormap)
 
 x.daymovie(background = background, method = method, \
-           scale = scale, title=title)
+           scale = scale, rmax = rmask, title=title)
 

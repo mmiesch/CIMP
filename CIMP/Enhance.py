@@ -11,6 +11,7 @@ import sunpy.map
 from skimage import exposure
 from skimage.filters import median
 from skimage.filters.rank import enhance_contrast_percentile
+from skimage.measure import block_reduce
 from skimage.morphology import disk
 from skimage.restoration import (denoise_tv_chambolle, denoise_tv_bregman,
                                  denoise_nl_means)
@@ -201,3 +202,9 @@ def mask_annulus(im, rmin = 0.0, rmax = None, missingval = 0.0):
             if (r2 < rr1) or (r2 > rr2):
                 im[i,j] = missingval
 
+def downsample(im):
+    """
+    This downsamples an image by a factor of two in each dimension.  So, for example, it will convert a 2048 x 2048 image into a 1024 x 1024 image.  The method it uses to downsample is to replace each 2 x 2 block in the source image by the median of those four values.  So, it serves as a simple point filter while downsampling.
+    """
+
+    return block_reduce(im, block_size = 2, func = np.nanmedian, cval = np.nanmin(im))

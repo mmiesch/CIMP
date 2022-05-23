@@ -9,10 +9,12 @@ from CIMP import Animate as an
 from CIMP import Snapshot as snap
 from sunpy.net import attrs as a
 
-pcase = 4
+pcase = 7
 
 # default directory for movies
 outdir = '/home/mark.miesch/Products/image_processing/movies'
+
+rmask = None
 
 if pcase == 1:
     title = "Model CME0 pos-30"
@@ -76,6 +78,24 @@ elif pcase == 4:
     file1 = 'frame_0008.fits'
     file2 = 'frame_0009.fits'
 
+elif pcase == 7:
+    title = "LASCO April 15, 2012"
+    outfile = f"/lasco_c3_2012_04_15_p{pcase}_mgn.mp4"
+    instrument = a.Instrument.lasco
+    detector = a.Detector.c3
+    dir = '/home/mark.miesch/data/lasco_monthly/c3/2012_04/15'
+    bgfile = '/home/mark.miesch/data/lasco_monthly/c3/2012_04/background.fts'
+    background = 'ratio'
+    method = 'enhance_mgn'
+    colormap = 'soholasco2'
+    #colormap = 'stereocor2'
+    cliprange = (1.0,2.0)
+    scale = (0.0,1.0)
+    rmask = 1.05
+
+    file1 = '32296626.fts'
+    file2 = '32296627.fts'
+
 outfile = outdir + '/' + outfile 
 
 m = an.movie(dir, bgfile = bgfile, outfile = outfile, \
@@ -90,6 +110,7 @@ x1 = snap.snapshot(file = fpath, bgfile = bgfile, \
     instrument = instrument, detector = detector)
 x1.background_ratio(rescale = False)
 x1.enhance(detail='mgn')
+x1.mask_annulus(rmax=rmask)
 map1 = x1.map()
 
 fpath = dir+'/'+file2
@@ -97,6 +118,7 @@ x2 = snap.snapshot(file = fpath, bgfile = bgfile, \
     instrument = instrument, detector = detector)
 x2.background_ratio(rescale = False)
 x2.enhance(detail='mgn')
+x2.mask_annulus(rmax=rmask)
 map2 = x2.map()
 
 #-----------------------------------------------------------------
