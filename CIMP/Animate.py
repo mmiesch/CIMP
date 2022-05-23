@@ -73,9 +73,9 @@ class movie:
         else:
             snap.background_ratio(rescale = False)
 
-        if background == 'enhance mgn':
+        if method == 'enhance_mgn':
             snap.enhance(detail = 'mgn')
-        elif background == 'enhance fnrgf':
+        elif method == 'enhance_fnrgf':
             snap.enhance(detail = 'fnrgf')
 
     def daymovie(self, background = 'ratio', method = 'None', \

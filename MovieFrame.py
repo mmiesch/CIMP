@@ -9,7 +9,7 @@ from CIMP import Animate as an
 from CIMP import Snapshot as snap
 from sunpy.net import attrs as a
 
-pcase = 3
+pcase = 4
 
 # default directory for movies
 outdir = '/home/mark.miesch/Products/image_processing/movies'
@@ -49,8 +49,32 @@ elif pcase == 3:
     background = 'ratio'
     method = 'none'
     colormap = 'soholasco2'
-    colormap = 'stereocor2'
-    scale = (1.,2)
+    #colormap = 'stereocor2'
+    #scale = (1.,2)
+    scale = (0.,1.)
+
+    file1 = '33385478.fts'
+    file2 = '33385479.fts'
+
+    #file1 = '33385479.fts'
+    #file2 = '33385480.fts'
+
+# subset of simulation data for testing & debugging
+elif pcase == 4:
+    title = "Testing"
+    outfile = f"/testing.mp4"
+    instrument = 'ModelHAO0'
+    detector = 'original'
+    dir = '/home/mark.miesch/data/anny/testing'
+    bgfile = dir+'/frame_0000.fits'
+    background = 'ratio'
+    method = 'enhance mgn'
+    colormap = 'soholasco2'
+    cliprange = 'image'
+    scale = (0.0,1.0)
+
+    file1 = 'frame_0008.fits'
+    file2 = 'frame_0009.fits'
 
 outfile = outdir + '/' + outfile 
 
@@ -60,18 +84,19 @@ m = an.movie(dir, bgfile = bgfile, outfile = outfile, \
 
 #-----------------------------------------------------------------
 
-file1 = '33385479.fts'
+
 fpath = dir+'/'+file1
 x1 = snap.snapshot(file = fpath, bgfile = bgfile, \
     instrument = instrument, detector = detector)
 x1.background_ratio(rescale = False)
+x1.enhance(detail='mgn')
 map1 = x1.map()
 
-file2 = '33385480.fts'
 fpath = dir+'/'+file2
 x2 = snap.snapshot(file = fpath, bgfile = bgfile, \
     instrument = instrument, detector = detector)
 x2.background_ratio(rescale = False)
+x2.enhance(detail='mgn')
 map2 = x2.map()
 
 #-----------------------------------------------------------------
