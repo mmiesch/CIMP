@@ -5,7 +5,7 @@ Driver for the Movie class
 from CIMP import Animate as an
 from sunpy.net import attrs as a
 
-pcase = 10
+pcase = 8
 
 rmask = None
 
@@ -123,6 +123,7 @@ elif pcase == 8:
     rmask = 1.05
     cliprange = (1.0,2.0)
     scale = (0.0,1.0)
+    framedir = '/home/mark.miesch/Products/image_processing/frames/2014_01_17/none'
 
 elif pcase == 9:
     title = "LASCO Jan 17, 2014: mgn enhanced"
@@ -134,8 +135,10 @@ elif pcase == 9:
     background = 'ratio'
     method = 'enhance_mgn'
     colormap = 'soholasco2'
+    rmask = 1.05
     cliprange = (1.0,2.0)
     scale = (0.1,1.0)
+    framedir = '/home/mark.miesch/Products/image_processing/frames/2014_01_17/mgn'
 
 elif pcase == 10:
     title = "LASCO Jan 17, 2014: fnrgf enhanced"
@@ -148,6 +151,7 @@ elif pcase == 10:
     method = 'enhance_fnrgf'
     colormap = 'soholasco2'
     cliprange = (1.0,2.0)
+    rmask = 1.05
     scale = (0.0,1.0)
     framedir = '/home/mark.miesch/Products/image_processing/frames/2014_01_17/fnrgf'
 
