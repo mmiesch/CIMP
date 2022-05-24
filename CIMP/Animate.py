@@ -83,7 +83,8 @@ class movie:
             snap.mask_annulus(rmax = rmax)
 
     def daymovie(self, background = 'ratio', method = 'None', \
-                 scale = (0.0, 1.0), rmax = None, title = None):
+                 scale = (0.0, 1.0), rmax = None, title = None, \
+                 framedir = None):
         """
         loop over all valid files in a directory
         """
@@ -92,6 +93,7 @@ class movie:
         frames = []
 
         # get data from all valid files
+        frame = 0
         for file in os.listdir(self.dir):
             print(yellow+f"{file}"+cend)
             fpath = self.dir+'/'+file
@@ -114,6 +116,9 @@ class movie:
                     im = x.map().plot(cmap = self.cmap, vmin = scale[0], \
                                       vmax = scale[1], title = title)
                 frames.append([im])
+                frame += 1
+                if framedir is not None:
+                    plt.savefig(framedir+f"/frame_{frame}.png")
             except:
                 pass
 

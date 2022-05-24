@@ -5,7 +5,7 @@ Driver for the Movie class
 from CIMP import Animate as an
 from sunpy.net import attrs as a
 
-pcase = 9
+pcase = 10
 
 rmask = None
 
@@ -149,6 +149,7 @@ elif pcase == 10:
     colormap = 'soholasco2'
     cliprange = (1.0,2.0)
     scale = (0.0,1.0)
+    framedir = '/home/mark.miesch/Products/image_processing/frames/2014_01_17/fnrgf'
 
 outfile = outdir + '/' + outfile 
 
@@ -157,5 +158,6 @@ x = an.movie(dir, bgfile = bgfile, outfile = outfile, \
              cmap = colormap)
 
 x.daymovie(background = background, method = method, \
-           scale = scale, rmax = rmask, title=title)
+           scale = scale, rmax = rmask, title=title, \
+           framedir = framedir)
 
