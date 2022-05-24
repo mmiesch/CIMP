@@ -5,7 +5,7 @@ Driver for the Movie class
 from CIMP import Animate as an
 from sunpy.net import attrs as a
 
-pcase = 7
+pcase = 9
 
 rmask = None
 
@@ -95,7 +95,7 @@ elif pcase == 6:
 
 elif pcase == 7:
     title = "LASCO April 15, 2012: mgn enhanced"
-    outfile = f"/lasco_c3_2012_04_15_p{pcase}_mgn.mp4"
+    outfile = f"/lasco_c3_2012_04_15_p{pcase}_mgn_v2.mp4"
     instrument = a.Instrument.lasco
     detector = a.Detector.c3
     dir = '/home/mark.miesch/data/lasco_monthly/c3/2012_04/15'
@@ -105,6 +105,48 @@ elif pcase == 7:
     colormap = 'soholasco2'
     #colormap = 'stereocor2'
     rmask = 1.05
+    cliprange = (1.0,2.0)
+    #scale = (0.0,1.0) # v1
+    scale = (0.1,1.0)
+
+elif pcase == 8:
+    title = "LASCO April 15, 2012: fnrgf enhanced"
+    outfile = f"/lasco_c3_2012_04_15_p{pcase}_fnrgf.mp4"
+    instrument = a.Instrument.lasco
+    detector = a.Detector.c3
+    dir = '/home/mark.miesch/data/lasco_monthly/c3/2012_04/15'
+    bgfile = '/home/mark.miesch/data/lasco_monthly/c3/2012_04/background.fts'
+    background = 'ratio'
+    method = 'enhance_fnrgf'
+    colormap = 'soholasco2'
+    #colormap = 'stereocor2'
+    rmask = 1.05
+    cliprange = (1.0,2.0)
+    scale = (0.0,1.0)
+
+elif pcase == 9:
+    title = "LASCO Jan 17, 2014: mgn enhanced"
+    outfile = f"/lasco_c3_2014_01_17_p{pcase}_mgn.mp4"
+    instrument = a.Instrument.lasco
+    detector = a.Detector.c3
+    dir = '/home/mark.miesch/data/lasco_monthly/c3/2014_01/17'
+    bgfile = '/home/mark.miesch/data/lasco_monthly/c3/2014_01/background.fts'
+    background = 'ratio'
+    method = 'enhance_mgn'
+    colormap = 'soholasco2'
+    cliprange = (1.0,2.0)
+    scale = (0.1,1.0)
+
+elif pcase == 10:
+    title = "LASCO Jan 17, 2014: fnrgf enhanced"
+    outfile = f"/lasco_c3_2014_01_17_p{pcase}_fnrgf.mp4"
+    instrument = a.Instrument.lasco
+    detector = a.Detector.c3
+    dir = '/home/mark.miesch/data/lasco_monthly/c3/2014_01/17'
+    bgfile = '/home/mark.miesch/data/lasco_monthly/c3/2014_01/background.fts'
+    background = 'ratio'
+    method = 'enhance_fnrgf'
+    colormap = 'soholasco2'
     cliprange = (1.0,2.0)
     scale = (0.0,1.0)
 
