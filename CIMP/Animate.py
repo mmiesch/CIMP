@@ -84,7 +84,7 @@ class movie:
 
     def daymovie(self, background = 'ratio', method = 'None', \
                  scale = (0.0, 1.0), rmax = None, title = None, \
-                 framedir = None):
+                 framedir = None, tolerance = None):
         """
         loop over all valid files in a directory
         """
@@ -110,7 +110,7 @@ class movie:
                 self.process(x, background = background, method = method, \
                              rmax = rmax)
 
-                if x.valid(ref):
+                if x.valid(ref, tolerance):
                     if title is None:
                         im = x.map().plot(cmap = self.cmap, vmin = scale[0], \
                                           vmax = scale[1])
@@ -121,8 +121,8 @@ class movie:
                     frame = len(frames)
                     if framedir is not None:
                         plt.savefig(framedir+f"/frame_{frame}.png")
+                        print(yellow+f"frame {frame}: {file}"+cend)
                     ref = x.data
-                    print(yellow+f"frame {frame}: {file}"+cend)
 
             except:
                 pass

@@ -5,10 +5,11 @@ Driver for the Movie class
 from CIMP import Animate as an
 from sunpy.net import attrs as a
 
-pcase = 3
+pcase = 9
 
 rmask = None
 framedir = None
+tolerance = None
 
 # default directory for movies
 outdir = '/home/mark.miesch/Products/image_processing/movies'
@@ -130,7 +131,8 @@ elif pcase == 9:
     colormap = 'soholasco2'
     rmask = 1.05
     scale = (0.15,0.9)
-    framedir = '/home/mark.miesch/Products/image_processing/frames/2014_01_17/mgn'
+    tolerance = 0.5
+    framedir = '/home/mark.miesch/Products/image_processing/frames/2014_01_17/debug'
 
 elif pcase == 10:
     title = "LASCO Jan 17, 2014: fnrgf enhanced"
@@ -146,7 +148,7 @@ elif pcase == 10:
     #scale = (0.0,1.0) v1
     #scale = (0.1,1.0) v2
     scale = (0.2,1.0)
-    framedir = '/home/mark.miesch/Products/image_processing/frames/2014_01_17/fnrgf'
+    #framedir = '/home/mark.miesch/Products/image_processing/frames/2014_01_17/fnrgf'
 
 outfile = outdir + '/' + outfile 
 
@@ -156,5 +158,5 @@ x = an.movie(dir, bgfile = bgfile, outfile = outfile, \
 
 x.daymovie(background = background, method = method, \
            scale = scale, rmax = rmask, title=title, \
-           framedir = framedir)
+           framedir = framedir, tolerance = tolerance)
 
