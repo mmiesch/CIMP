@@ -246,8 +246,7 @@ class snapshot:
         d = astropy.io.fits.ImageDataDiff(self.data, ref, rtol = tolerance)
 
         if (d.diff_ratio > 0.1):
-            print(yellow+f"Corrupted image {self.file} {tolerance} {d.diff_ratio*100} {np.min(ref)} {np.max(ref)}}" \
-                  + cend)
+            print(yellow+f"Corrupted image {self.file} {tolerance} {d.diff_ratio*100} {np.min(ref)} {np.max(ref)}" + cend)
             return False
         else:
             return True

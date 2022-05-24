@@ -5,7 +5,7 @@ Driver for the Movie class
 from CIMP import Animate as an
 from sunpy.net import attrs as a
 
-pcase = 9
+pcase = 10
 
 rmask = None
 framedir = None
@@ -132,7 +132,7 @@ elif pcase == 9:
     rmask = 1.05
     scale = (0.15,0.9)
     tolerance = 0.5
-    framedir = '/home/mark.miesch/Products/image_processing/frames/2014_01_17/debug'
+    #framedir = '/home/mark.miesch/Products/image_processing/frames/2014_01_17/debug'
 
 elif pcase == 10:
     title = "LASCO Jan 17, 2014: fnrgf enhanced"
@@ -148,7 +148,8 @@ elif pcase == 10:
     #scale = (0.0,1.0) v1
     #scale = (0.1,1.0) v2
     scale = (0.2,1.0)
-    #framedir = '/home/mark.miesch/Products/image_processing/frames/2014_01_17/fnrgf'
+    tolerance = 0.7
+    framedir = '/home/mark.miesch/Products/image_processing/frames/2014_01_17/debug'
 
 outfile = outdir + '/' + outfile 
 
