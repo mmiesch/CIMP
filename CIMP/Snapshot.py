@@ -190,7 +190,7 @@ class snapshot:
         self.data = Enhance.equalize(self.data)
 
     def rescale(self, cliprange = 'image'):
-        self.data = exposure.rescale_intensity(self.data, 
+        self.data = exposure.rescale_intensity(self.data,
                                                in_range = cliprange, \
                                                out_range = (0,1))
 
@@ -223,6 +223,11 @@ class snapshot:
 
     def mask_annulus(self, rmin = 0.0, rmax = None):
         Enhance.mask_annulus(self.data, rmin = rmin, rmax = rmax)
+
+    def downsample(self, rescale = True):
+        self.data = Enhance.downsample(self.data)
+        if rescale:
+            self.rescale()
 
     def __str__(self):
         return (f'Instrument = {self.instrument} \n'

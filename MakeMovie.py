@@ -5,9 +5,10 @@ Driver for the Movie class
 from CIMP import Animate as an
 from sunpy.net import attrs as a
 
-pcase = 8
+pcase = 9
 
 rmask = None
+framedir = None
 
 # default directory for movies
 outdir = '/home/mark.miesch/Products/image_processing/movies'
@@ -22,7 +23,6 @@ if pcase == 1:
     background = 'ratio'
     method = 'none'
     colormap = 'soholasco2'
-    cliprange = 'image'
     scale = (0.5,3.0)
 
 elif pcase == 2:
@@ -36,7 +36,6 @@ elif pcase == 2:
     method = 'none'
     #colormap = 'soholasco2'
     colormap = 'stereocor2'
-    cliprange = (1.0,2.0)
     scale = (0.0,1.0)
 
 elif pcase == 3:
@@ -50,8 +49,8 @@ elif pcase == 3:
     method = 'none'
     #colormap = 'soholasco2'
     colormap = 'stereocor2'
-    cliprange = (1.0,2.0)
     scale = (1.0,2.0)
+    framedir = '/home/mark.miesch/Products/image_processing/frames/2014_01_17/none'
 
 # subset of simulation data for testing & debugging
 elif pcase == 4:
@@ -64,7 +63,6 @@ elif pcase == 4:
     background = 'ratio'
     method = 'enhance_mgn'
     colormap = 'soholasco2'
-    cliprange = 'image'
     scale = (0.0,1.0)
 
 elif pcase == 5:
@@ -77,7 +75,6 @@ elif pcase == 5:
     background = 'ratio'
     method = 'enhance_mgn'
     colormap = 'soholasco2'
-    cliprange = 'image'
     scale = (0.0,1.0)
 
 elif pcase == 6:
@@ -90,7 +87,6 @@ elif pcase == 6:
     background = 'ratio'
     method = 'enhance_fnrgf'
     colormap = 'soholasco2'
-    cliprange = 'image'
     scale = (0.0,1.0)
 
 elif pcase == 7:
@@ -105,7 +101,6 @@ elif pcase == 7:
     colormap = 'soholasco2'
     #colormap = 'stereocor2'
     rmask = 1.05
-    cliprange = (1.0,2.0)
     #scale = (0.0,1.0) # v1
     scale = (0.1,1.0)
 
@@ -121,9 +116,7 @@ elif pcase == 8:
     colormap = 'soholasco2'
     #colormap = 'stereocor2'
     rmask = 1.05
-    cliprange = (1.0,2.0)
     scale = (0.0,1.0)
-    framedir = '/home/mark.miesch/Products/image_processing/frames/2014_01_17/none'
 
 elif pcase == 9:
     title = "LASCO Jan 17, 2014: mgn enhanced"
@@ -136,8 +129,7 @@ elif pcase == 9:
     method = 'enhance_mgn'
     colormap = 'soholasco2'
     rmask = 1.05
-    cliprange = (1.0,2.0)
-    scale = (0.1,1.0)
+    scale = (0.15,0.9)
     framedir = '/home/mark.miesch/Products/image_processing/frames/2014_01_17/mgn'
 
 elif pcase == 10:
@@ -150,9 +142,10 @@ elif pcase == 10:
     background = 'ratio'
     method = 'enhance_fnrgf'
     colormap = 'soholasco2'
-    cliprange = (1.0,2.0)
     rmask = 1.05
-    scale = (0.0,1.0)
+    #scale = (0.0,1.0) v1
+    #scale = (0.1,1.0) v2
+    scale = (0.2,1.0)
     framedir = '/home/mark.miesch/Products/image_processing/frames/2014_01_17/fnrgf'
 
 outfile = outdir + '/' + outfile 
