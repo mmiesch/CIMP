@@ -91,11 +91,11 @@ class movie:
 
         fig = plt.figure()
         frames = []
+        corrupted = []
 
         # get data from all valid files
-        frame = 0
+        ref = None
         for file in os.listdir(self.dir):
-            print(yellow+f"{file}"+cend)
             fpath = self.dir+'/'+file
             try:
                 assert(os.path.isfile(fpath))
@@ -109,16 +109,21 @@ class movie:
                 assert(x.ny == self.ny)
                 self.process(x, background = background, method = method, \
                              rmax = rmax)
-                if title is None:
-                    im = x.map().plot(cmap = self.cmap, vmin = scale[0], \
-                                      vmax = scale[1])
-                else:
-                    im = x.map().plot(cmap = self.cmap, vmin = scale[0], \
-                                      vmax = scale[1], title = title)
-                frames.append([im])
-                frame += 1
-                if framedir is not None:
-                    plt.savefig(framedir+f"/frame_{frame}.png")
+
+                if x.valid(ref):
+                    if title is None:
+                        im = x.map().plot(cmap = self.cmap, vmin = scale[0], \
+                                          vmax = scale[1])
+                    else:
+                        im = x.map().plot(cmap = self.cmap, vmin = scale[0], \
+                                          vmax = scale[1], title = title)
+                    frames.append([im])
+                    frame = len(frames)
+                    if framedir is not None:
+                        plt.savefig(framedir+f"/frame_{frame}.png")
+                    ref = x.data
+                    print(yellow+f"frame {frame}: {file}"+cend)
+
             except:
                 pass
 

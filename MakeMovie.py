@@ -5,7 +5,7 @@ Driver for the Movie class
 from CIMP import Animate as an
 from sunpy.net import attrs as a
 
-pcase = 9
+pcase = 3
 
 rmask = None
 framedir = None
@@ -50,7 +50,7 @@ elif pcase == 3:
     #colormap = 'soholasco2'
     colormap = 'stereocor2'
     scale = (1.0,2.0)
-    framedir = '/home/mark.miesch/Products/image_processing/frames/2014_01_17/none'
+    #framedir = '/home/mark.miesch/Products/image_processing/frames/2014_01_17/none'
 
 # subset of simulation data for testing & debugging
 elif pcase == 4:

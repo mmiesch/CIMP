@@ -1,15 +1,18 @@
 """
-Generate a single movie frame, using the same procedure as in MakeMovie
+Generate two movie frames, using the same procedure as in MakeMovie
 Intended for debugging
 """
 
 import matplotlib.pyplot as plt
+import numpy as np
 
 from CIMP import Animate as an
 from CIMP import Snapshot as snap
 from sunpy.net import attrs as a
 
-pcase = 7
+from astropy.io import fits
+
+pcase = 3
 
 # default directory for movies
 outdir = '/home/mark.miesch/Products/image_processing/movies'
@@ -52,14 +55,32 @@ elif pcase == 3:
     method = 'none'
     colormap = 'soholasco2'
     #colormap = 'stereocor2'
-    #scale = (1.,2)
-    scale = (0.,1.)
+    scale = (1.,1.1)
+    #scale = (0.,1.)
 
-    file1 = '33385478.fts'
-    file2 = '33385479.fts'
+    #file1 = '33385478.fts'
+    #file2 = '33385479.fts'
 
     #file1 = '33385479.fts'
     #file2 = '33385480.fts'
+
+    # frames 27-29
+    #file1 = '33385504.fts'
+    #file2 = '33385505.fts'
+    #file1 = '33385505.fts'
+    #file2 = '33385506.fts'
+
+    # frames 37-39
+    #file1 = '33385514.fts'
+    #file2 = '33385515.fts'
+    #file1 = '33385515.fts'
+    #file2 = '33385516.fts'
+
+    # frames 71-73
+    file1 = '33385564.fts'
+    file2 = '33385565.fts'
+    #file1 = '33385565.fts'
+    #file2 = '33385566.fts'
 
 # subset of simulation data for testing & debugging
 elif pcase == 4:
@@ -73,7 +94,7 @@ elif pcase == 4:
     method = 'enhance mgn'
     colormap = 'soholasco2'
     cliprange = 'image'
-    scale = (0.0,1.0)
+    scale = (0.0,0.1)
 
     file1 = 'frame_0008.fits'
     file2 = 'frame_0009.fits'
@@ -104,22 +125,31 @@ m = an.movie(dir, bgfile = bgfile, outfile = outfile, \
 
 #-----------------------------------------------------------------
 
-
 fpath = dir+'/'+file1
 x1 = snap.snapshot(file = fpath, bgfile = bgfile, \
     instrument = instrument, detector = detector)
 x1.background_ratio(rescale = False)
-x1.enhance(detail='mgn')
-x1.mask_annulus(rmax=rmask)
+#x1.enhance(detail='mgn')
+#x1.mask_annulus(rmax=rmask)
 map1 = x1.map()
 
 fpath = dir+'/'+file2
 x2 = snap.snapshot(file = fpath, bgfile = bgfile, \
     instrument = instrument, detector = detector)
 x2.background_ratio(rescale = False)
-x2.enhance(detail='mgn')
-x2.mask_annulus(rmax=rmask)
+#x2.enhance(detail='mgn')
+#x2.mask_annulus(rmax=rmask)
 map2 = x2.map()
+
+#-----------------------------------------------------------------
+
+valid_pix = np.ma.masked_where(x1.data <= 0.0, x1.data)
+threshold = 0.5 * np.nanmedian(valid_pix)
+print(f"Threshold = {threshold}")
+
+d = fits.ImageDataDiff(x1.data, x2.data, rtol = threshold)
+mismatch = d.diff_ratio*100
+print(f"pixel mismatch (percent): {mismatch}")
 
 #-----------------------------------------------------------------
 

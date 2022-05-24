@@ -2,6 +2,7 @@
 CIMP Event module
 """
 
+import astropy.io
 import astropy.units as u
 import datetime
 import logging
@@ -228,6 +229,25 @@ class snapshot:
         self.data = Enhance.downsample(self.data)
         if rescale:
             self.rescale()
+
+    def valid(self, ref = None, threshold = 0.5):
+        """
+        This identifies and flags corrupted images by comparing the data to a reference image that is passed as ref (a 2D numpy array).  In a movie sequence, ref would typically be the previous frame.
+        Images are flagged as corrupted if more than 10% of their pixels are different from the reference image, within a specified tolerance.  The default tolerance is currently set to be 0.5 times the median non-zero value of the reference image.
+        """
+
+        if ref is None:
+            return True
+
+        valid_pix = np.ma.masked_equal(ref, 0.0, copy = False)
+        tolerance = threshold*np.nanmedian(np.absolute(valid_pix))
+
+        d = astropy.io.fits.ImageDataDiff(self.data, ref, rtol = tolerance)
+
+        if (d.diff_ratio > 0.1):
+            return False
+        else:
+            return True
 
     def __str__(self):
         return (f'Instrument = {self.instrument} \n'
