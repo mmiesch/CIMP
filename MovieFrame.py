@@ -12,7 +12,7 @@ from sunpy.net import attrs as a
 
 from astropy.io import fits
 
-pcase = 3
+pcase = 2
 
 # default directory for movies
 outdir = '/home/mark.miesch/Products/image_processing/movies'

@@ -5,8 +5,10 @@ This module is for making movies!
 import os
 import matplotlib.animation as animation
 import matplotlib.pyplot as plt
+import numpy as np
 import sunpy.visualization.colormaps as cm
 
+from astropy.time.core import Time
 from CIMP import Snapshot as snap
 from sunpy.io import fits
 
@@ -91,6 +93,7 @@ class movie:
 
         fig = plt.figure()
         frames = []
+        times = np.array([], dtype = 'float64')
         corrupted = []
 
         # get data from all valid files
@@ -118,6 +121,7 @@ class movie:
                         im = x.map().plot(cmap = self.cmap, vmin = scale[0], \
                                           vmax = scale[1], title = title)
                     frames.append([im])
+                    times = np.append(times, x.time.tai_seconds)
                     frame = len(frames)
                     if framedir is not None:
                         plt.savefig(framedir+f"/frame_{frame}.png")
@@ -130,8 +134,12 @@ class movie:
         mov = animation.ArtistAnimation(fig, frames, interval = 50, blit = True,
               repeat = True, repeat_delay = 1000)
 
-        print(f"Nframes= {len(frames)}")
+        print(f"Nframes= {len(frames)} {len(times)}")
+
+        times = times - times[0]
+
+        for t in times:
+            print(t)
 
         mov.save(self.outfile)
-
 
