@@ -230,10 +230,12 @@ class snapshot:
         if rescale:
             self.rescale()
 
-    def valid(self, ref = None, tolerance = None):
+    def valid(self, ref = None, tolerance = None, diff_ratio = 100.0):
         """
         This identifies and flags corrupted images by comparing the data to a reference image that is passed as ref (a 2D numpy array).  In a movie sequence, ref would typically be the previous frame.
-        Images are flagged as corrupted if more than 10% of their pixels are different from the reference image, within a specified tolerance.  The default tolerance is currently set to be 0.5 times the median non-zero value of the reference image.
+        Images are flagged as corrupted if more than `diff_ratio` percent of their pixels are different from the reference image, within a specified `tolerance`.  The default diff_ratio is set to be 100%,
+        which means that, by default, no frames are declared invalid.  
+        The default tolerance is currently set to be 0.5 times the median non-zero value of the reference image.
         """
 
         if ref is None:
@@ -245,7 +247,7 @@ class snapshot:
 
         d = astropy.io.fits.ImageDataDiff(self.data, ref, rtol = tolerance)
 
-        if (d.diff_ratio > 0.1):
+        if (100*d.diff_ratio > diff_ratio):
             print(yellow+f"Corrupted image {self.file} {tolerance} {d.diff_ratio*100} {np.min(ref)} {np.max(ref)}" + cend)
             return False
         else:

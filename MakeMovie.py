@@ -10,6 +10,7 @@ pcase = 2
 rmask = None
 framedir = None
 tolerance = None
+diff_ratio = 100.0
 resample = None
 day = None
 
@@ -42,7 +43,8 @@ elif pcase == 2:
     scale = (1.0,2.0)
     resample = 96
     day = '2012-04-15'
-    framedir = '/home/mark.miesch/Products/image_processing/frames/debug'
+    tolerance = 0.02; diff_ratio = 10.0
+    #framedir = '/home/mark.miesch/Products/image_processing/frames/debug'
 
 elif pcase == 3:
     title = "LASCO Jan 17, 2014"
@@ -97,7 +99,7 @@ elif pcase == 6:
 
 elif pcase == 7:
     title = "LASCO April 15, 2012: mgn enhanced"
-    outfile = f"/lasco_c3_2012_04_15_p{pcase}_mgn_v2.mp4"
+    outfile = f"/lasco_c3_2012_04_15_p{pcase}_mgn.mp4"
     instrument = a.Instrument.lasco
     detector = a.Detector.c3
     dir = '/home/mark.miesch/data/lasco_monthly/c3/2012_04/15'
@@ -109,6 +111,8 @@ elif pcase == 7:
     rmask = 1.05
     #scale = (0.0,1.0) # v1
     scale = (0.1,1.0)
+    resample = 96
+    day = '2012-04-15'
 
 elif pcase == 8:
     title = "LASCO April 15, 2012: fnrgf enhanced"
@@ -165,5 +169,5 @@ x = an.movie(dir, bgfile = bgfile, outfile = outfile, \
 x.daymovie(background = background, method = method, \
            scale = scale, rmax = rmask, title=title, \
            framedir = framedir, tolerance = tolerance, \
-           resample = resample, day = day)
+           diff_ratio = diff_ratio, resample = resample, day = day)
 

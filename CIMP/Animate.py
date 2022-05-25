@@ -86,8 +86,8 @@ class movie:
 
     def daymovie(self, background = 'ratio', method = 'None', \
                  scale = (0.0, 1.0), rmax = None, title = None, \
-                 framedir = None, tolerance = None, resample = None, \
-                 day = None):
+                 framedir = None, tolerance = None, diff_ratio = 10.0, \
+                 resample = None, day = None):
         """
         loop over all valid files in a directory
         If you want to do nearest-neighbor interpolation on a regular grid, 
@@ -117,7 +117,7 @@ class movie:
                 self.process(x, background = background, method = method, \
                              rmax = rmax)
 
-                if x.valid(ref, tolerance):
+                if x.valid(ref, tolerance, diff_ratio):
                     maps.append(x.map())
                     times = np.append(times, x.time.gps)
                     ref = x.data
@@ -151,10 +151,8 @@ class movie:
                 tmin = 0.0
                 tmax = Time(day+"T23:59:59.999").gps - tref
                 times = times - tref
-                if np.nanmin(times) > tmin:
-                    tmin = np.nanmin(times)
-                if np.nanmax(times) < tmax:
-                    tmax = np.nanmax(times)
+                tmin = np.max([tmin, np.nanmin(times)])
+                tmax = np.min([tmax, np.nanmax(times)])
 
             # now create a regular array over the desired time range
             tgrid, dt = np.linspace(tmin, tmax, num = resample, endpoint = True, \
@@ -167,8 +165,6 @@ class movie:
                 #print(f"{t} {times[idx]} {idx}")
                 newmaps.append(maps[idx])
             maps = newmaps
-
-        print(yellow+f"Nframes = {len(maps)}"+cend)
 
         # make movie
         fig = plt.figure()
@@ -187,6 +183,8 @@ class movie:
 
         mov = animation.ArtistAnimation(fig, frames, interval = 50, blit = True,
               repeat = True, repeat_delay = 1000)
+
+        print(yellow+f"Nframes = {len(frames)}"+cend)
 
         mov.save(self.outfile)
 
