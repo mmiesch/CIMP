@@ -97,8 +97,7 @@ class movie:
         ignored.
         """
 
-        fig = plt.figure()
-        frames = []
+        maps = []
         times = np.array([], dtype = 'float64')
 
         # get data from all valid files
@@ -119,24 +118,14 @@ class movie:
                              rmax = rmax)
 
                 if x.valid(ref, tolerance):
-                    if title is None:
-                        im = x.map().plot(cmap = self.cmap, vmin = scale[0], \
-                                          vmax = scale[1])
-                    else:
-                        im = x.map().plot(cmap = self.cmap, vmin = scale[0], \
-                                          vmax = scale[1], title = title)
-                    frames.append([im])
+                    maps.append(x.map())
                     times = np.append(times, x.time.gps)
-                    frame = len(frames)
-                    if framedir is not None:
-                        plt.savefig(framedir+f"/frame_{frame}.png")
-                        print(yellow+f"frame {frame}: {file}"+cend)
                     ref = x.data
 
             except:
                 pass
 
-        print(yellow+f"Nfiles = {len(frames)} {len(times)}"+cend)
+        print(yellow+f"Nfiles = {len(maps)} {len(times)}"+cend)
 
         # optionally resample on to a regular time grid
         # set resample to be an integer equal to the number
@@ -172,14 +161,29 @@ class movie:
                                     retstep = True)
 
             # find nearest neighbor for each frame
-            newframes = []
+            newmaps = []
             for t in tgrid:
                 idx = (np.abs(times-t)).argmin()
-                print(f"{t} {times[idx]} {idx}")
-                newframes.append(frames[idx])
-            frames = newframes
+                #print(f"{t} {times[idx]} {idx}")
+                newmaps.append(maps[idx])
+            maps = newmaps
 
-        print(yellow+f"Nframes = {len(frames)}"+cend)
+        print(yellow+f"Nframes = {len(maps)}"+cend)
+
+        # make movie
+        fig = plt.figure()
+        frames = []
+        for map in maps:
+            if title is None:
+                im = map.plot(cmap = self.cmap, vmin = scale[0], \
+                              vmax = scale[1])
+            else:
+                im = map.plot(cmap = self.cmap, vmin = scale[0], \
+                              vmax = scale[1], title = title)
+            frames.append([im])
+            if framedir is not None:
+                frame = str(len(frames)).zfill(3)
+                plt.savefig(framedir+f"/frame_{frame}.png")
 
         mov = animation.ArtistAnimation(fig, frames, interval = 50, blit = True,
               repeat = True, repeat_delay = 1000)
