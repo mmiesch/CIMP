@@ -11,6 +11,7 @@ rmask = None
 framedir = None
 tolerance = None
 resample = None
+day = None
 
 # default directory for movies
 outdir = '/home/mark.miesch/Products/image_processing/movies'
@@ -40,6 +41,7 @@ elif pcase == 2:
     colormap = 'stereocor2'
     scale = (0.0,1.0)
     resample = 48
+    day = '2012-04-15'
 
 elif pcase == 3:
     title = "LASCO Jan 17, 2014"
@@ -162,5 +164,5 @@ x = an.movie(dir, bgfile = bgfile, outfile = outfile, \
 x.daymovie(background = background, method = method, \
            scale = scale, rmax = rmask, title=title, \
            framedir = framedir, tolerance = tolerance, \
-           resample = resample)
+           resample = resample, day = day)
 

@@ -86,15 +86,21 @@ class movie:
 
     def daymovie(self, background = 'ratio', method = 'None', \
                  scale = (0.0, 1.0), rmax = None, title = None, \
-                 framedir = None, tolerance = None, resample = None):
+                 framedir = None, tolerance = None, resample = None, \
+                 day = None):
         """
         loop over all valid files in a directory
+        If you want to do nearest-neighbor interpolation on a regular grid, 
+        then set `resample` equal to the integer number of desired grid points
+        and `day` equal to the observation day as a string in iso time format, 
+        e.g. "2022-05-25".  Frames with time stamps outside this day will be 
+        ignored.
         """
 
         fig = plt.figure()
         frames = []
         times = np.array([], dtype = 'float64')
-        corrupted = []
+        idx = []
 
         # get data from all valid files
         ref = None
@@ -121,8 +127,9 @@ class movie:
                         im = x.map().plot(cmap = self.cmap, vmin = scale[0], \
                                           vmax = scale[1], title = title)
                     frames.append([im])
-                    times = np.append(times, x.time.tai_seconds)
+                    times = np.append(times, x.time.gps)
                     frame = len(frames)
+                    idx.append(frame)
                     if framedir is not None:
                         plt.savefig(framedir+f"/frame_{frame}.png")
                         print(yellow+f"frame {frame}: {file}"+cend)
@@ -141,14 +148,33 @@ class movie:
         # of desired points in the regular grid
         if resample is not None:
 
-            # use the median as a robust estimator of the reference time
-            # in case there are any invalid time stamps
-            tref = np.nanmedian(times)
+            if day is None:
 
-            times = times - tref
+                # use the median as a robust estimator of the reference time
+                # in case there are any invalid time stamps
+                tref = np.nanmedian(times)
+                times = times - tref
 
-            for t in times:
-                print(t)
+                # if the day is not specified, get a robust estimate of the 
+                # time range by excluding any time stamps more than 20 hours 
+                # away from the reference time
+                vrange = 20.*3600.
+                valid_times = np.ma.masked_where(np.abs(times) > vrange, times)
+                tmin, tmax = (valid_times.min(), valid_times.max())
+
+            else:
+                tref = Time(day).gps
+                tmin = 0.0
+                tmax = Time(day+"T23:59:59.999").gps - tref
+                times = times - tref
+                if np.nanmin(times) > tmin:
+                    tmin = np.nanmin(times)
+                if np.nanmax(times) < tmax:
+                    tmax = np.nanmax(times)
+
+            # now create a regular array over the desired time range
+            tgrid, dt = np.linspace(tmin, tmax, endpoint = True, \
+                                    retstep = True)
 
         mov.save(self.outfile)
 
