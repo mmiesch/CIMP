@@ -100,7 +100,6 @@ class movie:
         fig = plt.figure()
         frames = []
         times = np.array([], dtype = 'float64')
-        idx = []
 
         # get data from all valid files
         ref = None
@@ -129,7 +128,6 @@ class movie:
                     frames.append([im])
                     times = np.append(times, x.time.gps)
                     frame = len(frames)
-                    idx.append(frame)
                     if framedir is not None:
                         plt.savefig(framedir+f"/frame_{frame}.png")
                         print(yellow+f"frame {frame}: {file}"+cend)
@@ -138,10 +136,7 @@ class movie:
             except:
                 pass
 
-        mov = animation.ArtistAnimation(fig, frames, interval = 50, blit = True,
-              repeat = True, repeat_delay = 1000)
-
-        print(f"Nframes= {len(frames)} {len(times)}")
+        print(yellow+f"Nfiles = {len(frames)} {len(times)}"+cend)
 
         # optionally resample on to a regular time grid
         # set resample to be an integer equal to the number
@@ -173,8 +168,21 @@ class movie:
                     tmax = np.nanmax(times)
 
             # now create a regular array over the desired time range
-            tgrid, dt = np.linspace(tmin, tmax, endpoint = True, \
+            tgrid, dt = np.linspace(tmin, tmax, num = resample, endpoint = True, \
                                     retstep = True)
+
+            # find nearest neighbor for each frame
+            newframes = []
+            for t in tgrid:
+                idx = (np.abs(times-t)).argmin()
+                print(f"{t} {times[idx]} {idx}")
+                newframes.append(frames[idx])
+            frames = newframes
+
+        print(yellow+f"Nframes = {len(frames)}"+cend)
+
+        mov = animation.ArtistAnimation(fig, frames, interval = 50, blit = True,
+              repeat = True, repeat_delay = 1000)
 
         mov.save(self.outfile)
 

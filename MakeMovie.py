@@ -39,9 +39,10 @@ elif pcase == 2:
     method = 'none'
     #colormap = 'soholasco2'
     colormap = 'stereocor2'
-    scale = (0.0,1.0)
+    scale = (1.0,2.0)
     resample = 48
     day = '2012-04-15'
+    #framedir = '/home/mark.miesch/Products/image_processing/frames/debug'
 
 elif pcase == 3:
     title = "LASCO Jan 17, 2014"
