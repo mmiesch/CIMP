@@ -86,7 +86,7 @@ class movie:
 
     def daymovie(self, background = 'ratio', method = 'None', \
                  scale = (0.0, 1.0), rmax = None, title = None, \
-                 framedir = None, tolerance = None):
+                 framedir = None, tolerance = None, resample = None):
         """
         loop over all valid files in a directory
         """
@@ -136,10 +136,19 @@ class movie:
 
         print(f"Nframes= {len(frames)} {len(times)}")
 
-        times = times - times[0]
+        # optionally resample on to a regular time grid
+        # set resample to be an integer equal to the number
+        # of desired points in the regular grid
+        if resample is not None:
 
-        for t in times:
-            print(t)
+            # use the median as a robust estimator of the reference time
+            # in case there are any invalid time stamps
+            tref = np.nanmedian(times)
+
+            times = times - tref
+
+            for t in times:
+                print(t)
 
         mov.save(self.outfile)
 
