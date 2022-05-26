@@ -58,7 +58,7 @@ class movie:
             self.ny = header['NAXIS2']
 
     def process(self, snap, background = 'ratio', method = 'none', \
-                rmax = None):
+                rmin = 0.0, rmax = None):
         """
         Image processing to be performed for each snapshot
 
@@ -82,8 +82,7 @@ class movie:
         elif method == 'enhance_fnrgf':
             snap.enhance(detail = 'fnrgf')
 
-        if rmax is not None:
-            snap.mask_annulus(rmax = rmax)
+        snap.mask_annulus(rmin = rmin, rmax = rmax)
 
     def valid(self, image, ref, tolerance = None, diff_ratio = 100.0, \
               file = ''):
@@ -103,13 +102,13 @@ class movie:
         d = ImageDataDiff(image, ref, rtol = tolerance)
 
         if (100*d.diff_ratio > diff_ratio):
-            print(yellow+f"Corrupted image {file} {tolerance} {d.diff_ratio*100} {np.min(ref)} {np.max(ref)}" + cend)
+            print(yellow+f"Corrupted image {file} {tolerance} {diff_ratio} {d.diff_ratio*100} {np.min(ref)} {np.max(ref)}" + cend)
             return False
         else:
             return True
 
     def daymovie(self, background = 'ratio', method = 'None', \
-                 scale = (0.0, 1.0), rmax = None, title = None, \
+                 scale = (0.0, 1.0), rmin = None, rmax = None, title = None, \
                  framedir = None, tolerance = None, diff_ratio = 10.0, \
                  resample = None, day = None):
         """
@@ -139,7 +138,7 @@ class movie:
                 assert(x.nx == self.nx)
                 assert(x.ny == self.ny)
                 self.process(x, background = background, method = method, \
-                             rmax = rmax)
+                             rmin = rmin, rmax = rmax)
                 maps.append(x.map())
                 times = np.append(times, x.time.gps)
             except:
@@ -158,7 +157,6 @@ class movie:
             Nref = i2 - i1
             refimages = np.empty((self.nx, self.ny, Nref), dtype = 'float32')
             for ridx in np.arange(Nref):
-                print(f"{ridx} {i1} {i2} {refimages.shape} {maps[ridx].data.shape}")
                 refimages[:,:,ridx] = maps[ridx+i1].data
             ref = np.nanmedian(refimages,axis=2)
             if self.valid(maps[idx].data, ref, tolerance, diff_ratio, \
@@ -172,7 +170,7 @@ class movie:
         refimages = 0
         valid_maps = 0
         valid_times = 0
-        print(yellow+f"Number of valid files = {len(maps)}"+cend)
+        N_valid_files = len(maps)
 
         # optionally resample on to a regular time grid
         # set resample to be an integer equal to the number
@@ -209,7 +207,7 @@ class movie:
             newmaps = []
             for t in tgrid:
                 idx = (np.abs(times-t)).argmin()
-                #print(f"{t} {times[idx]} {idx}")
+                print(yellow+f"{tmin} {t} {times[idx]} {tmax} {idx}"+cend)
                 newmaps.append(maps[idx])
             maps = newmaps
 
@@ -231,7 +229,8 @@ class movie:
         mov = animation.ArtistAnimation(fig, frames, interval = 50, blit = True,
               repeat = True, repeat_delay = 1000)
 
-        print(yellow+f"Nframes = {len(frames)}"+cend)
+        print(yellow+f"Number of valid files = {N_valid_files}"+cend)
+        print(yellow+f"Number of frames = {len(frames)}"+cend)
 
         mov.save(self.outfile)
 

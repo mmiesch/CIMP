@@ -5,8 +5,9 @@ Driver for the Movie class
 from CIMP import Animate as an
 from sunpy.net import attrs as a
 
-pcase = 2
+pcase = 10
 
+rmin = 0.0
 rmask = None
 framedir = None
 tolerance = None
@@ -43,7 +44,7 @@ elif pcase == 2:
     scale = (1.0,2.0)
     resample = 96
     day = '2012-04-15'
-    tolerance = 0.02; diff_ratio = 10.0
+    tolerance = 0.02; diff_ratio = 100.0
     #framedir = '/home/mark.miesch/Products/image_processing/frames/debug'
 
 elif pcase == 3:
@@ -58,7 +59,10 @@ elif pcase == 3:
     #colormap = 'soholasco2'
     colormap = 'stereocor2'
     scale = (1.0,2.0)
-    #framedir = '/home/mark.miesch/Products/image_processing/frames/2014_01_17/none'
+    resample = 96
+    day = '2014-01-17'
+    tolerance = 0.01; diff_ratio = 30.0
+    framedir = '/home/mark.miesch/Products/image_processing/frames/debug'
 
 # subset of simulation data for testing & debugging
 elif pcase == 4:
@@ -111,8 +115,11 @@ elif pcase == 7:
     rmask = 1.05
     #scale = (0.0,1.0) # v1
     scale = (0.1,1.0)
+    tolerance = 0.2; diff_ratio = 30.0
     resample = 96
     day = '2012-04-15'
+    framedir = '/home/mark.miesch/Products/image_processing/frames/debug'
+
 
 elif pcase == 8:
     title = "LASCO April 15, 2012: fnrgf enhanced"
@@ -127,6 +134,10 @@ elif pcase == 8:
     #colormap = 'stereocor2'
     rmask = 1.05
     scale = (0.0,1.0)
+    tolerance = 0.2; diff_ratio = 30.0
+    resample = 96
+    day = '2012-04-15'
+    framedir = '/home/mark.miesch/Products/image_processing/frames/debug'
 
 elif pcase == 9:
     title = "LASCO Jan 17, 2014: mgn enhanced"
@@ -140,7 +151,9 @@ elif pcase == 9:
     colormap = 'soholasco2'
     rmask = 1.05
     scale = (0.15,0.9)
-    tolerance = 0.5
+    resample = 96
+    day = '2014-01-17'
+    tolerance = 0.08; diff_ratio = 30.0
     #framedir = '/home/mark.miesch/Products/image_processing/frames/2014_01_17/debug'
 
 elif pcase == 10:
@@ -157,8 +170,10 @@ elif pcase == 10:
     #scale = (0.0,1.0) v1
     #scale = (0.1,1.0) v2
     scale = (0.2,1.0)
-    tolerance = 0.7
-    framedir = '/home/mark.miesch/Products/image_processing/frames/2014_01_17/debug'
+    resample = 96
+    day = '2014-01-17'
+    tolerance = 0.2; diff_ratio = 30.0
+    #framedir = '/home/mark.miesch/Products/image_processing/frames/2014_01_17/debug'
 
 outfile = outdir + '/' + outfile
 
@@ -167,7 +182,7 @@ x = an.movie(dir, bgfile = bgfile, outfile = outfile, \
              cmap = colormap)
 
 x.daymovie(background = background, method = method, \
-           scale = scale, rmax = rmask, title=title, \
+           scale = scale, rmin = rmin, rmax = rmask, title=title, \
            framedir = framedir, tolerance = tolerance, \
            diff_ratio = diff_ratio, resample = resample, day = day)
 
