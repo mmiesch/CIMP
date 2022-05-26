@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import sunpy.visualization.colormaps as cm
 
+from astropy.io.fits import ImageDataDiff
 from astropy.time.core import Time
 from CIMP import Snapshot as snap
 from sunpy.io import fits
@@ -84,6 +85,29 @@ class movie:
         if rmax is not None:
             snap.mask_annulus(rmax = rmax)
 
+    def valid(self, image, ref, tolerance = None, diff_ratio = 100.0, \
+              file = ''):
+        """
+        This identifies and flags corrupted images by comparing the data to a reference image that is passed as ref (a 2D numpy array).  In a movie sequence, ref would typically be the previous frame.
+        Images are flagged as corrupted if more than `diff_ratio` percent of their pixels are different from the reference image, within a specified `tolerance`.  The default diff_ratio is set to be 100%,
+        which means that, by default, no frames are declared invalid.
+        The default tolerance is currently set to be 0.5 times the median non-zero value of the reference image.
+        """
+
+        assert(image.shape == ref.shape)
+
+        if tolerance is None:
+            valid_pix = np.ma.masked_equal(ref, 0.0, copy = False)
+            tolerance = 0.5*np.nanmedian(np.absolute(valid_pix))
+
+        d = ImageDataDiff(image, ref, rtol = tolerance)
+
+        if (100*d.diff_ratio > diff_ratio):
+            print(yellow+f"Corrupted image {file} {tolerance} {d.diff_ratio*100} {np.min(ref)} {np.max(ref)}" + cend)
+            return False
+        else:
+            return True
+
     def daymovie(self, background = 'ratio', method = 'None', \
                  scale = (0.0, 1.0), rmax = None, title = None, \
                  framedir = None, tolerance = None, diff_ratio = 10.0, \
@@ -100,7 +124,7 @@ class movie:
         maps = []
         times = np.array([], dtype = 'float64')
 
-        # get data from all valid files
+        # first pass: get data from all valid files
         ref = None
         for file in os.listdir(self.dir):
             fpath = self.dir+'/'+file
@@ -116,16 +140,39 @@ class movie:
                 assert(x.ny == self.ny)
                 self.process(x, background = background, method = method, \
                              rmax = rmax)
-
-                if x.valid(ref, tolerance, diff_ratio):
-                    maps.append(x.map())
-                    times = np.append(times, x.time.gps)
-                    ref = x.data
-
+                maps.append(x.map())
+                times = np.append(times, x.time.gps)
             except:
+                print(red+f"Skipping {file}"+cend)
                 pass
 
-        print(yellow+f"Nfiles = {len(maps)} {len(times)}"+cend)
+        Nmaps = len(maps)
+        print(yellow+f"Nfiles = {Nmaps}"+cend)
+
+        # second pass: remove corrupted images
+        valid_maps = []
+        valid_times = []
+        for idx in np.arange(Nmaps):
+            i1 = np.max([0, idx-2])
+            i2 = np.min([idx+3, Nmaps])
+            Nref = i2 - i1
+            refimages = np.empty((self.nx, self.ny, Nref), dtype = 'float32')
+            for ridx in np.arange(Nref):
+                print(f"{ridx} {i1} {i2} {refimages.shape} {maps[ridx].data.shape}")
+                refimages[:,:,ridx] = maps[ridx+i1].data
+            ref = np.nanmedian(refimages,axis=2)
+            if self.valid(maps[idx].data, ref, tolerance, diff_ratio, \
+                          file = maps[idx].fits_header['FILENAME']):
+                valid_maps.append(maps[idx])
+                valid_times.append(times[idx])
+
+        # free up some memory before resampling
+        maps = valid_maps
+        times = valid_times
+        refimages = 0
+        valid_maps = 0
+        valid_times = 0
+        print(yellow+f"Number of valid files = {len(maps)}"+cend)
 
         # optionally resample on to a regular time grid
         # set resample to be an integer equal to the number

@@ -160,7 +160,7 @@ elif pcase == 10:
     tolerance = 0.7
     framedir = '/home/mark.miesch/Products/image_processing/frames/2014_01_17/debug'
 
-outfile = outdir + '/' + outfile 
+outfile = outdir + '/' + outfile
 
 x = an.movie(dir, bgfile = bgfile, outfile = outfile, \
              instrument = instrument, detector = detector, \
