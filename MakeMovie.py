@@ -5,7 +5,7 @@ Driver for the Movie class
 from CIMP import Animate as an
 from sunpy.net import attrs as a
 
-pcase = 10
+pcase = 12
 
 rmin = 0.0
 rmask = None
@@ -120,7 +120,6 @@ elif pcase == 7:
     day = '2012-04-15'
     framedir = '/home/mark.miesch/Products/image_processing/frames/debug'
 
-
 elif pcase == 8:
     title = "LASCO April 15, 2012: fnrgf enhanced"
     outfile = f"/lasco_c3_2012_04_15_p{pcase}_fnrgf.mp4"
@@ -174,6 +173,41 @@ elif pcase == 10:
     day = '2014-01-17'
     tolerance = 0.2; diff_ratio = 30.0
     #framedir = '/home/mark.miesch/Products/image_processing/frames/2014_01_17/debug'
+
+elif pcase == 11:
+    title = "LASCO April 15, 2012: mgn enhanced+morph pf"
+    outfile = f"/lasco_c3_2012_04_15_p{pcase}_mgn_morph.mp4"
+    instrument = a.Instrument.lasco
+    detector = a.Detector.c3
+    dir = '/home/mark.miesch/data/lasco_monthly/c3/2012_04/15'
+    bgfile = '/home/mark.miesch/data/lasco_monthly/c3/2012_04/background.fts'
+    background = 'ratio'
+    method = 'enhance_mgn'
+    colormap = 'soholasco2'
+    rmask = 1.05
+    scale = (0.1,1.0)
+    tolerance = 0.2; diff_ratio = 30.0
+    resample = 96
+    day = '2012-04-15'
+    framedir = '/home/mark.miesch/Products/image_processing/frames/2012_04_15/morph'
+
+elif pcase == 12:
+    title = "LASCO Jan 17, 2014: mgn enhanced + morph"
+    outfile = f"/lasco_c3_2014_01_17_p{pcase}_mgn_morph.mp4"
+    instrument = a.Instrument.lasco
+    detector = a.Detector.c3
+    dir = '/home/mark.miesch/data/lasco_monthly/c3/2014_01/17'
+    bgfile = '/home/mark.miesch/data/lasco_monthly/c3/2014_01/background.fts'
+    background = 'ratio'
+    method = 'enhance_mgn'
+    colormap = 'soholasco2'
+    rmask = 1.05
+    scale = (0.15,0.9)
+    resample = 96
+    day = '2014-01-17'
+    tolerance = 0.2; diff_ratio = 30.0
+    #framedir = '/home/mark.miesch/Products/image_processing/frames/2014_01_17/debug'
+
 
 outfile = outdir + '/' + outfile
 

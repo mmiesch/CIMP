@@ -12,7 +12,7 @@ from skimage import exposure
 from skimage.filters import median
 from skimage.filters.rank import enhance_contrast_percentile
 from skimage.measure import block_reduce
-from skimage.morphology import disk
+from skimage.morphology import disk, opening
 from skimage.restoration import (denoise_tv_chambolle, denoise_tv_bregman,
                                  denoise_nl_means)
 from sunkit_image.utils import equally_spaced_bins
@@ -52,6 +52,16 @@ def bright_point_filter(im, threshold = 2.0, radius = 20, rescaleim = True):
     amed = median(im, disk(radius))
     rob = im > threshold * amed
     a = np.where(rob, amed, im)
+    if rescaleim:
+        return rescale(a)
+    else:
+        return a
+
+def morph_opening(im, radius = 3, rescaleim = True):
+    """
+    Point filter based on mathematical morphology
+    """
+    a = opening(im, disk(radius))
     if rescaleim:
         return rescale(a)
     else:

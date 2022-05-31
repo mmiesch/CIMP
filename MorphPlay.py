@@ -10,7 +10,7 @@ import sunpy.visualization.colormaps as cm
 from CIMP import Snapshot as snap
 from skimage.morphology import opening, closing, disk
 
-pcase = 3
+pcase = 1
 
 # dcase = 1: subtract the background
 # dcase = 2: take a ratio with the background
@@ -83,7 +83,7 @@ if comp.count(0) > 0:
     dscales.append((0.0,1.0))
 
 if comp.count(1) > 0:
-    x.point_filter()
+    x.bright_point_filter()
     titles.append("Point filter")
     images.append(x.data)
     dscales.append((0.0,1.0))

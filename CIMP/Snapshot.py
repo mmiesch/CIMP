@@ -169,6 +169,7 @@ class snapshot:
         print(f"Noise filter: {noise_filter}")
 
         a = Enhance.bright_point_filter(self.data, rescaleim = False)
+        #a = Enhance.morph_opening(self.data, rescaleim = False)
 
         # contrast stretching via clipping
         if clip is not None:
