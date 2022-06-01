@@ -8,9 +8,9 @@ import sunpy.map
 import sunpy.visualization.colormaps as cm
 
 from CIMP import Snapshot as snap
-from skimage.morphology import opening, closing, disk
+from skimage.morphology import opening, closing, disk, erosion, reconstruction
 
-pcase = 1
+pcase = 6
 
 # dcase = 1: subtract the background
 # dcase = 2: take a ratio with the background
@@ -24,18 +24,27 @@ colormap = 'stereo'
 if pcase == 1:
     comp = (0,1)
     testcase = 1
-    dcase = 2
     scales = [(0,.05),(0, 1)]
 elif pcase == 2:
     comp = (0,2)
     testcase = 1
-    dcase = 2
     scales = [(0,.05),(0, 0.05)]
 elif pcase == 3:
     comp = (0,3)
     testcase = 1
-    dcase = 2
     scales = [(0,.05),(0, 0.05)]
+elif pcase == 4:
+    comp = (0,4)
+    testcase = 1
+    scales = [(0,.05),(0, 0.05)]
+elif pcase == 5:
+    comp = (0,5)
+    testcase = 1
+    scales = [(0,.05),(0, 0.05)]
+elif pcase == 6:
+    comp = (0,5)
+    testcase = 2
+    scales = [(0,.03),(0, 0.03)]
 else:
     print("specify a valid test case")
     exit()
@@ -83,7 +92,7 @@ if comp.count(0) > 0:
     dscales.append((0.0,1.0))
 
 if comp.count(1) > 0:
-    x.bright_point_filter()
+    x.point_filter()
     titles.append("Point filter")
     images.append(x.data)
     dscales.append((0.0,1.0))
@@ -103,6 +112,21 @@ if comp.count(3) > 0:
     images.append(fim2)
     dscales.append((0.0,1.0))
 
+if comp.count(4) > 0:
+    footprint = disk(3)
+    fim = erosion(x.data, footprint)
+    titles.append("Erosion")
+    images.append(fim)
+    dscales.append((0.0,1.0))
+
+if comp.count(5) > 0:
+    footprint = disk(3)
+    fim = erosion(x.data, footprint)
+    fim2 = reconstruction(fim, x.data, method = 'dilation', footprint = footprint)
+    titles.append("OMR")
+    images.append(fim2)
+    dscales.append((0.0,1.0))
+
 #------------------------------------------------------------------------------
 
 for image in images:
@@ -119,7 +143,8 @@ else:
 #------------------------------------------------------------------------------
 # plot
 
-plot_comparison(images[0],images[1],titles[1], scales)
+plot_comparison(images[0],images[1],titles[1], scales, colormap = colormap)
+
 # ===================
 # save to a file
 # ==================

@@ -159,18 +159,22 @@ class snapshot:
         if rescale:
             self.rescale(cliprange = cliprange)
 
-    def enhance(self, clip = None, detail = 'mgn', noise_filter = 'bregman', \
-                morph = False):
+    def enhance(self, clip = None, point = 'omr', detail = 'mgn', \
+                noise_filter = 'omr'):
         """
         Combination of multiple processing steps for plotting
         clip (optional): 2-element tuple specifying the range to clip the data
+        point: specify the point filter to use.  Current options are 'omr' or 'median'
+        detail: algorithm to use for detail enhancement
+        noise_filter: algorithm to use to remove noise after the detail filter has been applied
         """
 
+        print(f"Point Filter: {point}")
         print(f"Detail Enhancement: {detail}")
         print(f"Noise filter: {noise_filter}")
 
-        if morph:
-            a = Enhance.morph_opening(self.data, rescaleim = False)
+        if point == 'omr':
+            a = Enhance.omr(self.data, rescaleim = False)
         else:
             a = Enhance.bright_point_filter(self.data, rescaleim = False)
 
@@ -183,10 +187,7 @@ class snapshot:
                            params = [0.8, 1.5])
 
         # optionally remove noise
-        if morph:
-            a = Enhance.morph_opening(self.data)
-        else:
-            a = Enhance.denoise(a, noise_filter)
+        a = Enhance.denoise(a, noise_filter)
 
         # adaptive equalization
         if (detail != 'mgn'):

@@ -187,10 +187,10 @@ elif pcase == 11:
     colormap = 'soholasco2'
     rmask = 1.05
     scale = (0.1,1.0)
-    tolerance = 0.2; diff_ratio = 30.0
-    resample = 96
-    day = '2012-04-15'
-    morph = True
+    tolerance = 0.4; diff_ratio = 30.0
+    #tolerance = 0.2; diff_ratio = 30.0
+    #resample = 96
+    #day = '2012-04-15'
     framedir = '/home/mark.miesch/Products/image_processing/frames/2012_04_15/morph'
 
 elif pcase == 12:
@@ -208,7 +208,6 @@ elif pcase == 12:
     resample = 96
     day = '2014-01-17'
     tolerance = 0.2; diff_ratio = 30.0
-    morph = True
     framedir = '/home/mark.miesch/Products/image_processing/frames/debug'
 
 
@@ -221,6 +220,5 @@ x = an.movie(dir, bgfile = bgfile, outfile = outfile, \
 x.daymovie(background = background, method = method, \
            scale = scale, rmin = rmin, rmax = rmask, title=title, \
            framedir = framedir, tolerance = tolerance, \
-           diff_ratio = diff_ratio, resample = resample, day = day, \
-           morph = morph)
+           diff_ratio = diff_ratio, resample = resample, day = day)
 

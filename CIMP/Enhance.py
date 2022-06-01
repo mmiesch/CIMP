@@ -12,7 +12,7 @@ from skimage import exposure
 from skimage.filters import median
 from skimage.filters.rank import enhance_contrast_percentile
 from skimage.measure import block_reduce
-from skimage.morphology import disk, opening
+from skimage.morphology import disk, opening, erosion, reconstruction
 from skimage.restoration import (denoise_tv_chambolle, denoise_tv_bregman,
                                  denoise_nl_means)
 from sunkit_image.utils import equally_spaced_bins
@@ -66,6 +66,20 @@ def morph_opening(im, radius = 3, rescaleim = True):
         return rescale(a)
     else:
         return a
+
+def omr(im, radius = 3, rescaleim = True):
+    """
+    OMR = Opening by Morphological Reconstruction
+    This is similar to morphological opening but uses the original image as a mask to mitigate the apparent smoothing that comes with a standard opening procedure.
+    """
+    a = erosion(im, disk(radius))
+    b = reconstruction(a, im, method = 'dilation', footprint = disk(radius))
+
+    if rescaleim:
+        return rescale(b)
+    else:
+        return b
+
 
 def nrgf(imap, instrument = 'lasco', detector = 'c3'):
 
@@ -176,10 +190,12 @@ def denoise(im, filter = 'bregman'):
         c = denoise_tv_chambolle(im, weight = 0.2)
     elif filter == 'bregman':
         c = denoise_tv_bregman(im)
-    elif noise_removal == 'median':
+    elif filter == 'median':
         c = median(im, disk(1))
     elif filter == 'nl_means"':
         c = denoise_nl_means(a, patch_size = 4)
+    elif filter == 'omr':
+        c = omr(im, rescaleim = False)
     else:
         print(yellow+"Warning: no noise filter applied"+cend)
         c = im
