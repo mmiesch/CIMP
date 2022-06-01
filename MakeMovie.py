@@ -5,7 +5,7 @@ Driver for the Movie class
 from CIMP import Animate as an
 from sunpy.net import attrs as a
 
-pcase = 12
+pcase = 11
 
 rmin = 0.0
 rmask = None
@@ -14,6 +14,7 @@ tolerance = None
 diff_ratio = 100.0
 resample = None
 day = None
+morph = False
 
 # default directory for movies
 outdir = '/home/mark.miesch/Products/image_processing/movies'
@@ -189,6 +190,7 @@ elif pcase == 11:
     tolerance = 0.2; diff_ratio = 30.0
     resample = 96
     day = '2012-04-15'
+    morph = True
     framedir = '/home/mark.miesch/Products/image_processing/frames/2012_04_15/morph'
 
 elif pcase == 12:
@@ -202,11 +204,12 @@ elif pcase == 12:
     method = 'enhance_mgn'
     colormap = 'soholasco2'
     rmask = 1.05
-    scale = (0.15,0.9)
+    scale = (0.05,0.9)
     resample = 96
     day = '2014-01-17'
     tolerance = 0.2; diff_ratio = 30.0
-    #framedir = '/home/mark.miesch/Products/image_processing/frames/2014_01_17/debug'
+    morph = True
+    framedir = '/home/mark.miesch/Products/image_processing/frames/debug'
 
 
 outfile = outdir + '/' + outfile
@@ -218,5 +221,6 @@ x = an.movie(dir, bgfile = bgfile, outfile = outfile, \
 x.daymovie(background = background, method = method, \
            scale = scale, rmin = rmin, rmax = rmask, title=title, \
            framedir = framedir, tolerance = tolerance, \
-           diff_ratio = diff_ratio, resample = resample, day = day)
+           diff_ratio = diff_ratio, resample = resample, day = day, \
+           morph = morph)
 

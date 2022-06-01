@@ -58,7 +58,7 @@ class movie:
             self.ny = header['NAXIS2']
 
     def process(self, snap, background = 'ratio', method = 'none', \
-                rmin = 0.0, rmax = None):
+                rmin = 0.0, rmax = None, morph = False):
         """
         Image processing to be performed for each snapshot
 
@@ -78,9 +78,9 @@ class movie:
             snap.background_ratio(rescale = False)
 
         if method == 'enhance_mgn':
-            snap.enhance(detail = 'mgn')
+            snap.enhance(detail = 'mgn', morph = morph)
         elif method == 'enhance_fnrgf':
-            snap.enhance(detail = 'fnrgf')
+            snap.enhance(detail = 'fnrgf', morph = morph)
 
         snap.mask_annulus(rmin = rmin, rmax = rmax)
 
@@ -110,7 +110,7 @@ class movie:
     def daymovie(self, background = 'ratio', method = 'None', \
                  scale = (0.0, 1.0), rmin = None, rmax = None, title = None, \
                  framedir = None, tolerance = None, diff_ratio = 10.0, \
-                 resample = None, day = None):
+                 resample = None, day = None, morph = False):
         """
         loop over all valid files in a directory
         If you want to do nearest-neighbor interpolation on a regular grid, 
@@ -138,7 +138,7 @@ class movie:
                 assert(x.nx == self.nx)
                 assert(x.ny == self.ny)
                 self.process(x, background = background, method = method, \
-                             rmin = rmin, rmax = rmax)
+                             rmin = rmin, rmax = rmax, morph = morph)
                 maps.append(x.map())
                 times = np.append(times, x.time.gps)
             except:
