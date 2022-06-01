@@ -10,7 +10,7 @@ import sunpy.visualization.colormaps as cm
 from CIMP import Snapshot as snap
 from skimage.morphology import opening, closing, disk, erosion, reconstruction
 
-pcase = 6
+pcase = 7
 
 # dcase = 1: subtract the background
 # dcase = 2: take a ratio with the background
@@ -45,6 +45,11 @@ elif pcase == 6:
     comp = (0,5)
     testcase = 2
     scales = [(0,.03),(0, 0.03)]
+elif pcase == 7:
+    comp = (0,6)
+    testcase = 1
+    scales = [(0,.05),(0.1, 1.0)]
+    colormap = 'lasco'
 else:
     print("specify a valid test case")
     exit()
@@ -126,6 +131,15 @@ if comp.count(5) > 0:
     titles.append("OMR")
     images.append(fim2)
     dscales.append((0.0,1.0))
+
+if comp.count(6) > 0:
+    #a = en.omr(x.data, rescaleim = False)
+    x.enhance(point = 'omr', detail = 'mgn', noise_filter = 'omr')
+    x.mask_annulus(rmax = 1.05)
+    titles.append("Enhance")
+    images.append(x.data)
+    dscales.append((0.0,1.0))
+
 
 #------------------------------------------------------------------------------
 

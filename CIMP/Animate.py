@@ -73,9 +73,9 @@ class movie:
         """
 
         if background == 'subtract':
-            snap.subtract_background(rescale = False)
+            snap.subtract_background()
         else:
-            snap.background_ratio(rescale = False)
+            snap.background_ratio()
 
         if method == 'enhance_mgn':
             snap.enhance(point = 'omr', detail = 'mgn', noise_filter = 'omr')
@@ -141,6 +141,7 @@ class movie:
                              rmin = rmin, rmax = rmax)
                 maps.append(x.map())
                 times = np.append(times, x.time.gps)
+
             except:
                 print(red+f"Skipping {file}"+cend)
                 pass
@@ -216,11 +217,11 @@ class movie:
         frames = []
         for map in maps:
             if title is None:
-                im = map.plot(cmap = self.cmap, vmin = scale[0], \
-                              vmax = scale[1])
+                im = plt.imshow(map.data, cmap=self.cmap, vmin = scale[0], \
+                                vmax = scale[1])
             else:
-                im = map.plot(cmap = self.cmap, vmin = scale[0], \
-                              vmax = scale[1], title = title)
+                im = plt.imshow(map.data, cmap=self.cmap, vmin = scale[0], \
+                                vmax = scale[1], title = title)
             frames.append([im])
             if framedir is not None:
                 frame = str(len(frames)).zfill(3)
