@@ -216,12 +216,10 @@ class movie:
         fig = plt.figure()
         frames = []
         for map in maps:
-            if title is None:
-                im = plt.imshow(map.data, cmap=self.cmap, vmin = scale[0], \
-                                vmax = scale[1])
-            else:
-                im = plt.imshow(map.data, cmap=self.cmap, vmin = scale[0], \
-                                vmax = scale[1], title = title)
+            im = plt.imshow(map.data, cmap=self.cmap, vmin = scale[0], \
+                            vmax = scale[1], origin='lower')
+            if title is not None:
+                plt.title(title)
             frames.append([im])
             if framedir is not None:
                 frame = str(len(frames)).zfill(3)

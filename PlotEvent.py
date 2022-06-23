@@ -8,7 +8,7 @@ from sunpy.net import attrs as a
 
 #---------------------------------------------------
 
-plotcase = 3
+plotcase = 14
 
 if plotcase == 1:
     testcase = 1
@@ -140,6 +140,16 @@ elif plotcase == 13:
     plotframes = (1,2,3,5)
     scale = None
     clip = (0,600)
+
+elif plotcase == 14:
+    # Testing ingest of polarized STEREO-A images
+    testcase = 9
+    nrgf = False
+    enhance = False
+    plotframes = (1,2,3,5)
+    scale = (-1.e-12,1.e-12)
+    clip = None
+
 else:
     print("specify a valid plotcase")
     exit()    

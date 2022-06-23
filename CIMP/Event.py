@@ -84,6 +84,16 @@ testevent = {
     'dir': '/home/mark.miesch/sunpy/data/secchi_cor2/',
     'files': list("20130517_"+t+"00_d4c2b.fts" for t in
              ["0924","0954","1024","1054","1124","1154"])
+    },
+    9: {
+    'source': "STEREO_B",
+    'instrument': a.Instrument.secchi,
+    'detector': a.Detector.cor2,
+    'dir': '/home/mark.miesch/code/stereo-pB/data/pBcom_backup/',
+    'files': list("20220601_"+t+"_pBcom.fts" for t in
+             ["032702", "043308", "052707", "092809", "103348", "112750", \
+              "123349", "132751", "143329", "152730", "163327", "172803", \
+              "183258", "192702", "203306", "212707", "223342", "232748"])
     }
 }
 

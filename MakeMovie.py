@@ -5,7 +5,7 @@ Driver for the Movie class
 from CIMP import Animate as an
 from sunpy.net import attrs as a
 
-pcase = 11
+pcase = 2
 
 rmin = 0.0
 rmask = None
@@ -42,11 +42,11 @@ elif pcase == 2:
     method = 'none'
     #colormap = 'soholasco2'
     colormap = 'stereocor2'
-    scale = (1.0,2.0)
-    resample = 96
-    day = '2012-04-15'
-    tolerance = 0.02; diff_ratio = 100.0
-    #framedir = '/home/mark.miesch/Products/image_processing/frames/debug'
+    scale = (0.0,0.1)
+    #resample = 96
+    #day = '2012-04-15'
+    #tolerance = 0.02; diff_ratio = 100.0
+    framedir = '/home/mark.miesch/Products/image_processing/frames/debug'
 
 elif pcase == 3:
     title = "LASCO Jan 17, 2014"
@@ -112,10 +112,8 @@ elif pcase == 7:
     background = 'ratio'
     method = 'enhance_mgn'
     colormap = 'soholasco2'
-    #colormap = 'stereocor2'
     rmask = 1.05
-    #scale = (0.0,1.0) # v1
-    scale = (0.1,1.0)
+    scale = (0.3,1.0)
     tolerance = 0.2; diff_ratio = 30.0
     resample = 96
     day = '2012-04-15'
@@ -133,11 +131,12 @@ elif pcase == 8:
     colormap = 'soholasco2'
     #colormap = 'stereocor2'
     rmask = 1.05
-    scale = (0.0,1.0)
-    tolerance = 0.2; diff_ratio = 30.0
+    scale = (0.2,1.0)
+    #tolerance = 0.2; diff_ratio = 30.0
+    tolerance = 0.4; diff_ratio = 30.0
     resample = 96
     day = '2012-04-15'
-    framedir = '/home/mark.miesch/Products/image_processing/frames/debug'
+    #framedir = '/home/mark.miesch/Products/image_processing/frames/debug'
 
 elif pcase == 9:
     title = "LASCO Jan 17, 2014: mgn enhanced"
@@ -150,10 +149,10 @@ elif pcase == 9:
     method = 'enhance_mgn'
     colormap = 'soholasco2'
     rmask = 1.05
-    scale = (0.15,0.9)
+    scale = (0.2,0.9)
     resample = 96
     day = '2014-01-17'
-    tolerance = 0.08; diff_ratio = 30.0
+    tolerance = 0.2; diff_ratio = 30.0
     #framedir = '/home/mark.miesch/Products/image_processing/frames/2014_01_17/debug'
 
 elif pcase == 10:
@@ -186,7 +185,7 @@ elif pcase == 11:
     method = 'enhance_mgn'
     colormap = 'soholasco2'
     rmask = 1.05
-    scale = (0.1,1.0)
+    scale = (0.15,1.0)
     tolerance = 0.4; diff_ratio = 30.0
     #tolerance = 0.2; diff_ratio = 30.0
     #resample = 96
