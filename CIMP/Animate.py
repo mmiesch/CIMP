@@ -5,7 +5,9 @@ This module is for making movies!
 import os
 import matplotlib.animation as animation
 import matplotlib.pyplot as plt
+import noisegate as ng
 import numpy as np
+import sunpy.map
 import sunpy.visualization.colormaps as cm
 
 from astropy.io.fits import ImageDataDiff
@@ -84,6 +86,27 @@ class movie:
 
         snap.mask_annulus(rmin = rmin, rmax = rmax)
 
+    def noise_gate(self, maps, cubesize = (3, 12, 12), model = 'hybrid',
+                   factor = 2.0):
+        """
+        Noise Gate filter from DeForest, C.E. 2017, ApJ, 838:155 (10pp)
+        """
+
+        nframes = len(maps)
+
+        print(f"Applying noise gate filter: {cubesize} {model} {factor}")
+        dcube = np.zeros((nframes, maps[0].data.shape[0],
+                                   maps[0].data.shape[1]))
+
+        for i in np.arange(1, nframes):
+            dcube[i-1,:,:] = maps[i].data
+
+        ng.noise_gate_batch(dcube, cubesize=cubesize, model=model,
+                            factor = factor)
+
+        for i in np.arange(1, nframes):
+            maps[i] = sunpy.map.Map(dcube[i-1,:,:], maps[i].fits_header)
+
     def valid(self, image, ref, tolerance = None, diff_ratio = 100.0, \
               file = ''):
         """
@@ -110,7 +133,7 @@ class movie:
     def daymovie(self, background = 'ratio', method = 'None', \
                  scale = (0.0, 1.0), rmin = None, rmax = None, title = None, \
                  framedir = None, tolerance = None, diff_ratio = 10.0, \
-                 resample = None, day = None):
+                 resample = None, day = None, noisegate = False):
         """
         loop over all valid files in a directory
         If you want to do nearest-neighbor interpolation on a regular grid, 
@@ -211,6 +234,10 @@ class movie:
                 print(yellow+f"{tmin} {t} {times[idx]} {tmax} {idx}"+cend)
                 newmaps.append(maps[idx])
             maps = newmaps
+
+        # optionally apply a noise gate filter
+        if noisegate:
+            self.noise_gate(maps)
 
         # make movie
         fig = plt.figure()

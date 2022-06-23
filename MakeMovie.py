@@ -5,7 +5,7 @@ Driver for the Movie class
 from CIMP import Animate as an
 from sunpy.net import attrs as a
 
-pcase = 2
+pcase = 13
 
 rmin = 0.0
 rmask = None
@@ -15,6 +15,7 @@ diff_ratio = 100.0
 resample = None
 day = None
 morph = False
+noisegate = False
 
 # default directory for movies
 outdir = '/home/mark.miesch/Products/image_processing/movies'
@@ -209,6 +210,23 @@ elif pcase == 12:
     tolerance = 0.2; diff_ratio = 30.0
     framedir = '/home/mark.miesch/Products/image_processing/frames/debug'
 
+elif pcase == 13:
+    title = "LASCO April 15, 2012 w/ noisegate"
+    outfile = f"/lasco_c3_2012_04_15_p{pcase}_ng.mp4"
+    instrument = a.Instrument.lasco
+    detector = a.Detector.c3
+    dir = '/home/mark.miesch/data/lasco_monthly/c3/2012_04/15'
+    bgfile = '/home/mark.miesch/data/lasco_monthly/c3/2012_04/background.fts'
+    background = 'ratio'
+    method = 'none'
+    #colormap = 'soholasco2'
+    colormap = 'stereocor2'
+    scale = (0.0,0.1)
+    resample = 96
+    day = '2012-04-15'
+    tolerance = 0.6; diff_ratio = 30.0
+    noisegate = True
+    framedir = '/home/mark.miesch/Products/image_processing/frames/debug'
 
 outfile = outdir + '/' + outfile
 
@@ -219,5 +237,6 @@ x = an.movie(dir, bgfile = bgfile, outfile = outfile, \
 x.daymovie(background = background, method = method, \
            scale = scale, rmin = rmin, rmax = rmask, title=title, \
            framedir = framedir, tolerance = tolerance, \
-           diff_ratio = diff_ratio, resample = resample, day = day)
+           diff_ratio = diff_ratio, resample = resample, day = day, \
+           noisegate = True)
 
