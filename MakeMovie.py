@@ -238,7 +238,7 @@ elif pcase == 14:
     background = 'ratio'
     method = 'none'
     colormap = 'stereocor2'
-    scale = (0.0,0.1)
+    scale = (0.0,1.e-8)
     #resample = 96
     #day = '2012-04-15'
     #tolerance = 0.6; diff_ratio = 30.0
@@ -254,5 +254,5 @@ x.daymovie(background = background, method = method, \
            scale = scale, rmin = rmin, rmax = rmask, title=title, \
            framedir = framedir, tolerance = tolerance, \
            diff_ratio = diff_ratio, resample = resample, day = day, \
-           noisegate = True)
+           noisegate = noisegate)
 
