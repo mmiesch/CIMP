@@ -5,7 +5,7 @@ Driver for the Movie class
 from CIMP import Animate as an
 from sunpy.net import attrs as a
 
-pcase = 13
+pcase = 14
 
 rmin = 0.0
 rmask = None
@@ -226,6 +226,22 @@ elif pcase == 13:
     day = '2012-04-15'
     tolerance = 0.6; diff_ratio = 30.0
     noisegate = True
+    framedir = '/home/mark.miesch/Products/image_processing/frames/debug'
+
+elif pcase == 14:
+    title = "STEREO-A Sept 20, 2012"
+    outfile = f"/stereo_a_2012_09_20_p{pcase}.mp4"
+    instrument = a.Instrument.secchi
+    detector = a.Detector.cor2
+    dir = '/home/mark.miesch/sunpy/data/secchi_cor2/L1/2012/09/20'
+    bgfile = '/home/mark.miesch/sunpy/data/secchi_cor2/L1/2012/09/background.fts'
+    background = 'ratio'
+    method = 'none'
+    colormap = 'stereocor2'
+    scale = (0.0,0.1)
+    #resample = 96
+    #day = '2012-04-15'
+    #tolerance = 0.6; diff_ratio = 30.0
     framedir = '/home/mark.miesch/Products/image_processing/frames/debug'
 
 outfile = outdir + '/' + outfile

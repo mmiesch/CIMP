@@ -20,7 +20,7 @@ cend = '\033[0m'
 # define platform-specific parameters
 
 # this is the directory to monitor for new files
-targetdir = '/home/mark.miesch/sunpy/data/secchi_cor2/2012/'
+targetdir = '/home/mark.miesch/sunpy/data/secchi_cor2/2012b/'
 
 #output directory (+ month/day)
 outdir = '/home/mark.miesch/sunpy/data/secchi_cor2/L1/2012/'
