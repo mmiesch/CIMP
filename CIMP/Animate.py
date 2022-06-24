@@ -243,7 +243,7 @@ class movie:
         fig = plt.figure()
         frames = []
         for map in maps:
-            print(yellow+f"min, max: {np.min(map.data)} {np.max(map.data)}")
+            #print(yellow+f"min, max: {np.min(map.data)} {np.max(map.data)}")
             im = plt.imshow(map.data, cmap=self.cmap, vmin = scale[0], \
                             vmax = scale[1], origin='lower')
             if title is not None:

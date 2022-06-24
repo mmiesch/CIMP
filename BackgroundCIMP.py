@@ -53,7 +53,7 @@ def radial_cut(r,a,N=100):
     return acut, theta_deg
 
 #======================================================================
-pcase = 2
+pcase = 3
 
 if pcase == 1:
     instrument = 'lasco'
@@ -62,11 +62,18 @@ if pcase == 1:
     file = dir+'/15/32296650.fts'
     bgfile = dir+'/'+'background.fts'
 
-if pcase == 2:
+elif pcase == 2:
     instrument = 'lasco'
     detector = 'c3'
     dir = '/home/mark.miesch/data/lasco_monthly/c3/2014_01'
     file = dir+'/17/33385479.fts'
+    bgfile = dir+'/'+'background.fts'
+
+elif pcase == 3:
+    instrument = 'stereo'
+    detector = 'cor2'
+    dir = '/home/mark.miesch/sunpy/data/secchi_cor2/L1/2012/09'
+    file = dir+'/20/20120920_172400_14c2A.fts'
     bgfile = dir+'/'+'background.fts'
 
 else:
@@ -92,10 +99,10 @@ cmap = plt.get_cmap('stereocor2')
 fig = plt.figure(figsize=[16,12])
 
 ax = fig.add_subplot(2,3,1,projection=amap)
-amap.plot(cmap=cmap)
+amap.plot(cmap=cmap,vmin=0,vmax=1.e-8)
 
 ax = fig.add_subplot(2,3,4,projection=bmap)
-bmap.plot(cmap=cmap)
+bmap.plot(cmap=cmap,vmin=0,vmax=1.e-8)
 
 #======================================================================
 # polar intensity plots at a particular radius
@@ -131,7 +138,8 @@ ax = fig.add_subplot(2,3,3,projection=pmap)
 
 print(f"Difference minmax: {pmap.min()} {pmap.max()}")
 
-pmap.plot(cmap=cmap,vmin=0,vmax=1.0e3)
+#pmap.plot(cmap=cmap,vmin=0,vmax=1.0e3)
+pmap.plot(cmap=cmap,vmin=0,vmax=1.0e-9)
 #pmap.plot(cmap=cmap)
 #dmap.plot(cmap=cmap,clip_interval=(1,99)*u.percent)
 
@@ -146,7 +154,7 @@ rmap = sunpy.map.Map(rat,header)
 #rmap = sunpy.map.Map(pa,header)
 
 #emap = Enhance.fnrgf(rmap, instrument, detector)
-emap = Enhance.nrgf(rmap, instrument, detector)
+#emap = Enhance.nrgf(rmap, instrument, detector)
 
 ax = fig.add_subplot(2,3,6,projection=rmap)
 
