@@ -78,6 +78,6 @@ for file in files:
             os.makedirs(savepath)
 
 
-    idlcommand = f"secchi_prep,'{file}',savepath='{savepath}',/polariz_on,/write_fts"
+    idlcommand = f"secchi_prep,'{file}',savepath='{savepath}',/write_fts"
     subprocess.run([sswidl,"-e",idlcommand], env=os.environ)
 

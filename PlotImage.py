@@ -15,8 +15,9 @@ from sunpy.io import fits
 #file = dir+'frame_0000.fits'
 
 # L1 STEREO data
-dir='/home/mark.miesch/sunpy/data/secchi_cor2/L1/2012/09/01/'
-file = dir+'20120901_153900_14c2A.fts'
+dir='/home/mark.miesch/sunpy/data/secchi_cor2/L1/2012/09/07/'
+#file = dir+'20120901_153900_14c2A.fts'
+file = dir+'20120907_163900_14c2A.fts'
 scale=(0,2.e-8)
 
 #dir = '/home/mark.miesch/data/lasco_monthly/c3/2012_04/'
