@@ -68,20 +68,16 @@ for file in files:
     nx = hdu.header['NAXIS1']
     ny = hdu.header['NAXIS2']
 
-    subdir = outdir + month + '/' + day
+    savepath = outdir + month + '/' + day
 
     if (nx == 2048) and (ny == 2048):
 
         print(yellow+f"{fname} {month} {day} {nx} {ny}"+cend)
 
-        if not os.path.exists(subdir):
-            os.makedirs(subdir)
+        if not os.path.exists(savepath):
+            os.makedirs(savepath)
 
 
-    #------------------------------------------------------------------------------
-
-    #outfile = outdir + time.strftime('%Y%m%d_%H%M%S'+'_pBcom.fts')
-    #print(yellow+f"Creating tB L1 file {outfile}"+cend)
-    #idlcommand = f"combine_stereo_pb,'{fset[0]}','{fset[1]}','{fset[2]}','{time.jd}','{outfile}'"
-    #subprocess.run([sswidl,"-e",idlcommand], env=os.environ)
+    idlcommand = f"secchi_prep,'{file}',savepath='{savepath}',/polariz_on,/write_fts"
+    subprocess.run([sswidl,"-e",idlcommand], env=os.environ)
 
