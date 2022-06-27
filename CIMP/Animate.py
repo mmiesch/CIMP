@@ -14,6 +14,7 @@ from astropy.io import fits
 from astropy.io.fits import ImageDataDiff
 from astropy.time.core import Time
 from CIMP import Snapshot as snap
+from CIMP import Enhance
 
 # for warning / error statements; print red, yellow text to terminal
 red = '\033[91m'
@@ -60,7 +61,7 @@ class movie:
             self.ny = hdu.header['NAXIS2']
 
     def process(self, snap, background = 'ratio', method = 'none', \
-                rmin = 0.0, rmax = None):
+                clip = None, rmin = 0.0, rmax = None):
         """
         Image processing to be performed for each snapshot
 
@@ -81,12 +82,16 @@ class movie:
             snap.mask_background(rmin = rmin, rmax = rmax, nonzero = True)
             snap.background_ratio(rescale=False)
 
-        if method == 'enhance_mgn':
-            snap.enhance(point = 'omr', detail = 'mgn', noise_filter = 'omr')
-        elif method == 'enhance_fnrgf':
-            snap.enhance(point = 'omr', detail = 'fnrgf', noise_filter = 'omr')
-
         snap.mask_annulus(rmin = rmin, rmax = rmax)
+
+        if clip is not None:
+            snap.clip(clip)
+
+        if method == 'enhance_mgn':
+            snap.enhance(clip = clip, point = 'omr', detail = 'mgn', noise_filter = 'omr')
+        elif method == 'enhance_fnrgf':
+            snap.enhance(clip = clip, point = 'omr', detail = 'fnrgf', noise_filter = 'omr')
+
 
     def noise_gate(self, maps, cubesize = (3, 12, 12), model = 'hybrid',
                    factor = 2.0):
@@ -132,7 +137,7 @@ class movie:
         else:
             return True
 
-    def daymovie(self, background = 'ratio', method = 'None', \
+    def daymovie(self, background = 'ratio', method = 'None', clip = None, \
                  scale = (0.0, 1.0), rmin = None, rmax = None, title = None, \
                  framedir = None, tolerance = None, diff_ratio = 10.0, \
                  resample = None, day = None, noisegate = False, \
@@ -163,15 +168,12 @@ class movie:
                     detector = self.detector)
                 assert(x.nx == self.nx)
                 assert(x.ny == self.ny)
-                print(f"MSM BEFORE {x.data.shape[0]} {x.data.shape[1]}")
+                self.process(x, background = background, method = method, \
+                             clip = clip, rmin = rmin, rmax = rmax)
                 if downsample:
                     x.downsample()
-                print(f"MSM AFTER {x.data.shape[0]} {x.data.shape[1]}")
-                self.process(x, background = background, method = method, \
-                             rmin = rmin, rmax = rmax)
                 maps.append(x.map())
                 times = np.append(times, x.time.gps)
-
             except:
                 print(red+f"Skipping {file}"+cend)
                 pass

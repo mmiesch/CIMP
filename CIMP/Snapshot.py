@@ -51,7 +51,7 @@ class snapshot:
     """A snapshot is defined as a single coronagraph images for a particular instrument, detector, and time"""
 
     def __init__(self, file = None, bgfile = None, instrument = None, \
-                       detector = None):
+                       detector = None, rescale = False):
 
         if (file is None):
             print("Incomplete argument list: Using default test case")
@@ -94,8 +94,9 @@ class snapshot:
             raise
 
         self.rawdata = hdu.data.astype('float')
-        self.data = exposure.rescale_intensity(self.rawdata, \
-                                               out_range=(0,1))
+        self.data = self.rawdata.copy()
+        if rescale:
+            self.rescale()
         self.header = hdu.header
 
         # adjustments for simulation data
@@ -142,15 +143,16 @@ class snapshot:
         positive_pix = np.masked_less_equal(self.data, 0.0, copy = False)
         return positive_pix.min()
 
-    def clip(self,limits):
+    def clip(self, limits, rescale = False):
         self.data = self.data.clip(min = limits[0], max = limits[1])
-        self.rescale()
+        if rescale:
+            self.rescale()
 
     def map(self):
         return sunpy.map.Map(self.data, self.header)
 
     def subtract_background(self, rescale = True, cliprange = 'image'):
-        self.data = self.rawdata - self.background
+        self.data = self.data - self.background
 
         if rescale:
             self.rescale(cliprange = cliprange)
@@ -161,7 +163,7 @@ class snapshot:
         """
 
         self.data = np.where(self.background <= 0.0, 0.0, \
-                             self.rawdata / self.background)
+                             self.data / self.background)
 
         if rescale:
             self.rescale(cliprange = cliprange)
@@ -190,7 +192,7 @@ class snapshot:
             a = Enhance.clip(a, min = clip[0], max = clip[1])
 
         # various techniques to bring out detail
-        a = Enhance.detail(a, self.header, filter = 'mgn', \
+        a = Enhance.detail(a, self.header, filter = detail, \
                            params = [0.8, 1.5])
 
         # optionally remove noise

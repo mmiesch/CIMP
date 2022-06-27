@@ -5,7 +5,7 @@ Driver for the Movie class
 from CIMP import Animate as an
 from sunpy.net import attrs as a
 
-pcase = 15
+pcase = 16
 
 rmin = 0.0
 rmax = None
@@ -17,6 +17,7 @@ day = None
 morph = False
 noisegate = False
 downsample = False
+clip = None
 
 # default directory for movies
 outdir = '/home/mark.miesch/Products/image_processing/movies'
@@ -266,6 +267,25 @@ elif pcase == 15:
     downsample = True
     framedir = '/home/mark.miesch/Products/image_processing/frames/debug'
 
+elif pcase == 16:
+    # Try an mgn enhanced version of the stereo L1 data 
+    title = "STEREO-A Sept 20, 2012"
+    outfile = f"/stereo_a_2012_09_20_p{pcase}_mgn.mp4"
+    instrument = a.Instrument.secchi
+    detector = a.Detector.cor2
+    dir = '/home/mark.miesch/sunpy/data/secchi_cor2/L1/2012/09/20'
+    bgfile = '/home/mark.miesch/sunpy/data/secchi_cor2/L1/2012/09/background.fts'
+    background = 'ratio'
+    method = 'enhance_mgn'
+    colormap = 'stereocor2'
+    clip = (1, 1.2) # clipping the ratio image
+    scale = (0.0,0.1)
+    rmin = 0.15
+    rmax = 1.0
+    #resample = 72
+    #day = '2012-09-20'
+    downsample = True
+    framedir = '/home/mark.miesch/Products/image_processing/frames/debug'
 
 outfile = outdir + '/' + outfile
 
@@ -273,7 +293,7 @@ x = an.movie(dir, bgfile = bgfile, outfile = outfile, \
              instrument = instrument, detector = detector, \
              cmap = colormap)
 
-x.daymovie(background = background, method = method, \
+x.daymovie(background = background, method = method, clip = clip, \
            scale = scale, rmin = rmin, rmax = rmax, title=title, \
            framedir = framedir, tolerance = tolerance, \
            diff_ratio = diff_ratio, resample = resample, day = day, \
