@@ -130,10 +130,12 @@ class snapshot:
         return cls(file, bgfile, s['instrument'], s['detector'])
 
     def min(self):
-        return np.min(self.data)
+        nonzero_pix = np.masked_not_equal(self.data, 0.0)
+        return nonzero_pix.min()
 
     def max(self):
-        return np.max(self.data)
+        nonzero_pix = np.masked_not_equal(self.data, 0.0)
+        return nonzero_pix.max()
 
     def clip(self,limits):
         self.data = self.data.clip(min = limits[0], max = limits[1])
