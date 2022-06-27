@@ -265,7 +265,7 @@ elif pcase == 15:
     resample = 72
     day = '2012-09-20'
     downsample = True
-    framedir = '/home/mark.miesch/Products/image_processing/frames/debug'
+    framedir = '/home/mark.miesch/Products/image_processing/frames/2012_09_20/noenhance'
 
 elif pcase == 16:
     # Try an mgn enhanced version of the stereo L1 data 
@@ -277,15 +277,16 @@ elif pcase == 16:
     bgfile = '/home/mark.miesch/sunpy/data/secchi_cor2/L1/2012/09/background.fts'
     background = 'ratio'
     method = 'enhance_mgn'
-    colormap = 'stereocor2'
+    #colormap = 'stereocor2'
+    colormap = 'soholasco2'
     clip = (1, 1.2) # clipping the ratio image
-    scale = (0.0,0.1)
+    scale = (0.0,1.0)
     rmin = 0.15
     rmax = 1.0
-    #resample = 72
-    #day = '2012-09-20'
+    resample = 72
+    day = '2012-09-20'
     downsample = True
-    framedir = '/home/mark.miesch/Products/image_processing/frames/debug'
+    framedir = '/home/mark.miesch/Products/image_processing/frames/2012_09_20/mgn'
 
 outfile = outdir + '/' + outfile
 

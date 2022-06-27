@@ -5,6 +5,11 @@ import sunpy.map
 import sunpy.visualization.colormaps as cm
 
 from sunpy.io import fits
+from skimage.measure import block_reduce
+
+def downsample(im):
+    return block_reduce(im, block_size = 2, func = np.nanmedian, cval = np.nanmin(im))
+
 
 #dir = '/home/mark.miesch/data/lasco_monthly/c3/2012_04/'
 #file = dir+'03/32295364.fts'
@@ -48,7 +53,12 @@ data, header = fits.read(file)[0]
 
 dmap = sunpy.map.Map(data, header)
 #dmap.plot(cmap = cmap_stereo_cor2)
-plt.imshow(data, cmap = cmap_stereo_cor2,vmin=scale[0],vmax=scale[1])
+#plt.imshow(data, cmap = cmap_stereo_cor2,vmin=scale[0],vmax=scale[1])
+
+d = downsample(data)
+
+plt.figimage(d,cmap=cmap_stereo_cor2,vmin=scale[0],vmax=scale[1],resize=True,
+             origin='lower')
 
 print(f" minmax: {np.nanmin(data)} {np.nanmax(data)}")
 

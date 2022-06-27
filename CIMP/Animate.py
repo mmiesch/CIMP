@@ -256,8 +256,8 @@ class movie:
         fig = plt.figure()
         frames = []
         for map in maps:
-            im = plt.imshow(map.data, cmap=self.cmap, vmin = scale[0], \
-                            vmax = scale[1], origin='lower')
+            im = plt.figimage(map.data, cmap=self.cmap, vmin = scale[0], \
+                            vmax = scale[1], origin='lower', resize=True)
             if title is not None:
                 plt.title(title)
             frames.append([im])
@@ -265,7 +265,7 @@ class movie:
                 frame = str(len(frames)).zfill(3)
                 plt.savefig(framedir+f"/frame_{frame}.png")
 
-        mov = animation.ArtistAnimation(fig, frames, interval = 50, blit = True,
+        mov = animation.ArtistAnimation(fig, frames, interval = 50, blit = False,
               repeat = True, repeat_delay = 1000)
 
         print(yellow+f"Number of valid files = {N_valid_files}"+cend)
