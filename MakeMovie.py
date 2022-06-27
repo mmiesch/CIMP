@@ -5,7 +5,7 @@ Driver for the Movie class
 from CIMP import Animate as an
 from sunpy.net import attrs as a
 
-pcase = 14
+pcase = 15
 
 rmin = 0.0
 rmax = None
@@ -16,6 +16,7 @@ resample = None
 day = None
 morph = False
 noisegate = False
+downsample = False
 
 # default directory for movies
 outdir = '/home/mark.miesch/Products/image_processing/movies'
@@ -246,6 +247,26 @@ elif pcase == 14:
     #tolerance = 0.6; diff_ratio = 30.0
     #framedir = '/home/mark.miesch/Products/image_processing/frames/debug'
 
+elif pcase == 15:
+    # same as 14 but downsample to 1k x 1k
+    title = "STEREO-A Sept 20, 2012"
+    outfile = f"/stereo_a_2012_09_20_p{pcase}_1k_rs72.mp4"
+    instrument = a.Instrument.secchi
+    detector = a.Detector.cor2
+    dir = '/home/mark.miesch/sunpy/data/secchi_cor2/L1/2012/09/20'
+    bgfile = '/home/mark.miesch/sunpy/data/secchi_cor2/L1/2012/09/background.fts'
+    background = 'ratio'
+    method = 'none'
+    colormap = 'stereocor2'
+    scale = (1.0,1.2)
+    rmin = 0.15
+    rmax = 1.0
+    resample = 72
+    day = '2012-09-20'
+    downsample = True
+    framedir = '/home/mark.miesch/Products/image_processing/frames/debug'
+
+
 outfile = outdir + '/' + outfile
 
 x = an.movie(dir, bgfile = bgfile, outfile = outfile, \
@@ -256,5 +277,5 @@ x.daymovie(background = background, method = method, \
            scale = scale, rmin = rmin, rmax = rmax, title=title, \
            framedir = framedir, tolerance = tolerance, \
            diff_ratio = diff_ratio, resample = resample, day = day, \
-           noisegate = noisegate)
+           noisegate = noisegate, downsample = downsample)
 

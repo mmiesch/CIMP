@@ -135,7 +135,8 @@ class movie:
     def daymovie(self, background = 'ratio', method = 'None', \
                  scale = (0.0, 1.0), rmin = None, rmax = None, title = None, \
                  framedir = None, tolerance = None, diff_ratio = 10.0, \
-                 resample = None, day = None, noisegate = False):
+                 resample = None, day = None, noisegate = False, \
+                 downsample = False):
         """
         loop over all valid files in a directory
         If you want to do nearest-neighbor interpolation on a regular grid, 
@@ -162,6 +163,10 @@ class movie:
                     detector = self.detector)
                 assert(x.nx == self.nx)
                 assert(x.ny == self.ny)
+                print(f"MSM BEFORE {x.data.shape[0]} {x.data.shape[1]}")
+                if downsample:
+                    x.downsample()
+                print(f"MSM AFTER {x.data.shape[0]} {x.data.shape[1]}")
                 self.process(x, background = background, method = method, \
                              rmin = rmin, rmax = rmax)
                 maps.append(x.map())

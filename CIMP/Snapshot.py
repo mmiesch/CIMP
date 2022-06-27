@@ -255,8 +255,12 @@ class snapshot:
         Enhance.mask_annulus(self.background, rmin = rmin, rmax = rmax,
                              missingval = missingval)
 
-    def downsample(self, rescale = True):
+    def downsample(self, rescale = False):
         self.data = Enhance.downsample(self.data)
+        self.nx = self.data.shape[0]
+        self.ny = self.data.shape[1]
+        self.header['NAXIS1'] = self.nx
+        self.header['NAXIS2'] = self.ny
         if rescale:
             self.rescale()
 
