@@ -75,8 +75,10 @@ class movie:
         """
 
         if background == 'subtract':
+            snap.mask_background(rmin = rmin, rmax = rmax, nonzero = False)
             snap.subtract_background()
         else:
+            snap.mask.background(rmin = rmin, rmax = rmax, nonzero = True)
             snap.background_ratio()
 
         if method == 'enhance_mgn':

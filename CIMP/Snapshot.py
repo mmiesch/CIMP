@@ -239,6 +239,20 @@ class snapshot:
     def mask_annulus(self, rmin = 0.0, rmax = None):
         Enhance.mask_annulus(self.data, rmin = rmin, rmax = rmax)
 
+    def mask_background(self, rmin = 0.0, rmax = None, nonzero = True):
+        # If computing the ratio with the background, you don't want to
+        # set the missing value to zero.  But, this does make sense if
+        # you're computing a difference
+
+        if nonzero:
+            pos_pix = np.ma.masked_less_equal(self.bkg, 0.0)
+            missingval = pos_pix.min()
+        else:
+            missingval = 0.0
+
+        Enhance.mask_annulus(self.background, rmin = rmin, rmax = rmax,
+                             missingval = missingval)
+
     def downsample(self, rescale = True):
         self.data = Enhance.downsample(self.data)
         if rescale:

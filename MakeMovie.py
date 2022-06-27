@@ -239,6 +239,8 @@ elif pcase == 14:
     method = 'none'
     colormap = 'stereocor2'
     scale = (0.0,1.e-8)
+    rmin = 0.15
+    rmax = 1.0
     #resample = 96
     #day = '2012-04-15'
     #tolerance = 0.6; diff_ratio = 30.0
