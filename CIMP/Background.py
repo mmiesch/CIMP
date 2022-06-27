@@ -5,7 +5,7 @@ CIMP Background module
 import numpy as np
 import os
 
-from sunpy.io import fits
+from astropy.io import fits
 
 # for warning / error statements; print red, yellow text to terminal
 red = '\033[91m'
@@ -58,19 +58,19 @@ class background:
         for file in os.listdir(ddir):
             try:
                 assert("median" not in file)
-                data, header = fits.read(ddir+file)[0]
+                hdu = fits.open(ddir+file)[0]
                 if nx is None:
-                    nx = header['NAXIS1']
+                    nx = hdu.header['NAXIS1']
                 else:
-                    assert(nx == header['NAXIS1'])
+                    assert(nx == hdu.header['NAXIS1'])
 
                 if ny is None:
-                    ny = header['NAXIS1']
+                    ny = hdu.header['NAXIS1']
                 else:
-                    assert(ny == header['NAXIS1'])
+                    assert(ny == hdu.header['NAXIS1'])
 
                 if header0 is None:
-                    header0 = header
+                    header0 = hdu.header
 
                 Nimages += 1
 
@@ -90,10 +90,10 @@ class background:
         for file in os.listdir(ddir):
             try:
                 assert("median" not in file)
-                data, header = fits.read(ddir+file)[0]
-                assert(nx == header['NAXIS1'])
-                assert(ny == header['NAXIS2'])
-                x[:,:,idx] = data
+                hdu= fits.open(ddir+file)[0]
+                assert(nx == hdu.header['NAXIS1'])
+                assert(ny == hdu.header['NAXIS2'])
+                x[:,:,idx] = hdu.data
                 idx += 1
             except:
                 pass
@@ -104,7 +104,8 @@ class background:
         # record the number of images used in the header
         header0['NIMAGES'] = Nimages
 
-        fits.write(ddir+'daily_median.fts', med_im, header0, overwrite = True)
+        hdu_out = fits.PrimaryHDU(data = med_im, header = header0)
+        hdu_out.writeto('daily_median.fts', overwrite = True)
 
     def minimize_medians(self):
         """
@@ -123,17 +124,17 @@ class background:
             if os.path.isdir(ddir):
                 file = ddir+'/'+ 'daily_median.fts'
                 try:
-                    data, header = fits.read(file)[0]
+                    hdu = fits.open(file)[0]
                     if self.background is None:
-                        self.header = header
-                        self.background = data
+                        self.header = hdu.header
+                        self.background = hdu.data
                         self.zero = self.background <= 0.0
                     else:
-                        np.fmin(self.background, data, \
-                            where = data > 0.0,
+                        np.fmin(self.background, hdu.data, \
+                            where = hdu.data > 0.0,
                             out = self.background)
                         self.background = np.where(self.background <= 0.0, \
-                                          data, self.background)
+                                          hdu.data, self.background)
                 except:
                     print(yellow+f"skipping {subdir}"+cend)
 
@@ -142,5 +143,6 @@ class background:
 
     def write_background(self):
         bg_file = self.dir + '/' + 'background.fts'
-        fits.write(bg_file, self.background, self.header, overwrite = True)
+        hdu_out = fits.PrimaryHDU(self.background, self.header)
+        hdu_out.writeto(bg_file, overwrite = True)
 

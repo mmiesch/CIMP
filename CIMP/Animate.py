@@ -10,10 +10,10 @@ import numpy as np
 import sunpy.map
 import sunpy.visualization.colormaps as cm
 
+from astropy.io import fits
 from astropy.io.fits import ImageDataDiff
 from astropy.time.core import Time
 from CIMP import Snapshot as snap
-from sunpy.io import fits
 
 # for warning / error statements; print red, yellow text to terminal
 red = '\033[91m'
@@ -49,15 +49,15 @@ class movie:
             # determine correct resolution from first fits file in director
             reffile = next(filter(lambda file: file[-5:] == ".fits" or file[-4:] == ".fts", flist2), None)
 
-            data, header = fits.read(reffile)[0]
-            self.nx = header['NAXIS1']
-            self.ny = header['NAXIS2']
+            hdu = fits.open(reffile)[0]
+            self.nx = hdu.header['NAXIS1']
+            self.ny = hdu.header['NAXIS2']
 
         else:
-            data, header = fits.read(bgfile)[0]
-            self.background = data
-            self.nx = header['NAXIS1']
-            self.ny = header['NAXIS2']
+            hdu = fits.open(bgfile)[0]
+            self.background = hdu.data
+            self.nx = hdu.header['NAXIS1']
+            self.ny = hdu.header['NAXIS2']
 
     def process(self, snap, background = 'ratio', method = 'none', \
                 rmin = 0.0, rmax = None):

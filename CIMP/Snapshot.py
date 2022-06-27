@@ -10,8 +10,8 @@ from astropy.utils import data_info
 import numpy as np
 import os
 import sunpy.map
-import sunpy.io
 
+from astropy.io import fits
 from CIMP import Enhance
 from io import RawIOBase
 from sunpy.net import Fido
@@ -82,7 +82,7 @@ class snapshot:
         # Now read in the data from files.  The assumption here is that there is one image per file.
         # If that is not the case, then we can generalize this as needed.
         try:
-            data, header = sunpy.io.fits.read(file)[0]
+            hdu = fits.open(file)[0]
         except FileNotFoundError as fnf_err:
             logging.exception(red+"Fatal Error in CIMP.Event.event constructor: {}".format(fnf_err)+cend)
             raise
@@ -93,10 +93,10 @@ class snapshot:
             logging.exception(red+"Fatal Error in CIMP.Event.event constructor: reading file {} : {}".format(file, err)+cend)
             raise
 
-        self.rawdata = data.astype('float')
+        self.rawdata = hdu.data.astype('float')
         self.data = exposure.rescale_intensity(self.rawdata, \
                                                out_range=(0,1))
-        self.header = header
+        self.header = hdu.header
 
         # adjustments for simulation data
         if 'modelhao' in self.instrument.lower():
@@ -113,7 +113,8 @@ class snapshot:
         if self.bgfile is None:
             self.background = None
         else:
-            self.background, bgheader = sunpy.io.fits.read(bgfile)[0]
+            bghdu = fits.open(bgfile)[0]
+            self.background = bghdu.data
 
     @classmethod
     def testcase(cls, case = 1):

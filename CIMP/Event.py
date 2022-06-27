@@ -8,9 +8,9 @@ import logging
 import numpy as np
 import os
 import sunpy.map
-import sunpy.io
 import noisegate as ng
 
+from astropy.io import fits
 from CIMP import Enhance
 from io import RawIOBase
 from sunpy.net import Fido
@@ -130,7 +130,7 @@ class event:
         self.times = []
         for file in files:
             try:
-                data, header = sunpy.io.fits.read(file)[0]
+                hdu = fits.read(file)[0]
             except FileNotFoundError as fnf_err:
                 logging.exception(red+"Fatal Error in CIMP.Event.event constructor: {}".format(fnf_err)+cend)
                 raise
@@ -142,11 +142,11 @@ class event:
                 raise
 
             if len(self._frames) == 0:
-                self._frames.append(data.astype(float))
+                self._frames.append(hdu.data.astype(float))
             else:
-                self._frames.append(data.astype(float) - self._frames[0])
+                self._frames.append(hdu.data.astype(float) - self._frames[0])
 
-            self.header.append(header)
+            self.header.append(hdu.header)
 
         self.nframes = len(self._frames)
 
