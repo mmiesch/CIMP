@@ -8,7 +8,7 @@ from sunpy.net import attrs as a
 pcase = 14
 
 rmin = 0.0
-rmask = None
+rmax = None
 framedir = None
 tolerance = None
 diff_ratio = 100.0
@@ -113,7 +113,7 @@ elif pcase == 7:
     background = 'ratio'
     method = 'enhance_mgn'
     colormap = 'soholasco2'
-    rmask = 1.05
+    rmax = 1.05
     scale = (0.3,1.0)
     tolerance = 0.2; diff_ratio = 30.0
     resample = 96
@@ -131,7 +131,7 @@ elif pcase == 8:
     method = 'enhance_fnrgf'
     colormap = 'soholasco2'
     #colormap = 'stereocor2'
-    rmask = 1.05
+    rmax = 1.05
     scale = (0.2,1.0)
     #tolerance = 0.2; diff_ratio = 30.0
     tolerance = 0.4; diff_ratio = 30.0
@@ -149,7 +149,7 @@ elif pcase == 9:
     background = 'ratio'
     method = 'enhance_mgn'
     colormap = 'soholasco2'
-    rmask = 1.05
+    rmax = 1.05
     scale = (0.2,0.9)
     resample = 96
     day = '2014-01-17'
@@ -166,7 +166,7 @@ elif pcase == 10:
     background = 'ratio'
     method = 'enhance_fnrgf'
     colormap = 'soholasco2'
-    rmask = 1.05
+    rmax = 1.05
     #scale = (0.0,1.0) v1
     #scale = (0.1,1.0) v2
     scale = (0.2,1.0)
@@ -185,7 +185,7 @@ elif pcase == 11:
     background = 'ratio'
     method = 'enhance_mgn'
     colormap = 'soholasco2'
-    rmask = 1.05
+    rmax = 1.05
     scale = (0.15,1.0)
     tolerance = 0.4; diff_ratio = 30.0
     #tolerance = 0.2; diff_ratio = 30.0
@@ -203,7 +203,7 @@ elif pcase == 12:
     background = 'ratio'
     method = 'enhance_mgn'
     colormap = 'soholasco2'
-    rmask = 1.05
+    rmax = 1.05
     scale = (0.05,0.9)
     resample = 96
     day = '2014-01-17'
@@ -238,7 +238,7 @@ elif pcase == 14:
     background = 'ratio'
     method = 'none'
     colormap = 'stereocor2'
-    scale = (0.0,1.e-8)
+    scale = (1.0,1.2)
     rmin = 0.15
     rmax = 1.0
     #resample = 96
@@ -253,7 +253,7 @@ x = an.movie(dir, bgfile = bgfile, outfile = outfile, \
              cmap = colormap)
 
 x.daymovie(background = background, method = method, \
-           scale = scale, rmin = rmin, rmax = rmask, title=title, \
+           scale = scale, rmin = rmin, rmax = rmax, title=title, \
            framedir = framedir, tolerance = tolerance, \
            diff_ratio = diff_ratio, resample = resample, day = day, \
            noisegate = noisegate)

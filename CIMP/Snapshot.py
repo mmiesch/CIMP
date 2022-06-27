@@ -245,8 +245,9 @@ class snapshot:
         # you're computing a difference
 
         if nonzero:
-            pos_pix = np.ma.masked_less_equal(self.bkg, 0.0)
+            pos_pix = np.ma.masked_less_equal(self.background, 0.0)
             missingval = pos_pix.min()
+            self.background = np.where(self.background > 0.0, self.background, missingval)
         else:
             missingval = 0.0
 

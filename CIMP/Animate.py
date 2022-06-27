@@ -76,10 +76,10 @@ class movie:
 
         if background == 'subtract':
             snap.mask_background(rmin = rmin, rmax = rmax, nonzero = False)
-            snap.subtract_background()
+            snap.subtract_background(rescale=False)
         else:
-            snap.mask.background(rmin = rmin, rmax = rmax, nonzero = True)
-            snap.background_ratio()
+            snap.mask_background(rmin = rmin, rmax = rmax, nonzero = True)
+            snap.background_ratio(rescale=False)
 
         if method == 'enhance_mgn':
             snap.enhance(point = 'omr', detail = 'mgn', noise_filter = 'omr')
@@ -245,7 +245,6 @@ class movie:
         fig = plt.figure()
         frames = []
         for map in maps:
-            #print(yellow+f"min, max: {np.min(map.data)} {np.max(map.data)}")
             im = plt.imshow(map.data, cmap=self.cmap, vmin = scale[0], \
                             vmax = scale[1], origin='lower')
             if title is not None:

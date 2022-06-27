@@ -101,7 +101,8 @@ elif pcase == 3:
     instrument = 'stereo'
     detector = 'cor2'
     dir = '/home/mark.miesch/sunpy/data/secchi_cor2/L1/2012/09'
-    file = dir+'/20/20120920_172400_14c2A.fts'
+    #file = dir+'/20/20120920_172400_14c2A.fts'
+    file = dir+'/20/20120920_002400_14c2A.fts'
     bgfile = dir+'/'+'background.fts'
 
 else:
