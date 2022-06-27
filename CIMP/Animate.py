@@ -61,7 +61,7 @@ class movie:
             self.ny = hdu.header['NAXIS2']
 
     def process(self, snap, background = 'ratio', method = 'none', \
-                clip = None, rmin = 0.0, rmax = None):
+                downsample = False, clip = None, rmin = 0.0, rmax = None):
         """
         Image processing to be performed for each snapshot
 
@@ -81,6 +81,9 @@ class movie:
         else:
             snap.mask_background(rmin = rmin, rmax = rmax, nonzero = True)
             snap.background_ratio(rescale=False)
+
+        if downsample:
+            snap.downsample()
 
         snap.mask_annulus(rmin = rmin, rmax = rmax)
 
@@ -169,9 +172,8 @@ class movie:
                 assert(x.nx == self.nx)
                 assert(x.ny == self.ny)
                 self.process(x, background = background, method = method, \
-                             clip = clip, rmin = rmin, rmax = rmax)
-                if downsample:
-                    x.downsample()
+                             downsample = downsample, clip = clip, \
+                             rmin = rmin, rmax = rmax)
                 maps.append(x.map())
                 times = np.append(times, x.time.gps)
             except:
@@ -184,11 +186,13 @@ class movie:
         # second pass: remove corrupted images
         valid_maps = []
         valid_times = []
+        nx = maps[0].data.shape[0]
+        ny = maps[0].data.shape[1]
         for idx in np.arange(Nmaps):
             i1 = np.max([0, idx-2])
             i2 = np.min([idx+3, Nmaps])
             Nref = i2 - i1
-            refimages = np.empty((self.nx, self.ny, Nref), dtype = 'float32')
+            refimages = np.empty((nx, ny, Nref), dtype = 'float32')
             for ridx in np.arange(Nref):
                 refimages[:,:,ridx] = maps[ridx+i1].data
             ref = np.nanmedian(refimages,axis=2)
