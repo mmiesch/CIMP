@@ -198,7 +198,8 @@ class snapshot:
 
         # various techniques to bring out detail
         a = Enhance.detail(a, self.header, filter = detail, \
-                           params = [0.8, 1.5])
+                           instrument = self.instrument, \
+                           detector = self.detector)
 
         # optionally remove noise
         a = Enhance.denoise(a, noise_filter)

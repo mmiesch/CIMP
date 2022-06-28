@@ -48,6 +48,7 @@ detector = a.Detector.cor2
 dir='/home/mark.miesch/sunpy/data/secchi_cor2/L1/2012/09/'
 bgfile = dir+'background.fts'
 file = dir+'20/20120920_153900_14c2A.fts'
+#file = dir+'20/20120920_222400_14c2A.fts'
 rmin = 0.15
 rmax = 1.0
 
@@ -56,7 +57,7 @@ outdir = '/home/mark.miesch/Products/image_processing/figs/'
 #------------------------------------------------------------------------------
 # choose the images you want to compare
 
-fig = 5
+fig = 9
 
 if fig == 1:
 
@@ -186,6 +187,110 @@ elif fig == 5:
     point2      = 'omr'
     detail2     = 'mgn'
     noise2      = 'None'
+    equalize2   = False
+    scale2 = (0, 1.0)
+
+elif fig == 6:
+
+    outfile = 'mgn_histo.png'
+
+    cmap = plt.get_cmap('soholasco2')
+
+    title1 = 'MGN feature enhancement'
+    background1 = 'ratio'
+    downsample1 = True
+    clip1       = (1.0,1.3)
+    point1      = 'omr'
+    detail1     = 'mgn'
+    noise1      = 'None'
+    equalize1   = False
+    scale1 = (0.0, 1.0)
+
+    title2 = 'Adaptive histogram equalization'
+    background2 = 'ratio'
+    downsample2 = True
+    clip2       = (1.0,1.3)
+    point2      = 'omr'
+    detail2     = 'None'
+    noise2      = 'None'
+    equalize2   = True
+    scale2 = (0, 1.0)
+
+elif fig == 7:
+
+    outfile = 'mgn_fnrgf.png'
+
+    cmap = plt.get_cmap('soholasco2')
+
+    title1 = 'MGN feature enhancement'
+    background1 = 'ratio'
+    downsample1 = True
+    clip1       = (1.0,1.3)
+    point1      = 'omr'
+    detail1     = 'mgn'
+    noise1      = 'None'
+    equalize1   = False
+    scale1 = (0.0, 1.0)
+
+    title2 = 'FNRGF'
+    background2 = 'ratio'
+    downsample2 = True
+    clip2       = (1.0,1.3)
+    point2      = 'omr'
+    detail2     = 'fnrgf'
+    noise2      = 'None'
+    equalize2   = False
+    scale2 = (0, 1.0)
+
+elif fig == 8:
+
+    outfile = 'mgn_nopf.png'
+
+    cmap = plt.get_cmap('soholasco2')
+
+    title1 = 'MGN feature enhancement'
+    background1 = 'ratio'
+    downsample1 = True
+    clip1       = (1.0,1.3)
+    point1      = 'omr'
+    detail1     = 'mgn'
+    noise1      = 'None'
+    equalize1   = False
+    scale1 = (0.0, 1.0)
+
+    title2 = 'MGN with no point filter'
+    background2 = 'ratio'
+    downsample2 = True
+    clip2       = (1.0,1.3)
+    point2      = 'none'
+    detail2     = 'mgn'
+    noise2      = 'None'
+    equalize2   = False
+    scale2 = (0, 1.0)
+
+elif fig == 9:
+
+    outfile = 'mgn_omr.png'
+
+    cmap = plt.get_cmap('soholasco2')
+
+    title1 = 'OMR before MGN'
+    background1 = 'ratio'
+    downsample1 = True
+    clip1       = (1.0,1.3)
+    point1      = 'omr'
+    detail1     = 'mgn'
+    noise1      = 'None'
+    equalize1   = False
+    scale1 = (0.0, 1.0)
+
+    title2 = 'OMR after MGN'
+    background2 = 'ratio'
+    downsample2 = True
+    clip2       = (1.0,1.3)
+    point2      = 'none'
+    detail2     = 'mgn'
+    noise2      = 'omr'
     equalize2   = False
     scale2 = (0, 1.0)
 

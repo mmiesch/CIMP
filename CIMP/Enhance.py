@@ -153,7 +153,7 @@ def detail(im, header, filter = 'mgn', instrument = None, detector = None, \
         Multiscale Gaussian Noise filter (Morgan & Druckmuller 2014)
         """
         if params is None:
-            h = 0.1
+            h = 0.8
             gamma = 1.5
         else:
             h = params[0]
