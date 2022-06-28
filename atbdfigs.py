@@ -56,7 +56,7 @@ outdir = '/home/mark.miesch/Products/image_processing/figs/'
 #------------------------------------------------------------------------------
 # choose the images you want to compare
 
-fig = 3
+fig = 5
 
 if fig == 1:
 
@@ -136,6 +136,59 @@ elif fig == 3:
     equalize2   = False
     scale2 = (1.0, 1.3)
 
+elif fig == 4:
+
+    outfile = 'pf_compare.png'
+
+    cmap = plt.get_cmap('stereocor2')
+
+    title1 = 'Median bright point filter'
+    background1 = 'ratio'
+    downsample1 = True
+    clip1       = None
+    point1      = 'median'
+    detail1     = 'None'
+    noise1      = 'None'
+    equalize1   = False
+    scale1 = (1.0, 1.3)
+
+    title2 = 'OMR'
+    background2 = 'ratio'
+    downsample2 = True
+    clip2       = None
+    point2      = 'omr'
+    detail2     = 'None'
+    noise2      = 'None'
+    equalize2   = False
+    scale2 = (1.0, 1.3)
+
+elif fig == 5:
+
+    outfile = 'enhance_mgn.png'
+
+    cmap1 = plt.get_cmap('stereocor2')
+    cmap2 = plt.get_cmap('soholasco2')
+
+    title1 = 'Base image'
+    background1 = 'ratio'
+    downsample1 = True
+    clip1       = None
+    point1      = 'omr'
+    detail1     = 'None'
+    noise1      = 'None'
+    equalize1   = False
+    scale1 = (1.0, 1.3)
+
+    title2 = 'MGN feature enhancement'
+    background2 = 'ratio'
+    downsample2 = True
+    clip2       = (1.0,1.3)
+    point2      = 'omr'
+    detail2     = 'mgn'
+    noise2      = 'None'
+    equalize2   = False
+    scale2 = (0, 1.0)
+
 else:
     print("pick a valid figure number")
     exit()
@@ -143,8 +196,11 @@ else:
 #------------------------------------------------------------------------------
 # select color map
 
-#cmap = plt.get_cmap('soholasco2')
-#cmap = plt.get_cmap('stereocor2')
+try:
+    cmap1 = cmap
+    cmap2 = cmap
+except:
+    pass
 
 #------------------------------------------------------------------------------
 # First image
@@ -181,12 +237,12 @@ print(f"x2 res: {x2.data.shape[0]} {x2.data.shape[1]}")
 
 fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(12,6))
 
-ax[0].imshow(x1.data,cmap=cmap,vmin=scale1[0],vmax=scale1[1], \
+ax[0].imshow(x1.data,cmap=cmap1,vmin=scale1[0],vmax=scale1[1], \
              origin='lower')
 ax[0].axis('off')
 ax[0].set_title(title1)
 
-ax[1].imshow(x2.data,cmap=cmap,vmin=scale2[0],vmax=scale2[1], \
+ax[1].imshow(x2.data,cmap=cmap2,vmin=scale2[0],vmax=scale2[1], \
              origin='lower')
 ax[1].axis('off')
 ax[1].set_title(title2)
