@@ -29,10 +29,10 @@ def process(snap, background = 'ratio', point = 'none', \
         snap.mask_background(rmin = rmin, rmax = rmax, nonzero = True)
         snap.background_ratio(rescale=False)
 
+    snap.mask_annulus(rmin = rmin, rmax = rmax)
+
     if downsample:
         snap.downsample()
-
-    snap.mask_annulus(rmin = rmin, rmax = rmax)
 
     snap.enhance(clip = clip, point = point, detail = detail, noise_filter = noise, \
                  equalize = equalize)
@@ -56,7 +56,8 @@ outdir = '/home/mark.miesch/Products/image_processing/figs/'
 #------------------------------------------------------------------------------
 # choose the images you want to compare
 
-fig = 1
+fig = 2
+
 if fig == 1:
 
     outfile = 'background_subtraction.png'
@@ -85,7 +86,7 @@ if fig == 1:
 
 elif fig == 2:
 
-    outfile = 'pf_median.png'
+    outfile = 'downsampling.png'
 
     cmap = plt.get_cmap('stereocor2')
 
@@ -99,9 +100,9 @@ elif fig == 2:
     equalize1   = False
     scale1 = (1.0, 1.3)
 
-    title2 = 'Median point filter'
+    title2 = 'Downsample to 1024 x 1024'
     background2 = 'ratio'
-    downsample2 = False
+    downsample2 = True
     clip2       = None
     point2      = 'None'
     detail2     = 'None'
@@ -145,6 +146,9 @@ process(x2, background = background2, point = point2, detail = detail2, \
 #------------------------------------------------------------------------------
 print(f"x1 minmax: {x1.min()} {x1.max()}")
 print(f"x2 minmax: {x2.min()} {x2.max()}")
+
+print(f"x1 res: {x1.data.shape[0]} {x1.data.shape[1]}")
+print(f"x2 res: {x2.data.shape[0]} {x2.data.shape[1]}")
 
 #------------------------------------------------------------------------------
 # plot

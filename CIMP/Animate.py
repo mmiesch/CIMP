@@ -82,10 +82,10 @@ class movie:
             snap.mask_background(rmin = rmin, rmax = rmax, nonzero = True)
             snap.background_ratio(rescale=False)
 
+        snap.mask_annulus(rmin = rmin, rmax = rmax)
+
         if downsample:
             snap.downsample()
-
-        snap.mask_annulus(rmin = rmin, rmax = rmax)
 
         if method == 'enhance_mgn':
             snap.enhance(clip = clip, point = 'omr', detail = 'mgn', noise_filter = 'omr')
