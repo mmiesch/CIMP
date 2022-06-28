@@ -57,7 +57,7 @@ outdir = '/home/mark.miesch/Products/image_processing/figs/'
 #------------------------------------------------------------------------------
 # choose the images you want to compare
 
-fig = 9
+fig = 10
 
 if fig == 1:
 
@@ -291,6 +291,32 @@ elif fig == 9:
     point2      = 'none'
     detail2     = 'mgn'
     noise2      = 'omr'
+    equalize2   = False
+    scale2 = (0, 1.0)
+
+elif fig == 10:
+
+    outfile = 'omr_vs_bregman.png'
+
+    cmap = plt.get_cmap('soholasco2')
+
+    title1 = 'MGN'
+    background1 = 'ratio'
+    downsample1 = True
+    clip1       = (1.0,1.3)
+    point1      = 'none'
+    detail1     = 'mgn'
+    noise1      = 'none'
+    equalize1   = False
+    scale1 = (0.0, 1.0)
+
+    title2 = 'MGN + bregman noise filter'
+    background2 = 'ratio'
+    downsample2 = True
+    clip2       = (1.0,1.3)
+    point2      = 'none'
+    detail2     = 'mgn'
+    noise2      = 'bregman'
     equalize2   = False
     scale2 = (0, 1.0)
 
