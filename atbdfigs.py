@@ -57,7 +57,6 @@ outdir = '/home/mark.miesch/Products/image_processing/figs/'
 # choose the images you want to compare
 
 fig = 1
-
 if fig == 1:
 
     outfile = 'background_subtraction.png'
@@ -72,7 +71,7 @@ if fig == 1:
     detail1     = 'None'
     noise1      = 'None'
     equalize1   = False
-    scale1 = (0.0, 1.e-9)
+    scale1 = (0.0, 1.5e-10)
 
     title2 = 'Background ratio'
     background2 = 'ratio'
@@ -82,12 +81,37 @@ if fig == 1:
     detail2     = 'None'
     noise2      = 'None'
     equalize2   = False
-    scale2 = (1.0, 1.2)
+    scale2 = (1.0, 1.3)
+
+elif fig == 2:
+
+    outfile = 'pf_median.png'
+
+    cmap = plt.get_cmap('stereocor2')
+
+    title1 = 'Base image'
+    background1 = 'ratio'
+    downsample1 = False
+    clip1       = None
+    point1      = 'None'
+    detail1     = 'None'
+    noise1      = 'None'
+    equalize1   = False
+    scale1 = (1.0, 1.3)
+
+    title2 = 'Median point filter'
+    background2 = 'ratio'
+    downsample2 = False
+    clip2       = None
+    point2      = 'None'
+    detail2     = 'None'
+    noise2      = 'None'
+    equalize2   = False
+    scale2 = (1.0, 1.3)
 
 else:
     print("pick a valid figure number")
     exit()
-
 
 #------------------------------------------------------------------------------
 # select color map
@@ -104,6 +128,9 @@ x1 = snap.snapshot(file = file, bgfile = bgfile, \
 process(x1, background = background1, point = point1, detail = detail1, \
         noise = noise1, equalize = equalize1, downsample = downsample1, \
         clip = clip1, rmin = rmin, rmax = rmax)
+
+if background1 == 'subtract':
+    x1.powerlaw()
 
 #------------------------------------------------------------------------------
 # second image

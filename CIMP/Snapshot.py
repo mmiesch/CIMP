@@ -240,9 +240,10 @@ class snapshot:
                              self.detector, order, rmix)
         self.data = amap.data
 
-    def powerlaw(self):
+    def powerlaw(self, rescale = False):
         self.data = Enhance.powerlaw(self.data)
-        self.rescale()
+        if rescale:
+            self.rescale()
 
     def mask_annulus(self, rmin = 0.0, rmax = None):
         Enhance.mask_annulus(self.data, rmin = rmin, rmax = rmax)
