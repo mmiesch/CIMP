@@ -273,6 +273,10 @@ class snapshot:
         self.ny = self.data.shape[1]
         self.header['NAXIS1'] = self.nx
         self.header['NAXIS2'] = self.ny
+        self.header['CRPIX1'] /= 2
+        self.header['CRPIX2'] /= 2
+        self.header['CDELT1'] *= 2
+        self.header['CDELT2'] *= 2
         if rescale:
             self.rescale()
 

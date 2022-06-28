@@ -60,7 +60,7 @@ outdir = '/home/mark.miesch/Products/image_processing/figs/'
 #------------------------------------------------------------------------------
 # choose the images you want to compare
 
-fig = 10
+fig = 7
 
 if fig == 1:
 
@@ -227,7 +227,7 @@ elif fig == 7:
 
     title1 = 'MGN feature enhancement'
     background1 = 'ratio'
-    downsample1 = False
+    downsample1 = True
     clip1       = (1.0,1.3)
     point1      = 'omr'
     detail1     = 'mgn'
@@ -237,7 +237,7 @@ elif fig == 7:
 
     title2 = 'FNRGF'
     background2 = 'ratio'
-    downsample2 = False
+    downsample2 = True
     clip2       = (1.0,1.3)
     point2      = 'omr'
     detail2     = 'fnrgf'
