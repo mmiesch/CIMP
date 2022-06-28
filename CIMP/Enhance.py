@@ -147,6 +147,8 @@ def detail(im, header, filter = 'mgn', instrument = None, detector = None, \
     specification of instrument and detector are only needed if the filter is nrgf or fnrgf.  It is used to determine the field of view.
     """
 
+    rescale_output = True
+
     if filter == 'mgn':
         """
         Multiscale Gaussian Noise filter (Morgan & Druckmuller 2014)
@@ -183,10 +185,16 @@ def detail(im, header, filter = 'mgn', instrument = None, detector = None, \
     else:
         print(yellow+"Warning: no detail enhancement applied"+cend)
         b = im
+        rescale_output = False
 
-    return rescale(b)
+    if rescale_output:
+        return rescale(b)
+    else:
+        return b
 
 def denoise(im, filter = 'bregman'):
+
+    rescale_output = True
 
     if filter == 'tv':
         c = denoise_tv_chambolle(im, weight = 0.2)
@@ -201,8 +209,12 @@ def denoise(im, filter = 'bregman'):
     else:
         print(yellow+"Warning: no noise filter applied"+cend)
         c = im
+        rescale_output = False
 
-    return rescale(c)
+    if rescale_output:
+        return rescale(c)
+    else:
+        return c
 
 def mask_annulus(im, rmin = 0.0, rmax = None, missingval = 0.0):
     """

@@ -29,13 +29,13 @@ def process(snap, background = 'ratio', point = 'none', \
         snap.mask_background(rmin = rmin, rmax = rmax, nonzero = True)
         snap.background_ratio(rescale=False)
 
-#    if downsample:
-#        snap.downsample()
+    if downsample:
+        snap.downsample()
 
     snap.mask_annulus(rmin = rmin, rmax = rmax)
 
-#    snap.enhance(clip = clip, point = point, detail = detail, noise_filter = noise, \
-#                 equalize = equalize)
+    snap.enhance(clip = clip, point = point, detail = detail, noise_filter = noise, \
+                 equalize = equalize)
 
     return
 
@@ -67,19 +67,21 @@ if fig == 1:
     title1 = 'Background difference'
     background1 = 'subtract'
     downsample1 = False
-    clip1 = None
+    clip1       = None
     point1      = 'None'
     detail1     = 'None'
     noise1      = 'None'
+    equalize1   = False
     scale1 = (0.0, 1.e-9)
 
     title2 = 'Background ratio'
     background2 = 'ratio'
     downsample2 = False
-    clip2 = None
+    clip2       = None
     point2      = 'None'
     detail2     = 'None'
     noise2      = 'None'
+    equalize2   = False
     scale2 = (1.0, 1.2)
 
 else:
@@ -100,8 +102,8 @@ x1 = snap.snapshot(file = file, bgfile = bgfile, \
                   instrument = instrument, detector = detector)
 
 process(x1, background = background1, point = point1, detail = detail1, \
-        noise = noise1, downsample = downsample1, clip = clip1, \
-        rmin = rmin, rmax = rmax)
+        noise = noise1, equalize = equalize1, downsample = downsample1, \
+        clip = clip1, rmin = rmin, rmax = rmax)
 
 #------------------------------------------------------------------------------
 # second image
@@ -110,8 +112,8 @@ x2 = snap.snapshot(file = file, bgfile = bgfile, \
                   instrument = instrument, detector = detector)
 
 process(x2, background = background2, point = point2, detail = detail2, \
-        noise = noise2, downsample = downsample2, clip = clip2, \
-        rmin = rmin, rmax = rmax)
+        noise = noise2, equalize = equalize2, downsample = downsample2, \
+        clip = clip2, rmin = rmin, rmax = rmax)
 
 #------------------------------------------------------------------------------
 print(f"x1 minmax: {x1.min()} {x1.max()}")
