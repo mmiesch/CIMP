@@ -37,6 +37,9 @@ def process(snap, background = 'ratio', point = 'none', \
     snap.enhance(clip = clip, point = point, detail = detail, noise_filter = noise, \
                  equalize = equalize)
 
+    # hit it with another mask after processing
+    snap.mask_annulus(rmin=rmin, rmax = rmax, missingval = np.nanmin(snap.data))
+
     return
 
 #------------------------------------------------------------------------------
@@ -49,7 +52,7 @@ dir='/home/mark.miesch/sunpy/data/secchi_cor2/L1/2012/09/'
 bgfile = dir+'background.fts'
 file = dir+'20/20120920_153900_14c2A.fts'
 #file = dir+'20/20120920_222400_14c2A.fts'
-rmin = 0.15
+rmin = 0.16
 rmax = 1.0
 
 outdir = '/home/mark.miesch/Products/image_processing/figs/'
@@ -188,7 +191,7 @@ elif fig == 5:
     detail2     = 'mgn'
     noise2      = 'None'
     equalize2   = False
-    scale2 = (0, 1.0)
+    scale2 = (0.1, 1.0)
 
 elif fig == 6:
 
@@ -204,7 +207,7 @@ elif fig == 6:
     detail1     = 'mgn'
     noise1      = 'None'
     equalize1   = False
-    scale1 = (0.0, 1.0)
+    scale1 = (0.1, 1.0)
 
     title2 = 'Adaptive histogram equalization'
     background2 = 'ratio'
@@ -224,23 +227,23 @@ elif fig == 7:
 
     title1 = 'MGN feature enhancement'
     background1 = 'ratio'
-    downsample1 = True
+    downsample1 = False
     clip1       = (1.0,1.3)
     point1      = 'omr'
     detail1     = 'mgn'
     noise1      = 'None'
     equalize1   = False
-    scale1 = (0.0, 1.0)
+    scale1 = (0.1, 1.0)
 
     title2 = 'FNRGF'
     background2 = 'ratio'
-    downsample2 = True
+    downsample2 = False
     clip2       = (1.0,1.3)
     point2      = 'omr'
     detail2     = 'fnrgf'
     noise2      = 'None'
     equalize2   = False
-    scale2 = (0, 1.0)
+    scale2 = (0.15, 1.0)
 
 elif fig == 8:
 
@@ -256,7 +259,7 @@ elif fig == 8:
     detail1     = 'mgn'
     noise1      = 'None'
     equalize1   = False
-    scale1 = (0.0, 1.0)
+    scale1 = (0.1, 1.0)
 
     title2 = 'MGN with no point filter'
     background2 = 'ratio'
@@ -266,7 +269,7 @@ elif fig == 8:
     detail2     = 'mgn'
     noise2      = 'None'
     equalize2   = False
-    scale2 = (0, 1.0)
+    scale2 = (0.1, 1.0)
 
 elif fig == 9:
 
@@ -282,7 +285,7 @@ elif fig == 9:
     detail1     = 'mgn'
     noise1      = 'None'
     equalize1   = False
-    scale1 = (0.0, 1.0)
+    scale1 = (0.1, 1.0)
 
     title2 = 'OMR after MGN'
     background2 = 'ratio'
@@ -292,11 +295,11 @@ elif fig == 9:
     detail2     = 'mgn'
     noise2      = 'omr'
     equalize2   = False
-    scale2 = (0, 1.0)
+    scale2 = (0.1, 1.0)
 
 elif fig == 10:
 
-    outfile = 'omr_vs_bregman.png'
+    outfile = 'mgn_bregman.png'
 
     cmap = plt.get_cmap('soholasco2')
 
@@ -308,7 +311,7 @@ elif fig == 10:
     detail1     = 'mgn'
     noise1      = 'none'
     equalize1   = False
-    scale1 = (0.0, 1.0)
+    scale1 = (0.1, 1.0)
 
     title2 = 'MGN + bregman noise filter'
     background2 = 'ratio'
@@ -318,7 +321,7 @@ elif fig == 10:
     detail2     = 'mgn'
     noise2      = 'bregman'
     equalize2   = False
-    scale2 = (0, 1.0)
+    scale2 = (0.1, 1.0)
 
 else:
     print("pick a valid figure number")

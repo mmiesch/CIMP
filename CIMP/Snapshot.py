@@ -249,8 +249,8 @@ class snapshot:
         if rescale:
             self.rescale()
 
-    def mask_annulus(self, rmin = 0.0, rmax = None):
-        Enhance.mask_annulus(self.data, rmin = rmin, rmax = rmax)
+    def mask_annulus(self, rmin = 0.0, rmax = None, missingval = 0.0):
+        Enhance.mask_annulus(self.data, rmin = rmin, rmax = rmax, missingval = missingval)
 
     def mask_background(self, rmin = 0.0, rmax = None, nonzero = True):
         # If computing the ratio with the background, you don't want to
