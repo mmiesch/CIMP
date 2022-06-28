@@ -5,7 +5,7 @@ Driver for the Movie class
 from CIMP import Animate as an
 from sunpy.net import attrs as a
 
-pcase = 14
+pcase = 16
 
 rmin = 0.0
 rmax = None
@@ -253,7 +253,7 @@ elif pcase == 14:
 elif pcase == 15:
     # same as 14 but downsample to 1k x 1k
     title = "STEREO-A Sept 20, 2012"
-    outfile = f"/stereo_a_2012_09_20_p{pcase}_1k_rs72.mp4"
+    outfile = f"/stereo_a_2012_09_20_p{pcase}.mp4"
     instrument = a.Instrument.secchi
     detector = a.Detector.cor2
     dir = '/home/mark.miesch/sunpy/data/secchi_cor2/L1/2012/09/20'
@@ -261,8 +261,8 @@ elif pcase == 15:
     background = 'ratio'
     method = 'none'
     colormap = 'stereocor2'
-    scale = (1.0,1.2)
-    rmin = 0.15
+    scale = (1.0,1.3)
+    rmin = 0.16
     rmax = 1.0
     resample = 72
     day = '2012-09-20'
@@ -270,7 +270,7 @@ elif pcase == 15:
     framedir = '/home/mark.miesch/Products/image_processing/frames/2012_09_20/noenhance'
 
 elif pcase == 16:
-    # Try an mgn enhanced version of the stereo L1 data 
+    # Try an mgn enhanced version of the stereo L1 data
     title = "STEREO-A Sept 20, 2012"
     outfile = f"/stereo_a_2012_09_20_p{pcase}_mgn.mp4"
     instrument = a.Instrument.secchi
@@ -279,11 +279,10 @@ elif pcase == 16:
     bgfile = '/home/mark.miesch/sunpy/data/secchi_cor2/L1/2012/09/background.fts'
     background = 'ratio'
     method = 'enhance_mgn'
-    #colormap = 'stereocor2'
     colormap = 'soholasco2'
-    clip = (1, 1.2) # clipping the ratio image
-    scale = (0.0,1.0)
-    rmin = 0.15
+    clip = (1, 1.3) # clipping the ratio image
+    scale = (0.1,1.0)
+    rmin = 0.16
     rmax = 1.0
     resample = 72
     day = '2012-09-20'
@@ -302,8 +301,8 @@ elif pcase == 17:
     method = 'enhance_mgn'
     #colormap = 'stereocor2'
     colormap = 'soholasco2'
-    clip = (1, 1.2) # clipping the ratio image
-    scale = (0.0,1.0)
+    clip = (1, 1.3) # clipping the ratio image
+    scale = (0.1,1.0)
     rmin = 0.15
     rmax = 1.0
     resample = 72

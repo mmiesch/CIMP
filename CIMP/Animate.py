@@ -88,10 +88,12 @@ class movie:
             snap.downsample()
 
         if method == 'enhance_mgn':
-            snap.enhance(clip = clip, point = 'omr', detail = 'mgn', noise_filter = 'omr')
+            snap.enhance(clip = clip, point = 'omr', detail = 'mgn', noise_filter = 'none')
         elif method == 'enhance_fnrgf':
-            snap.enhance(clip = clip, point = 'omr', detail = 'fnrgf', noise_filter = 'omr')
+            snap.enhance(clip = clip, point = 'omr', detail = 'fnrgf', noise_filter = 'none')
 
+        # hit it with another mask after processing
+        snap.mask_annulus(rmin=rmin, rmax = rmax, missingval = np.nanmin(snap.data))
 
     def noise_gate(self, maps, cubesize = (3, 12, 12), model = 'hybrid',
                    factor = 2.0):
