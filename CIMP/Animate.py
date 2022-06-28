@@ -87,9 +87,6 @@ class movie:
 
         snap.mask_annulus(rmin = rmin, rmax = rmax)
 
-        if clip is not None:
-            snap.clip(clip)
-
         if method == 'enhance_mgn':
             snap.enhance(clip = clip, point = 'omr', detail = 'mgn', noise_filter = 'omr')
         elif method == 'enhance_fnrgf':
@@ -155,6 +152,7 @@ class movie:
         """
 
         maps = []
+        files = []
         times = np.array([], dtype = 'float64')
 
         # first pass: get data from all valid files
@@ -176,6 +174,7 @@ class movie:
                              rmin = rmin, rmax = rmax)
                 maps.append(x.map())
                 times = np.append(times, x.time.gps)
+                files.append(file)
             except:
                 print(red+f"Skipping {file}"+cend)
                 pass
@@ -185,6 +184,7 @@ class movie:
 
         # second pass: remove corrupted images
         valid_maps = []
+        valid_files = []
         valid_times = []
         nx = maps[0].data.shape[0]
         ny = maps[0].data.shape[1]
@@ -199,15 +199,21 @@ class movie:
             if self.valid(maps[idx].data, ref, tolerance, diff_ratio, \
                           file = maps[idx].fits_header['FILENAME']):
                 valid_maps.append(maps[idx])
+                valid_files.append(files[idx])
                 valid_times.append(times[idx])
 
         # free up some memory before resampling
         maps = valid_maps
+        files = valid_files
         times = valid_times
         refimages = 0
         valid_maps = 0
         valid_times = 0
         N_valid_files = len(maps)
+
+        # show which file corresponds to each frame (before resampling)
+        for idx in np.arange(0,len(files)):
+            print(f"frame {idx} = {files[idx]}")
 
         # optionally resample on to a regular time grid
         # set resample to be an integer equal to the number

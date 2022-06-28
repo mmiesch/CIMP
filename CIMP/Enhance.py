@@ -173,14 +173,16 @@ def detail(im, header, filter = 'mgn', instrument = None, detector = None, \
         Fourier Normaling Radial Gradient Filter (Druckmullerova et al 2011)
         """
         amap = sunpy.map.Map(im, header)
-        bmap = fnrgf(amap, instrument, detector, order = 20, rmix = rmix)
+        bmap = fnrgf(amap, instrument, detector)
         b = bmap.data
 
     elif filter == 'contrast':
         asc = rescale(a)
         b = enhance_contrast_percentile(asc, disk(2), p0=.1, p1=.9)
+
     else:
-        b = a
+        print(yellow+"Warning: no detail enhancement applied"+cend)
+        b = im
 
     return rescale(b)
 

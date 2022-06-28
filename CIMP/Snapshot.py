@@ -132,11 +132,11 @@ class snapshot:
         return cls(file, bgfile, s['instrument'], s['detector'])
 
     def min(self):
-        nonzero_pix = np.masked_equal(self.data, 0.0, copy = False)
+        nonzero_pix = np.ma.masked_equal(self.data, 0.0, copy = False)
         return nonzero_pix.min()
 
     def max(self):
-        nonzero_pix = np.masked_equal(self.data, 0.0, copy = False)
+        nonzero_pix = np.ma.masked_equal(self.data, 0.0, copy = False)
         return nonzero_pix.max()
 
     def min_positive(self):
@@ -151,13 +151,13 @@ class snapshot:
     def map(self):
         return sunpy.map.Map(self.data, self.header)
 
-    def subtract_background(self, rescale = True, cliprange = 'image'):
+    def subtract_background(self, rescale = False, cliprange = 'image'):
         self.data = self.data - self.background
 
         if rescale:
             self.rescale(cliprange = cliprange)
 
-    def background_ratio(self, rescale = True, cliprange = 'image'):
+    def background_ratio(self, rescale = False, cliprange = 'image'):
         """
         This method will compute a ratio relative to the background image and optionally re-scale.  This is similar to NRL's pipeline for creating the daily "pretties" for LASCO, STERO, and PSP/WISPR.
         """
@@ -169,7 +169,7 @@ class snapshot:
             self.rescale(cliprange = cliprange)
 
     def enhance(self, clip = None, point = 'omr', detail = 'mgn', \
-                noise_filter = 'omr'):
+                noise_filter = 'omr', equalize = True):
         """
         Combination of multiple processing steps for plotting
         clip (optional): 2-element tuple specifying the range to clip the data
@@ -184,8 +184,10 @@ class snapshot:
 
         if point == 'omr':
             a = Enhance.omr(self.data, rescaleim = False)
-        else:
+        elif point == 'median':
             a = Enhance.bright_point_filter(self.data, rescaleim = False)
+        else:
+            a = self.data
 
         # contrast stretching via clipping
         if clip is not None:
@@ -199,7 +201,10 @@ class snapshot:
         a = Enhance.denoise(a, noise_filter)
 
         # adaptive equalization
-        if (detail != 'mgn'):
+        if detail == 'mgn':
+            equalize = False
+
+        if equalize:
             a = Enhance.equalize(a)
 
         self.data = a
