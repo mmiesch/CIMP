@@ -45,7 +45,7 @@ def point_filter(im, threshold = 2.0, radius = 20, rescaleim = True):
     else:
         return a
 
-def bright_point_filter(im, threshold = 2.0, radius = 20, rescaleim = True):
+def bright_point_filter(im, threshold = 2.0, radius = 20, rescaleim = False):
     """
     Simpler version for just bright points
     """
@@ -79,7 +79,6 @@ def omr(im, radius = 3, rescaleim = True):
         return rescale(b)
     else:
         return b
-
 
 def nrgf(imap, instrument = 'lasco', detector = 'c3'):
 

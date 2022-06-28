@@ -56,7 +56,7 @@ outdir = '/home/mark.miesch/Products/image_processing/figs/'
 #------------------------------------------------------------------------------
 # choose the images you want to compare
 
-fig = 2
+fig = 3
 
 if fig == 1:
 
@@ -90,7 +90,7 @@ elif fig == 2:
 
     cmap = plt.get_cmap('stereocor2')
 
-    title1 = 'Base image'
+    title1 = 'Base image 2048 x 2048'
     background1 = 'ratio'
     downsample1 = False
     clip1       = None
@@ -105,6 +105,32 @@ elif fig == 2:
     downsample2 = True
     clip2       = None
     point2      = 'None'
+    detail2     = 'None'
+    noise2      = 'None'
+    equalize2   = False
+    scale2 = (1.0, 1.3)
+
+elif fig == 3:
+
+    outfile = 'pf_median.png'
+
+    cmap = plt.get_cmap('stereocor2')
+
+    title1 = 'Base image'
+    background1 = 'ratio'
+    downsample1 = True
+    clip1       = None
+    point1      = 'None'
+    detail1     = 'None'
+    noise1      = 'None'
+    equalize1   = False
+    scale1 = (1.0, 1.3)
+
+    title2 = 'Median bright point filter'
+    background2 = 'ratio'
+    downsample2 = True
+    clip2       = None
+    point2      = 'median'
     detail2     = 'None'
     noise2      = 'None'
     equalize2   = False

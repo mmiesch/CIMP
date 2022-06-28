@@ -185,7 +185,10 @@ class snapshot:
         if point == 'omr':
             a = Enhance.omr(self.data, rescaleim = False)
         elif point == 'median':
-            a = Enhance.bright_point_filter(self.data, rescaleim = False)
+            #a = Enhance.bright_point_filter(self.data, rescaleim = False)
+            # much better for the 2k x 2k STEREO L1 images
+            a = Enhance.bright_point_filter(self.data, threshold = 1.1, radius = 10, \
+                                            rescaleim = False)
         else:
             a = self.data
 
