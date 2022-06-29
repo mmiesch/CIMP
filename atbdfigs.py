@@ -60,7 +60,7 @@ outdir = '/home/mark.miesch/Products/image_processing/figs/'
 #------------------------------------------------------------------------------
 # choose the images you want to compare
 
-fig = 7
+fig = 11
 
 if fig == 1:
 
@@ -320,6 +320,36 @@ elif fig == 10:
     point2      = 'none'
     detail2     = 'mgn'
     noise2      = 'bregman'
+    equalize2   = False
+    scale2 = (0.1, 1.0)
+
+elif fig == 11:
+
+    outfile = 'mgn_pf.png'
+
+    # override file choice
+    #file = dir+'20/20120920_232400_14c2A.fts'
+    file = dir+'20/20120920_225400_14c2A.fts'
+
+    cmap = plt.get_cmap('soholasco2')
+
+    title1 = 'MGN with OMR filter'
+    background1 = 'ratio'
+    downsample1 = True
+    clip1       = (1.0,1.3)
+    point1      = 'omr'
+    detail1     = 'mgn'
+    noise1      = 'none'
+    equalize1   = False
+    scale1 = (0.1, 1.0)
+
+    title2 = 'MGN without OMR filter'
+    background2 = 'ratio'
+    downsample2 = True
+    clip2       = (1.0,1.3)
+    point2      = 'none'
+    detail2     = 'mgn'
+    noise2      = 'none'
     equalize2   = False
     scale2 = (0.1, 1.0)
 
