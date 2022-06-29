@@ -328,7 +328,6 @@ elif fig == 11:
     outfile = 'mgn_pf.png'
 
     # override file choice
-    #file = dir+'20/20120920_232400_14c2A.fts'
     file = dir+'20/20120920_225400_14c2A.fts'
 
     cmap = plt.get_cmap('soholasco2')
