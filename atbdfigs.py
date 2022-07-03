@@ -25,9 +25,11 @@ def process(snap, background = 'ratio', point = 'none', \
     if background == 'subtract':
         snap.mask_background(rmin = rmin, rmax = rmax, nonzero = False)
         snap.subtract_background(rescale=False)
-    else:
+    elif background == 'ratio':
         snap.mask_background(rmin = rmin, rmax = rmax, nonzero = True)
         snap.background_ratio(rescale=False)
+    else:
+        snap.mask_background(rmin = rmin, rmax = rmax, nonzero = False)
 
     snap.mask_annulus(rmin = rmin, rmax = rmax)
 
@@ -60,7 +62,7 @@ outdir = '/home/mark.miesch/Products/image_processing/figs/'
 #------------------------------------------------------------------------------
 # choose the images you want to compare
 
-fig = 11
+fig = 12
 
 if fig == 1:
 
@@ -352,6 +354,32 @@ elif fig == 11:
     equalize2   = False
     scale2 = (0.1, 1.0)
 
+elif fig == 12:
+
+    outfile = 'raw_background.png'
+
+    cmap = plt.get_cmap('soholasco2')
+
+    title1 = 'STEREO L1 image'
+    background1 = 'none'
+    downsample1 = False
+    clip1       = None
+    point1      = 'none'
+    detail1     = 'none'
+    noise1      = 'none'
+    equalize1   = False
+    scale1 = (0.0, 1.0e-9)
+
+    title2 = 'Monthly min background'
+    background2 = 'ratio'
+    downsample2 = False
+    clip2       = (1.0,1.3)
+    point2      = 'none'
+    detail2     = 'none'
+    noise2      = 'none'
+    equalize2   = False
+    scale2 = (0.0, 1.0e-9)
+
 else:
     print("pick a valid figure number")
     exit()
@@ -398,19 +426,37 @@ print(f"x2 res: {x2.data.shape[0]} {x2.data.shape[1]}")
 #------------------------------------------------------------------------------
 # plot
 
+if fig == 12:
+    data1 = x1.data
+    data2 = x1.background
+else:
+    data1 = x1.data
+    data2 = x2.data
+
 fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(12,6))
 
-ax[0].imshow(x1.data,cmap=cmap1,vmin=scale1[0],vmax=scale1[1], \
+ax[0].imshow(data1,cmap=cmap1,vmin=scale1[0],vmax=scale1[1], \
              origin='lower')
 ax[0].axis('off')
 ax[0].set_title(title1)
 
-ax[1].imshow(x2.data,cmap=cmap2,vmin=scale2[0],vmax=scale2[1], \
+ax[1].imshow(data2,cmap=cmap2,vmin=scale2[0],vmax=scale2[1], \
              origin='lower')
 ax[1].axis('off')
 ax[1].set_title(title2)
 
 fig.tight_layout(pad=1,rect=(0.01,0.01,.99,.98))
+
+# label
+label = True
+
+if label:
+    plt.annotate("(a)", (0.05,0.87), xycoords = 'figure fraction', color='white', \
+                 fontsize = 'x-large', fontweight = 'semibold')
+
+    plt.annotate("(b)", (0.54,0.87), xycoords = 'figure fraction', color='white', \
+                 fontsize = 'x-large', fontweight = 'semibold')
+
 
 plt.savefig(outdir+outfile)
 
