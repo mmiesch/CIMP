@@ -62,7 +62,7 @@ outdir = '/home/mark.miesch/Products/image_processing/figs/'
 #------------------------------------------------------------------------------
 # choose the images you want to compare
 
-fig = 2
+fig = 3
 
 if fig == 1:
 
@@ -120,6 +120,9 @@ elif fig == 3:
 
     outfile = 'pf_median.png'
 
+    # override file choice
+    file = dir+'20/20120920_225400_14c2A.fts'
+
     cmap = plt.get_cmap('stereocor2')
 
     title1 = 'Base image'
@@ -145,6 +148,9 @@ elif fig == 3:
 elif fig == 4:
 
     outfile = 'pf_compare.png'
+
+    # override file choice
+    file = dir+'20/20120920_225400_14c2A.fts'
 
     cmap = plt.get_cmap('stereocor2')
 
