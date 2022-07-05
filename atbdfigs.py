@@ -62,7 +62,7 @@ outdir = '/home/mark.miesch/Products/image_processing/figs/'
 #------------------------------------------------------------------------------
 # choose the images you want to compare
 
-fig = 12
+fig = 2
 
 if fig == 1:
 
@@ -422,6 +422,8 @@ print(f"x2 minmax: {x2.min()} {x2.max()}")
 
 print(f"x1 res: {x1.data.shape[0]} {x1.data.shape[1]}")
 print(f"x2 res: {x2.data.shape[0]} {x2.data.shape[1]}")
+
+print(f"x1 time {x1.header['DATE-OBS']}")
 
 #------------------------------------------------------------------------------
 # plot
