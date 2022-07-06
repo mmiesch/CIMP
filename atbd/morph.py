@@ -46,8 +46,6 @@ fig.tight_layout(pad=1,rect=(0.01,0.01,.99,.98))
 yy = 0.84
 dx = 0.02
 
-print(f"MSM {ax1.get_position().x0}")
-
 xx = ax1.get_position().x0 + dx
 plt.annotate("(a)", (xx,yy), xycoords = 'figure fraction', color='white', \
              fontsize = 'x-large', fontweight = 'semibold')
@@ -59,5 +57,7 @@ plt.annotate("(b)", (xx,yy), xycoords = 'figure fraction', color='white', \
 xx = ax3.get_position().x0 + dx
 plt.annotate("(c)", (xx,yy), xycoords = 'figure fraction', color='white', \
              fontsize = 'x-large', fontweight = 'semibold')
+
+plt.savefig("../../figs/morph.png")
 
 plt.show()
