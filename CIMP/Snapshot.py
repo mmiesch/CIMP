@@ -169,7 +169,7 @@ class snapshot:
             self.rescale(cliprange = cliprange)
 
     def enhance(self, clip = None, point = 'omr', detail = 'mgn', \
-                noise_filter = 'omr', equalize = True):
+                noise_filter = 'omr', equalize = True, params = None):
         """
         Combination of multiple processing steps for plotting
         clip (optional): 2-element tuple specifying the range to clip the data
@@ -199,7 +199,8 @@ class snapshot:
         # various techniques to bring out detail
         a = Enhance.detail(a, self.header, filter = detail, \
                            instrument = self.instrument, \
-                           detector = self.detector)
+                           detector = self.detector, \
+                           params = params)
 
         # optionally remove noise
         a = Enhance.denoise(a, noise_filter)

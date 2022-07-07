@@ -20,7 +20,8 @@ This replicates the process() method in the Animate class but with a little more
 
 def process(snap, background = 'ratio', point = 'none', \
             detail = 'none', noise = 'none', equalize = False, \
-            downsample = False, clip = None, rmin = 0.0, rmax = None):
+            downsample = False, clip = None, rmin = 0.0, rmax = None, \
+            params = None):
 
     if background == 'subtract':
         snap.mask_background(rmin = rmin, rmax = rmax, nonzero = False)
@@ -37,7 +38,7 @@ def process(snap, background = 'ratio', point = 'none', \
         snap.downsample()
 
     snap.enhance(clip = clip, point = point, detail = detail, noise_filter = noise, \
-                 equalize = equalize)
+                 equalize = equalize, params = params)
 
     # hit it with another mask after processing
     snap.mask_annulus(rmin=rmin, rmax = rmax, missingval = np.nanmin(snap.data))
@@ -56,13 +57,15 @@ file = dir+'20/20120920_153900_14c2A.fts'
 #file = dir+'20/20120920_222400_14c2A.fts'
 rmin = 0.16
 rmax = 1.0
+params1 = None
+params2 = None
 
 outdir = '/home/mark.miesch/Products/image_processing/figs/'
 
 #------------------------------------------------------------------------------
 # choose the images you want to compare
 
-fig = 3
+fig = 13
 
 if fig == 1:
 
@@ -386,6 +389,34 @@ elif fig == 12:
     equalize2   = False
     scale2 = (0.0, 1.0e-9)
 
+elif fig == 13:
+
+    outfile = 'mgn_gamma.png'
+
+    cmap1 = plt.get_cmap('soholasco2')
+    cmap2 = plt.get_cmap('soholasco2')
+
+    title1 = 'MGN Enhancement'
+    background1 = 'ratio'
+    downsample1 = True
+    clip1       = (1.0,1.3)
+    point1      = 'omr'
+    detail1     = 'mgn'
+    noise1      = 'None'
+    equalize1   = False
+    scale1 = (0.1, 1.0)
+
+    title2 = 'Gamma Correction'
+    background2 = 'ratio'
+    downsample2 = True
+    clip2       = (1.0,1.3)
+    point2      = 'omr'
+    detail2     = 'mgn'
+    noise2      = 'None'
+    equalize2   = False
+    scale2 = (0.1, 1.0)
+    params2 = (1.0, 1.5)
+
 else:
     print("pick a valid figure number")
     exit()
@@ -407,7 +438,7 @@ x1 = snap.snapshot(file = file, bgfile = bgfile, \
 
 process(x1, background = background1, point = point1, detail = detail1, \
         noise = noise1, equalize = equalize1, downsample = downsample1, \
-        clip = clip1, rmin = rmin, rmax = rmax)
+        clip = clip1, rmin = rmin, rmax = rmax, params = params1)
 
 if background1 == 'subtract':
     x1.powerlaw()
@@ -420,7 +451,7 @@ x2 = snap.snapshot(file = file, bgfile = bgfile, \
 
 process(x2, background = background2, point = point2, detail = detail2, \
         noise = noise2, equalize = equalize2, downsample = downsample2, \
-        clip = clip2, rmin = rmin, rmax = rmax)
+        clip = clip2, rmin = rmin, rmax = rmax, params = params2)
 
 #------------------------------------------------------------------------------
 print(f"x1 minmax: {x1.min()} {x1.max()}")

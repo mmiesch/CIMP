@@ -61,7 +61,8 @@ class movie:
             self.ny = hdu.header['NAXIS2']
 
     def process(self, snap, background = 'ratio', method = 'none', \
-                downsample = False, clip = None, rmin = 0.0, rmax = None):
+                downsample = False, clip = None, rmin = 0.0, rmax = None, \
+                params = None):
         """
         Image processing to be performed for each snapshot
 
@@ -88,7 +89,7 @@ class movie:
             snap.downsample()
 
         if method == 'enhance_mgn':
-            snap.enhance(clip = clip, point = 'omr', detail = 'mgn', noise_filter = 'none')
+            snap.enhance(clip = clip, point = 'omr', detail = 'mgn', noise_filter = 'none', params = params)
         elif method == 'enhance_fnrgf':
             snap.enhance(clip = clip, point = 'omr', detail = 'fnrgf', noise_filter = 'none')
 
@@ -143,7 +144,7 @@ class movie:
                  scale = (0.0, 1.0), rmin = None, rmax = None, title = None, \
                  framedir = None, tolerance = None, diff_ratio = 10.0, \
                  resample = None, day = None, noisegate = False, \
-                 downsample = False):
+                 downsample = False, params = None):
         """
         loop over all valid files in a directory
         If you want to do nearest-neighbor interpolation on a regular grid, 
@@ -173,7 +174,7 @@ class movie:
                 assert(x.ny == self.ny)
                 self.process(x, background = background, method = method, \
                              downsample = downsample, clip = clip, \
-                             rmin = rmin, rmax = rmax)
+                             rmin = rmin, rmax = rmax, params = params)
                 maps.append(x.map())
                 times = np.append(times, x.time.gps)
                 files.append(file)
