@@ -124,9 +124,9 @@ if fig == 1:
     c1 = radial.set_attenuation_coefficients(kmax1)
 
     title2 = 'FNRGF2'
-    scale2 = (0.0,1.0)
+    scale2 = (0.15,1.0)
     kmax2 = 10
-    rat2  = [1,10]
+    rat2  = [1,15]
     n2 = 130
     c2 = radial.set_attenuation_coefficients(kmax2)
 
@@ -155,41 +155,39 @@ process(x1, background = background, point = point, detail = detail, \
         clip = clip, rmin = rmin, rmax = rmax, params = params1)
 
 #------------------------------------------------------------------------------
-# second image
-
-x2 = snap.snapshot(file = file, bgfile = bgfile, \
-                  instrument = instrument, detector = detector)
-
-process(x2, background = background, point = point, detail = detail, \
-        noise = noise, equalize = equalize, downsample = downsample, \
-        clip = clip, rmin = rmin, rmax = rmax, params = params2)
-
-#------------------------------------------------------------------------------
 # parameters that should be the same for both
 
-rmin = 3.0
-rmax = 15.0
+edges = equally_spaced_bins(3.0, 15.0) * u.R_sun
 
-edges = equally_spaced_bins(rmin, rmax)
-edges *= u.R_sun
+edges2 = equally_spaced_bins(1.0, 15.0) * u.R_sun
 
 #------------------------------------------------------------------------------
 
-map1 = x1.map()
+input1 = x1.data
+input2 = x1.data.copy()
+
+header = x1.header
+
+map1 = Map(input1, header)
 Rmap1 = radial.fnrgf(map1, edges, kmax1, c1, ratio_mix = rat1)
 data1 = rescale(Rmap1.data)
 mask_annulus(data1, rmin=0.16, rmax = 1.0, missingval = np.nanmin(data1))
 
-data2 = x2.data
+print(f"Map Scale: {map1.scale}")
+
+map2 = Map(input2, header)
+Rmap2 = radial.fnrgf(map2, edges, kmax2, c2, ratio_mix = rat2)
+data2 = rescale(Rmap2.data)
+mask_annulus(data2, rmin=0.16, rmax = 1.0, missingval = np.nanmin(data2))
 
 #------------------------------------------------------------------------------
-print(f"x1 minmax: {x1.min()} {x1.max()}")
-print(f"x2 minmax: {x2.min()} {x2.max()}")
+print(f"x1 minmax: {np.min(data1)} {np.max(data1)}")
+print(f"x2 minmax: {np.min(data2)} {np.max(data2)}")
 
-print(f"x1 res: {x1.data.shape[0]} {x1.data.shape[1]}")
-print(f"x2 res: {x2.data.shape[0]} {x2.data.shape[1]}")
+print(f"x1 res: {data1.shape[0]} {data2.shape[1]}")
+print(f"x2 res: {data1.shape[0]} {data2.shape[1]}")
 
-print(f"x1 time {x1.header['DATE-OBS']}")
+print(f"x1 time {header['DATE-OBS']}")
 
 #------------------------------------------------------------------------------
 # plot
