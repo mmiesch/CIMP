@@ -65,7 +65,7 @@ outdir = '/home/mark.miesch/Products/image_processing/figs/'
 #------------------------------------------------------------------------------
 # choose the images you want to compare
 
-fig = 6
+fig = 7
 
 if fig == 1:
 
@@ -236,7 +236,7 @@ elif fig == 7:
 
     cmap = plt.get_cmap('soholasco2')
 
-    title1 = 'MGN feature enhancement'
+    title1 = 'MGN'
     background1 = 'ratio'
     downsample1 = True
     clip1       = (1.0,1.3)

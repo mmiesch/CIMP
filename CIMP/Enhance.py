@@ -127,14 +127,18 @@ def powerlaw(im, n = 2.0, center = None):
 
     return f
 
-def clip(im, min = None, max = None):
+def clip(im, min = None, max = None, rescale_output = False):
     if min is None:
         min = np.min(im)
     if max is None:
         max = np.max(im)
 
     a = im.clip(min = min, max = max)
-    return rescale(a)
+
+    if rescale_output:
+        return rescale(a)
+    else:
+        return a
 
 def equalize(im):
     ceq = exposure.equalize_adapthist(im)

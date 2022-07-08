@@ -194,7 +194,7 @@ class snapshot:
 
         # contrast stretching via clipping
         if clip is not None:
-            a = Enhance.clip(a, min = clip[0], max = clip[1])
+            a = Enhance.clip(a, min = clip[0], max = clip[1], rescale_output = True)
 
         # various techniques to bring out detail
         a = Enhance.detail(a, self.header, filter = detail, \
