@@ -26,7 +26,7 @@ fov = {
     'lasco-c2'   : (1.5,  6.0),
     'lasco-c3'   : (3.5, 30.0),
     'secchi-cor1': (1.5,  4.0),
-    'secchi-cor2': (3.0, 15.0),
+    'secchi-cor2': (2.45, 15.0),
     'cme-model1' : (6.0, 120.0)
 }
 
@@ -89,7 +89,7 @@ def nrgf(imap, instrument = 'lasco', detector = 'c3'):
 
     return radial.nrgf(imap, edges)
 
-def fnrgf(imap, instrument = 'lasco', detector = 'c3', order = 20, rmix = [1,15]):
+def fnrgf(imap, instrument = 'lasco', detector = 'c3', order = 20, rmix = [4,1]):
     """
     Fourier Normaling Radial Gradient Filter (Druckmullerova et al 2011)
     """

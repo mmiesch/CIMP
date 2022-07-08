@@ -24,6 +24,7 @@ This replicates the process() method in the Animate class but with a little more
 
 """
 def rescale(im):
+    print(f"Amp prior to rescale {np.min(im)} {np.max(im)}")
     return exposure.rescale_intensity(im, out_range=(0,1))
 
 def mask_annulus(im, rmin = 0.0, rmax = None, missingval = 0.0):
@@ -100,7 +101,7 @@ outdir = '/home/mark.miesch/Products/image_processing/figs/'
 #------------------------------------------------------------------------------
 # choose the images you want to compare
 
-fig = 1
+fig = 2
 
 background = 'ratio'
 downsample = True
@@ -109,26 +110,43 @@ point      = 'omr'
 detail     = 'none'
 noise      = 'none'
 equalize   = False
+cmap = plt.get_cmap('soholasco2')
 
 if fig == 1:
 
     outfile = 'fnrgf1.png'
 
-    cmap = plt.get_cmap('soholasco2')
-
-    title1 = 'FNRGF1'
+    title1 = 'FNRGF kmax = 20'
     scale1 = (0.15,1.0)
     kmax1 = 20
     rat1  = [1,15]
     n1 = 130
     c1 = radial.set_attenuation_coefficients(kmax1)
 
-    title2 = 'FNRGF2'
+    title2 = 'FNRGF kmax = 10'
     scale2 = (0.15,1.0)
     kmax2 = 10
     rat2  = [1,15]
     n2 = 130
     c2 = radial.set_attenuation_coefficients(kmax2)
+
+elif fig == 2:
+
+    outfile = 'fnrgf2.png'
+
+    scale1 = (0.15,1.0)
+    kmax1 = 20
+    rat1  = [1,1]
+    n1 = 130
+    c1 = radial.set_attenuation_coefficients(kmax1)
+    title1 = f'FNRGF rat = {rat1[0]}, {rat1[1]}'
+
+    scale2 = (0.15,1.0)
+    kmax2 = 20
+    rat2  = [4,1]
+    n2 = 130
+    c2 = radial.set_attenuation_coefficients(kmax2)
+    title2 = f'FNRGF rat = {rat2[0]}, {rat2[1]}'
 
 else:
     print("pick a valid figure number")
@@ -157,14 +175,14 @@ process(x1, background = background, point = point, detail = detail, \
 #------------------------------------------------------------------------------
 # parameters that should be the same for both
 
-edges = equally_spaced_bins(3.0, 15.0) * u.R_sun
-
-edges2 = equally_spaced_bins(1.0, 15.0) * u.R_sun
+edges = equally_spaced_bins(2.45, 15.0) * u.R_sun
 
 #------------------------------------------------------------------------------
 
 input1 = x1.data
 input2 = x1.data.copy()
+
+print(f"input minmax: {np.min(input1)} {np.max(input1)}")
 
 header = x1.header
 
