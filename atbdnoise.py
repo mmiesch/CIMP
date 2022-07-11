@@ -95,7 +95,7 @@ if fig == 1:
 
 elif fig == 2:
 
-    outfile = 'lasco_nonorm.png'
+    outfile = 'lasco_norm.png'
 
     cmap = plt.get_cmap('stereocor2')
 
@@ -108,7 +108,7 @@ elif fig == 2:
     detail1     = 'None'
     noise1      = 'None'
     equalize1   = False
-    scale1 = (1.0, 1.3)
+    scale1 = (0.056, 0.074)
 
     file2 = dir+'15/32296619.fts'
     title2 = file2.split('/')[-1]
@@ -119,7 +119,7 @@ elif fig == 2:
     detail2     = 'None'
     noise2      = 'None'
     equalize2   = False
-    scale2 = (1.0, 1.3)
+    scale2 = (0.056, 0.074)
 
 else:
     print("pick a valid figure number")
@@ -144,8 +144,7 @@ process(x1, background = background1, point = point1, detail = detail1, \
         noise = noise1, equalize = equalize1, downsample = downsample1, \
         clip = clip1, rmin = rmin, rmax = rmax, params = params1)
 
-if background1 == 'subtract':
-    x1.powerlaw()
+print(f"file1 exposure time {x1.header['EXPTIME']}")
 
 #------------------------------------------------------------------------------
 # second image
@@ -156,6 +155,8 @@ x2 = snap.snapshot(file = file2, bgfile = bgfile, \
 process(x2, background = background2, point = point2, detail = detail2, \
         noise = noise2, equalize = equalize2, downsample = downsample2, \
         clip = clip2, rmin = rmin, rmax = rmax, params = params2)
+
+print(f"file2 exposure time {x2.header['EXPTIME']}")
 
 #------------------------------------------------------------------------------
 print(f"x1 minmax: {x1.min()} {x1.max()}")

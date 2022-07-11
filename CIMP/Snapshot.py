@@ -51,7 +51,7 @@ class snapshot:
     """A snapshot is defined as a single coronagraph images for a particular instrument, detector, and time"""
 
     def __init__(self, file = None, bgfile = None, instrument = None, \
-                       detector = None, rescale = False):
+                       detector = None, normalize = True):
 
         if (file is None):
             print("Incomplete argument list: Using default test case")
@@ -95,9 +95,11 @@ class snapshot:
 
         self.rawdata = hdu.data.astype('float')
         self.data = self.rawdata.copy()
-        if rescale:
-            self.rescale()
         self.header = hdu.header
+
+        # normalize by exposure time
+        if normalize:
+            self.norm()
 
         # adjustments for simulation data
         if 'modelhao' in self.instrument.lower():
@@ -142,6 +144,19 @@ class snapshot:
     def min_positive(self):
         positive_pix = np.masked_less_equal(self.data, 0.0, copy = False)
         return positive_pix.min()
+
+    def norm(self):
+        """
+        Normalize by exposure time
+        """
+        try:
+            if self.instrument == 'LASCO':
+                etime = self.header['EXPTIME']
+
+            self.data = self.data / etime
+            print(yellow+f"Normalized by exposure time {etime}"+cend)
+        except:
+            print(red+"Exposure time not found: not normalized"+cend)
 
     def clip(self, limits, rescale = False):
         self.data = self.data.clip(min = limits[0], max = limits[1])
