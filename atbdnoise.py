@@ -123,7 +123,7 @@ elif fig == 2:
 
 elif fig == 3:
 
-    outfile = 'lasco_noise_before.png'
+    outfile = 'lasco_noise_mgn.png'
 
     cmap = plt.get_cmap('stereocor2')
 
@@ -148,7 +148,7 @@ elif fig == 3:
     params2     = (0.8,1.2)
     noise2      = 'None'
     equalize2   = False
-    scale2 = (0.0,1.0)
+    scale2 = (0.2,1.0)
 else:
     print("pick a valid figure number")
     exit()
