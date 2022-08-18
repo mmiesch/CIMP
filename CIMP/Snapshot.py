@@ -51,7 +51,7 @@ class snapshot:
     """A snapshot is defined as a single coronagraph images for a particular instrument, detector, and time"""
 
     def __init__(self, file = None, bgfile = None, instrument = None, \
-                       detector = None, normalize = True):
+                       detector = None, normalize = False):
 
         if (file is None):
             print("Incomplete argument list: Using default test case")

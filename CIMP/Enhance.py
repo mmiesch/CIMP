@@ -150,7 +150,7 @@ def detail(im, header, filter = 'mgn', instrument = None, detector = None, \
     specification of instrument and detector are only needed if the filter is nrgf or fnrgf.  It is used to determine the field of view.
     """
 
-    rescale_output = True
+    rescale_output = False
 
     if filter == 'mgn':
         """

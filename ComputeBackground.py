@@ -10,17 +10,17 @@ from CIMP import Background as bg
 print("Starting")
 
 # for snapshot testcase 1
-dir = '/home/mark.miesch/data/lasco_monthly/c3/2012_04'
+#dir = '/home/mark.miesch/data/lasco_monthly/c3/2012_04'
 
 # for snapshot testcase 2
-#dir = "/home/mark.miesch/data/lasco_monthly/c3/2014_01"
+dir = "/home/mark.miesch/data/lasco_monthly/c3/2014_01"
 
 # for full-res STEREO-A L1 data
 #dir = "/home/mark.miesch/sunpy/data/secchi_cor2/L1/2012/09"
 
 bg = bg.background(dir)
 
-#bg.daily_medians(normalize = True)
+bg.daily_medians(normalize = True)
 bg.minimize_medians()
 bg.write_background()
 

@@ -65,7 +65,7 @@ outdir = '/home/mark.miesch/Products/image_processing/figs/'
 #------------------------------------------------------------------------------
 # choose the images you want to compare
 
-fig = 2
+fig = 3
 
 if fig == 1:
 
@@ -121,6 +121,34 @@ elif fig == 2:
     equalize2   = False
     scale2 = (0.056, 0.074)
 
+elif fig == 3:
+
+    outfile = 'lasco_noise_before.png'
+
+    cmap = plt.get_cmap('stereocor2')
+
+    file1 = dir+'15/32296635.fts'
+    title1 = 'base image'
+    background1 = 'ratio'
+    downsample1 = False
+    clip1       = None
+    point1      = 'None'
+    detail1     = 'None'
+    noise1      = 'None'
+    equalize1   = False
+    scale1 = (1.0, 1.3)
+
+    file2 = dir+'15/32296635.fts'
+    title2 = "MGN enhanced"
+    background2 = 'ratio'
+    downsample2 = True
+    clip2       = (1.0,1.3)
+    point2      = 'None'
+    detail2     = 'mgn'
+    params2     = (0.8,1.2)
+    noise2      = 'None'
+    equalize2   = False
+    scale2 = (0.0,1.0)
 else:
     print("pick a valid figure number")
     exit()
@@ -137,8 +165,8 @@ except:
 #------------------------------------------------------------------------------
 # First image
 
-x1 = snap.snapshot(file = file1, bgfile = bgfile, \
-                  instrument = instrument, detector = detector)
+x1 = snap.snapshot(file = file1, bgfile = bgfile, instrument = instrument, \
+                   detector = detector, normalize = True)
 
 process(x1, background = background1, point = point1, detail = detail1, \
         noise = noise1, equalize = equalize1, downsample = downsample1, \
@@ -149,8 +177,8 @@ print(f"file1 exposure time {x1.header['EXPTIME']}")
 #------------------------------------------------------------------------------
 # second image
 
-x2 = snap.snapshot(file = file2, bgfile = bgfile, \
-                  instrument = instrument, detector = detector)
+x2 = snap.snapshot(file = file2, bgfile = bgfile, instrument = instrument, \
+                   detector = detector, normalize = True)
 
 process(x2, background = background2, point = point2, detail = detail2, \
         noise = noise2, equalize = equalize2, downsample = downsample2, \
