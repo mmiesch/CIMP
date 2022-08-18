@@ -26,17 +26,17 @@ class background:
 
         self.dir = dir
 
-    def daily_medians(self):
+    def daily_medians(self, normalize = False):
         """
         This loops through the subdirectories for each day and computes a daily median image.  The image is saved in the same directory with the name `daily_median.fits`
         """
 
         for subdir in os.listdir(self.dir):
             if os.path.isdir(self.dir+'/'+subdir):
-                self.compute_median(subdir)
+                self.compute_median(subdir, normalize = normalize)
 
 
-    def compute_median(self, daydir):
+    def compute_median(self, daydir, normalize):
         """
         Given the name of a directory that contains images for a given day, daydir, this method will loop over all the files in that directory to compute a median image.
         """
@@ -93,8 +93,18 @@ class background:
                 hdu= fits.open(ddir+file)[0]
                 assert(nx == hdu.header['NAXIS1'])
                 assert(ny == hdu.header['NAXIS2'])
-                x[:,:,idx] = hdu.data
-                idx += 1
+                if normalize:
+                    try:
+                        etime = hdu.header['EXPTIME']
+                        x[:,:,idx] = hdu.data / etime
+                        print(yellow+f"Normalized by exposure time {etime}"+cend)
+                        idx += 1
+
+                    except:
+                        print(red+f"Exposure time not found: skipping file {file}"+cend)
+                else:
+                    x[:,:,idx] = hdu.data
+                    idx += 1
             except:
                 pass
 
@@ -104,8 +114,11 @@ class background:
         # record the number of images used in the header
         header0['NIMAGES'] = Nimages
 
+        # This was causing problems with LASCO with regard to unprintable characters
+        del header0['HISTORY']
+
         hdu_out = fits.PrimaryHDU(data = med_im, header = header0)
-        hdu_out.writeto('daily_median.fts', overwrite = True)
+        hdu_out.writeto(ddir+'daily_median.fts', overwrite = True)
 
     def minimize_medians(self):
         """
