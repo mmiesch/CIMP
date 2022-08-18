@@ -70,7 +70,7 @@ outdir = '/home/mark.miesch/Products/image_processing/figs/'
 #------------------------------------------------------------------------------
 # choose the images you want to compare
 
-fig = 3
+fig = 9
 
 if fig == 1:
 
@@ -130,7 +130,7 @@ elif fig == 3:
 
     outfile = 'lasco_noise_mgn.png'
 
-    cmap = plt.get_cmap('stereocor2')
+    cmap = plt.get_cmap('soholasco2')
 
     file1 = dir+'15/32296635.fts'
     title1 = 'base image'
@@ -141,16 +141,16 @@ elif fig == 3:
     detail1     = 'None'
     noise1      = 'None'
     equalize1   = False
-    scale1 = (1.0, 1.3)
+    scale1 = (1.0, 1.2)
 
     file2 = dir+'15/32296635.fts'
     title2 = "OMR/MGN enhanced"
     background2 = 'ratio'
     downsample2 = True
-    clip2       = (1.0,1.3)
+    clip2       = (1.0,1.4)
     point2      = 'omr'
     detail2     = 'mgn'
-    params2     = (0.8,1.2)
+    params2     = (0.8,1.5)
     noise2      = 'None'
     equalize2   = False
     scale2 = (0.2,1.0)
@@ -242,6 +242,98 @@ elif fig == 6:
     equalize2   = False
     rescale2    = True
     scale2 = (0.5,1.0)
+
+elif fig == 7:
+
+    outfile = 'lasco_noise_bregman.png'
+
+    cmap = plt.get_cmap('soholasco2')
+    #cmap = plt.get_cmap('stereocor2')
+
+    file1 = dir+'15/32296635.fts'
+    title1 = 'OMR/MGN enhanced'
+    background1 = 'ratio'
+    downsample1 = True
+    clip1       = (1.0,1.4)
+    point1      = 'omr'
+    detail1     = 'mgn'
+    params1     = (0.8,1.5)
+    noise1      = 'none'
+    equalize1   = False
+    scale1 = (0.2,1.0)
+
+    file2 = dir+'15/32296635.fts'
+    title2 = "with Bregman noise filter"
+    background2 = 'ratio'
+    downsample2 = True
+    clip2       = (1.0,1.4)
+    point2      = 'omr'
+    detail2     = 'mgn'
+    params2     = (0.8,1.2)
+    noise2      = 'bregman'
+    equalize2   = False
+    scale2 = (0.1,1.0)
+
+elif fig == 8:
+
+    outfile = 'lasco_noise_omr.png'
+
+    cmap = plt.get_cmap('soholasco2')
+    #cmap = plt.get_cmap('stereocor2')
+
+    file1 = dir+'15/32296635.fts'
+    title1 = 'OMR/MGN enhanced'
+    background1 = 'ratio'
+    downsample1 = True
+    clip1       = (1.0,1.4)
+    point1      = 'omr'
+    detail1     = 'mgn'
+    params1     = (0.8,1.5)
+    noise1      = 'none'
+    equalize1   = False
+    scale1 = (0.2,1.0)
+
+    file2 = dir+'15/32296635.fts'
+    title2 = "with OMR noise filter"
+    background2 = 'ratio'
+    downsample2 = True
+    clip2       = (1.0,1.4)
+    point2      = 'omr'
+    detail2     = 'mgn'
+    params2     = (0.8,1.2)
+    noise2      = 'omr'
+    equalize2   = False
+    scale2 = (0.2,1.0)
+
+elif fig == 9:
+
+    outfile = 'lasco_noise_tv.png'
+
+    cmap = plt.get_cmap('soholasco2')
+
+    file1 = dir+'15/32296635.fts'
+    title1 = 'OMR/MGN enhanced'
+    background1 = 'ratio'
+    downsample1 = True
+    clip1       = (1.0,1.4)
+    point1      = 'omr'
+    detail1     = 'mgn'
+    params1     = (0.8,1.5)
+    noise1      = 'none'
+    equalize1   = False
+    scale1 = (0.2,1.0)
+
+    file2 = dir+'15/32296635.fts'
+    title2 = "with TV noise filter"
+    background2 = 'ratio'
+    downsample2 = True
+    clip2       = (1.0,1.4)
+    point2      = 'omr'
+    detail2     = 'mgn'
+    params2     = (0.8,1.2)
+    noise2      = 'tv'
+    equalize2   = False
+    scale2 = (0.1,1.0)
 
 else:
     print("pick a valid figure number")

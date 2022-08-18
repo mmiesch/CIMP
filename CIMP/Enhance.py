@@ -200,9 +200,9 @@ def denoise(im, filter = 'bregman'):
     rescale_output = True
 
     if filter == 'tv':
-        c = denoise_tv_chambolle(im, weight = 0.2)
+        c = denoise_tv_chambolle(im, weight = 0.1)
     elif filter == 'bregman':
-        c = denoise_tv_bregman(im)
+        c = denoise_tv_bregman(im, weight = 10)
     elif filter == 'median':
         c = median(im, disk(1))
     elif filter == 'nl_means"':
