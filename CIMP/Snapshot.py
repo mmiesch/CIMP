@@ -237,6 +237,11 @@ class snapshot:
                                                in_range = cliprange, \
                                                out_range = (0,1))
 
+        a = np.ma.masked_equal(self.data, 0.0, copy = False)
+        mn = a.min()
+        den = a.max() - a.min()
+        self.data = np.where(self.data == 0.0, 0.0, (self.data - mn)/den)
+
     def point_filter(self, threshold = 2.0, radius = 20):
         self.data = Enhance.bright_point_filter(self.data, \
                     threshold = threshold, radius = radius)

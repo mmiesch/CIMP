@@ -21,7 +21,7 @@ This replicates the process() method in the Animate class but with a little more
 def process(snap, background = 'ratio', point = 'none', \
             detail = 'none', noise = 'none', equalize = False, \
             downsample = False, clip = None, rmin = 0.0, rmax = None, \
-            params = None):
+            params = None, rescale_output = False):
 
     if background == 'subtract':
         snap.mask_background(rmin = rmin, rmax = rmax, nonzero = False)
@@ -43,6 +43,9 @@ def process(snap, background = 'ratio', point = 'none', \
     # hit it with another mask after processing
     snap.mask_annulus(rmin=rmin, rmax = rmax, missingval = np.nanmin(snap.data))
 
+    if rescale_output:
+        snap.rescale()
+
     return
 
 #------------------------------------------------------------------------------
@@ -59,6 +62,8 @@ rmin = 0.16
 rmax = 1.0
 params1 = None
 params2 = None
+rescale1 = False
+rescale2 = False
 
 outdir = '/home/mark.miesch/Products/image_processing/figs/'
 
@@ -139,16 +144,105 @@ elif fig == 3:
     scale1 = (1.0, 1.3)
 
     file2 = dir+'15/32296635.fts'
-    title2 = "MGN enhanced"
+    title2 = "OMR/MGN enhanced"
     background2 = 'ratio'
     downsample2 = True
     clip2       = (1.0,1.3)
-    point2      = 'None'
+    point2      = 'omr'
     detail2     = 'mgn'
     params2     = (0.8,1.2)
     noise2      = 'None'
     equalize2   = False
     scale2 = (0.2,1.0)
+
+elif fig == 4:
+
+    outfile = 'lasco_noise_fnrgf.png'
+
+    cmap = plt.get_cmap('stereocor2')
+
+    file1 = dir+'15/32296635.fts'
+    title1 = 'base image'
+    background1 = 'ratio'
+    downsample1 = False
+    clip1       = None
+    point1      = 'None'
+    detail1     = 'None'
+    noise1      = 'None'
+    equalize1   = False
+    scale1 = (1.0, 1.3)
+
+    file2 = dir+'15/32296635.fts'
+    title2 = "FNRGF enhanced"
+    background2 = 'ratio'
+    downsample2 = True
+    clip2       = (1.0,1.3)
+    point2      = 'None'
+    detail2     = 'fnrgf'
+    noise2      = 'None'
+    equalize2   = False
+    scale2 = (0.3666,0.371)
+
+elif fig == 5:
+
+    outfile = 'lasco_noise_mgn_omr.png'
+
+    cmap = plt.get_cmap('stereocor2')
+
+    file1 = dir+'15/32296635.fts'
+    title1 = 'MGN enhanced'
+    background1 = 'ratio'
+    downsample1 = True
+    clip1       = (1.0,1.3)
+    point1      = 'None'
+    detail1     = 'mgn'
+    params1     = (0.8,1.2)
+    noise1      = 'None'
+    equalize1   = False
+    scale1 = (0.2, 1.0)
+
+    file2 = dir+'15/32296635.fts'
+    title2 = "MGN enhanced with OMR"
+    background2 = 'ratio'
+    downsample2 = True
+    clip2       = (1.0,1.3)
+    point2      = 'omr'
+    detail2     = 'mgn'
+    params2     = (0.7,1.0)
+    noise2      = 'None'
+    equalize2   = False
+    scale2 = (0.3,1.0)
+
+elif fig == 6:
+
+    outfile = 'lasco_noise_fnrgf.png'
+
+    cmap = plt.get_cmap('stereocor2')
+
+    file1 = dir+'15/32296635.fts'
+    title1 = 'FNRGF enhanced'
+    background1 = 'ratio'
+    downsample1 = True
+    clip1       = (1.0,1.3)
+    point1      = 'None'
+    detail1     = 'fnrgf'
+    noise1      = 'None'
+    equalize1   = False
+    rescale1    = True
+    scale1 = (0.1,1.0)
+
+    file2 = dir+'15/32296635.fts'
+    title2 = "FNRGF enhanced with OMR"
+    background2 = 'ratio'
+    downsample2 = True
+    clip2       = (1.0,1.3)
+    point2      = 'None'
+    detail2     = 'fnrgf'
+    noise2      = 'omr'
+    equalize2   = False
+    rescale2    = True
+    scale2 = (0.5,1.0)
+
 else:
     print("pick a valid figure number")
     exit()
@@ -170,7 +264,8 @@ x1 = snap.snapshot(file = file1, bgfile = bgfile, instrument = instrument, \
 
 process(x1, background = background1, point = point1, detail = detail1, \
         noise = noise1, equalize = equalize1, downsample = downsample1, \
-        clip = clip1, rmin = rmin, rmax = rmax, params = params1)
+        clip = clip1, rmin = rmin, rmax = rmax, params = params1, \
+        rescale_output = rescale1)
 
 print(f"file1 exposure time {x1.header['EXPTIME']}")
 
@@ -182,7 +277,8 @@ x2 = snap.snapshot(file = file2, bgfile = bgfile, instrument = instrument, \
 
 process(x2, background = background2, point = point2, detail = detail2, \
         noise = noise2, equalize = equalize2, downsample = downsample2, \
-        clip = clip2, rmin = rmin, rmax = rmax, params = params2)
+        clip = clip2, rmin = rmin, rmax = rmax, params = params2, \
+        rescale_output = rescale2)
 
 print(f"file2 exposure time {x2.header['EXPTIME']}")
 
