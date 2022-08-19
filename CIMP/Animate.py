@@ -47,8 +47,11 @@ class movie:
         if bgfile is None:
             self.background = None
 
-            # determine correct resolution from first fits file in director
-            reffile = next(filter(lambda file: file[-5:] == ".fits" or file[-4:] == ".fts", flist2), None)
+            # determine correct resolution from first fits file in directory
+            flist = os.listdir(self.dir)
+            rfile = next(filter(lambda file: file[-5:] == ".fits" or file[-4:] == ".fts", flist), None)
+            reffile = self.dir+'/'+rfile
+            print(yellow+f"Reference file: {reffile}"+cend)
 
             hdu = fits.open(reffile)[0]
             self.nx = hdu.header['NAXIS1']
@@ -284,7 +287,7 @@ class movie:
 
 
     def dirmovie(self, scale = (0.0, 1.0), title = None, \
-                 tolerance = None, diff_ratio = 10.0, \
+                 denylist = None, tolerance = None, diff_ratio = 10.0, \
                  framedir = None, fitsdir = None):
         """
         This is a simplified version of daymovie.  Like daymovie, it loops over
@@ -311,10 +314,9 @@ class movie:
                 hdu = fits.open(fpath)[0]
                 images.append(hdu.data.astype('float'))
                 header0 = hdu.header
-                del header0['HISTORY']
                 headers.append(header0)
-            except:
-                print(red+f"Skipping {file}"+cend)
+            except Exception as e:
+                print(red+f"{e}\nSkipping {file}"+cend)
                 pass
 
         N_preqc = len(images)
@@ -325,17 +327,20 @@ class movie:
         valid_headers = []
         nx = images[0].shape[0]
         ny = images[0].shape[1]
-        for idx in np.arange(Nimages):
+        for idx in np.arange(N_preqc):
             i1 = np.max([0, idx-2])
-            i2 = np.min([idx+3, Nimages])
+            i2 = np.min([idx+3, N_preqc])
             Nref = i2 - i1
             refimages = np.empty((nx, ny, Nref), dtype = 'float32')
             for ridx in np.arange(Nref):
                 refimages[:,:,ridx] = images[ridx+i1]
             ref = np.nanmedian(refimages,axis=2)
-            if self.valid(images[idx], ref, tolerance, diff_ratio):
+            if self.valid(images[idx], ref, tolerance, diff_ratio) \
+                and (idx+1) not in denylist:
                 valid_images.append(images[idx])
                 valid_headers.append(headers[idx])
+            else:
+                print(red+f"Skipping image {idx}"+cend)
 
         # free up memory before making movie
         images = valid_images

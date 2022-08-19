@@ -108,8 +108,8 @@ for d in dlist:
             hdu_out = fits.PrimaryHDU(x.data,header0)
             hdu_out.writeto(outfile, overwrite = True)
             idx += np.uint64(1)
-        except:
-            print(f"Skipping file {file}")
+        except Exception as e:
+            print(f"{e}\nSkipping file {file}")
             pass
 
         hdu_out.writeto(outfile, overwrite = True)
