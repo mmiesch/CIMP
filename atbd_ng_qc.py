@@ -31,8 +31,8 @@ if pcase == 1:
     #colormap = 'stereocor2'
     scale = (0.2,1.0)
     tolerance = 0.2; diff_ratio = 50.0
-    #fitsdir = '/home/mark.miesch/data/lasco_monthly/c3/2012_04_qc'
-    #framedir = '/home/mark.miesch/Products/image_processing/frames/debug'
+    fitsdir = '/home/mark.miesch/data/lasco_monthly/c3/2012_04_qc'
+    framedir = '/home/mark.miesch/Products/image_processing/frames/debug'
     denylist = [4, 19, 22, 27, 45, 60, 98, 111, 114, 117, 122, 124, 128, 131, \
                 140, 141, 147, 150, 168]
 else:
