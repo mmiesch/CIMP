@@ -282,3 +282,89 @@ class movie:
 
         mov.save(self.outfile)
 
+
+    def dirmovie(self, scale = (0.0, 1.0), title = None, \
+                 tolerance = None, diff_ratio = 10.0, \
+                 framedir = None, fitsdir = None):
+        """
+        This is a simplified version of daymovie.  Like daymovie, it loops over
+        all fits files in a directory to make a movie.  However, it does not
+        apply any processing and it does not interpolate onto a regular time grid.
+        But, it does do some qc and, optionally, you can write the qc-filtered
+        files to outdir.  This is useful as a pre-processing stage before applying
+        a noisegate filter.  So, the goal is to produce a series of files with a
+        similar noise profile (filtering out degraded images) that can be modeled
+        by noisegate.
+        """
+
+        images = []
+        headers = []
+
+        # first pass: get data from all valid files
+        ref = None
+        for file in os.listdir(self.dir):
+            fpath = self.dir+'/'+file
+            try:
+                assert(os.path.isfile(fpath))
+                assert("median" not in file)
+                assert(fpath != self.bgfile)
+                hdu = fits.open(fpath)[0]
+                images.append(hdu.data.astype('float'))
+                header0 = hdu.header
+                del header0['HISTORY']
+                headers.append(header0)
+            except:
+                print(red+f"Skipping {file}"+cend)
+                pass
+
+        N_preqc = len(images)
+        print(yellow+f"Pre  QC N = {N_preqc}"+cend)
+
+        # second pass: remove corrupted images
+        valid_images = []
+        valid_headers = []
+        nx = images[0].shape[0]
+        ny = images[0].shape[1]
+        for idx in np.arange(Nimages):
+            i1 = np.max([0, idx-2])
+            i2 = np.min([idx+3, Nimages])
+            Nref = i2 - i1
+            refimages = np.empty((nx, ny, Nref), dtype = 'float32')
+            for ridx in np.arange(Nref):
+                refimages[:,:,ridx] = images[ridx+i1]
+            ref = np.nanmedian(refimages,axis=2)
+            if self.valid(images[idx], ref, tolerance, diff_ratio):
+                valid_images.append(images[idx])
+                valid_headers.append(headers[idx])
+
+        # free up memory before making movie
+        images = valid_images
+        headers = valid_headers
+
+        Nimages = len(images)
+        print(yellow+f"Post QC N = {Nimages}"+cend)
+
+        # make movie
+        fig = plt.figure()
+        frames = []
+        for idx in np.arange(Nimages):
+            im = plt.figimage(images[idx], cmap=self.cmap, vmin = scale[0], \
+                            vmax = scale[1], origin='lower', resize=True)
+            if title is not None:
+                plt.title(title)
+            frames.append([im])
+            frame = str(len(frames)).zfill(3)
+            if fitsdir is not None:
+                outfile = fitsdir+f"/image{frame}.fts"
+                hdu_out = fits.PrimaryHDU(images[idx], headers[idx])
+                hdu_out.writeto(outfile, overwrite = True)
+            if framedir is not None:
+                plt.savefig(framedir+f"/frame_{frame}.png")
+
+        mov = animation.ArtistAnimation(fig, frames, interval = 50, blit = False,
+              repeat = True, repeat_delay = 1000)
+
+        print(yellow+f"Number of frames = {len(frames)}"+cend)
+
+        mov.save(self.outfile)
+
