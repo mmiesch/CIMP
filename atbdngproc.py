@@ -65,7 +65,7 @@ outdir = '/home/mark.miesch/data/lasco_monthly/c3/2012_04_processed/'
 
 #------------------------------------------------------------------------------
 
-fig = 1
+fig = 2
 
 if fig == 1:
 
@@ -75,6 +75,21 @@ if fig == 1:
     point      = 'omr'
     detail     = 'mgn'
     params     = (0.8,1.5)
+    noise      = 'None'
+    equalize   = False
+
+elif fig == 2:
+
+    # this is just background subtraction and normalization by exposure time.  
+    # This is intended to produce an L3 test data set for the CCOR ATBD
+
+    outdir = '/home/mark.miesch/data/lasco_monthly/c3/lasco_c3_L0.5/'
+
+    background = 'ratio'
+    downsample = False
+    clip       = None
+    point      = 'none'
+    detail     = 'none'
     noise      = 'None'
     equalize   = False
 
