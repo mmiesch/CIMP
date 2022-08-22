@@ -30,6 +30,10 @@ file1 = dir+'/image068.fts'
 
 outdir = '/home/mark.miesch/Products/image_processing/figs/'
 
+# optionally write the output image as a fits file
+outfitsdir = '/home/mark.miesch/data/lasco_monthly/c3/2012_04_ng/'
+outfits = None
+
 #------------------------------------------------------------------------------
 
 # default - I think this is only relevant for the hybrid method
@@ -37,7 +41,7 @@ dkfactor = 1.5
 
 dcidx = 67
 
-fig = 2
+fig = 7
 
 if fig == 1:
 
@@ -71,6 +75,98 @@ elif fig == 2:
     dkfactor = 4.0
     scale2 = (0.2, 1.0)
 
+elif fig == 3:
+
+    # fig2 with a larger cubesize
+
+    outfile = 'lasco_ng_hybrid_fig3.png'
+
+    cmap = plt.get_cmap('soholasco2')
+
+    title1 = 'OMR/MGN Enhanced'
+    scale1 = (0.2, 1.0)
+
+    title2 = 'Noisegate filter'
+    cubesize = (18,18,18)
+    model = 'hybrid'
+    factor = 4.0
+    dkfactor = 4.0
+    scale2 = (0.2, 1.0)
+
+elif fig == 4:
+
+    # fig3 with shot instead of hybrid
+
+    outfile = 'lasco_ng_shot_fig4.png'
+
+    cmap = plt.get_cmap('soholasco2')
+
+    title1 = 'OMR/MGN Enhanced'
+    scale1 = (0.2, 1.0)
+
+    title2 = 'Noisegate filter'
+    cubesize = (18,18,18)
+    model = 'shot'
+    factor = 4.0
+    dkfactor = 4.0
+    scale2 = (0.2, 1.0)
+
+elif fig == 5:
+
+    # fig3 with constant instead of hybrid
+
+    outfile = 'lasco_ng_constant_fig5.png'
+
+    cmap = plt.get_cmap('soholasco2')
+
+    title1 = 'OMR/MGN Enhanced'
+    scale1 = (0.2, 1.0)
+
+    title2 = 'Noisegate filter'
+    cubesize = (18,18,18)
+    model = 'constant'
+    factor = 4.0
+    dkfactor = 4.0
+    scale2 = (0.2, 1.0)
+
+elif fig == 6:
+
+    # fig3 with constant instead of hybrid
+
+    outfile = 'lasco_ng_mult_fig6.png'
+
+    cmap = plt.get_cmap('soholasco2')
+
+    title1 = 'OMR/MGN Enhanced'
+    scale1 = (0.2, 1.0)
+
+    title2 = 'Noisegate filter'
+    cubesize = (18,18,18)
+    model = 'multiplicative'
+    factor = 4.0
+    dkfactor = 4.0
+    scale2 = (0.2, 1.0)
+
+elif fig == 7:
+
+    # fig3 with a smaller dkfactor
+
+    outfile = 'lasco_ng_hybrid_fig7.png'
+
+    cmap = plt.get_cmap('soholasco2')
+
+    title1 = 'OMR/MGN Enhanced'
+    scale1 = (0.2, 1.0)
+
+    title2 = 'Noisegate filter'
+    cubesize = (18,18,18)
+    model = 'hybrid'
+    factor = 4.0
+    dkfactor = 1.5
+    scale2 = (0.2, 1.0)
+
+    outfits = 'ng_hybrid_fig7.fts'
+
 else:
     print("pick a valid figure number")
     exit()
@@ -79,6 +175,12 @@ else:
 # First image - before filter
 
 x1 = fits.open(file1)[0]
+header0 = x1.header
+
+try:
+    del header0['HISTORY']
+except:
+    pass
 
 #------------------------------------------------------------------------------
 # load data
@@ -127,13 +229,20 @@ ngdata = ng.noise_gate_batch(dcube, cubesize=cubesize, model=model,
 print(f"x1 time {x1.header['DATE-OBS']}")
 
 #------------------------------------------------------------------------------
-# plot
+# data for plotting
 
 data1 = x1.data
 data2 = ngdata[dcidx,:,:]
 
 print(f"x1 minmax: {np.min(data1)} {np.max(data1)}")
 print(f"x2 minmax: {np.min(data2)} {np.max(data2)}")
+
+if outfits is not None:
+    hdu_out = fits.PrimaryHDU(data2,header0)
+    hdu_out.writeto(outfitsdir+outfits, overwrite = True)
+
+#------------------------------------------------------------------------------
+# plot
 
 fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(12,6))
 
