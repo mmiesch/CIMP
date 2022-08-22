@@ -32,7 +32,7 @@ outdir = '/home/mark.miesch/Products/image_processing/figs/'
 
 #------------------------------------------------------------------------------
 
-fig = 1
+fig = 2
 
 if fig == 1:
 
@@ -48,6 +48,22 @@ if fig == 1:
     cubesize = (12,12,12)
     model = 'shot'
     factor = 2.0
+    dcidx = 67
+    scale2 = (0.2, 1.0)
+
+elif fig == 2:
+
+    outfile = 'lasco_ng_beta.png'
+
+    cmap = plt.get_cmap('soholasco2')
+
+    title1 = 'OMR/MGN Enhanced'
+    scale1 = (0.2, 1.0)
+
+    title2 = 'Noisegate filter'
+    cubesize = (12,12,12)
+    model = 'hybrid'
+    factor = 10.0
     dcidx = 67
     scale2 = (0.2, 1.0)
 
@@ -100,8 +116,11 @@ print(yellow+f"Data shape: {dcube.shape}"+cend)
 #------------------------------------------------------------------------------
 # apply noisegate filter
 
-ng.noise_gate_batch(dcube, cubesize=cubesize, model=model,
-                    factor = factor)
+#ng.noise_gate_batch(dcube, cubesize=cubesize, model=model,
+#                    factor = factor)
+
+ngdata = ng.noise_gate_batch(dcube, cubesize=12, model='hybrid',
+                             factor = 10, dkfactor = 10)
 
 #------------------------------------------------------------------------------
 print(f"x1 time {x1.header['DATE-OBS']}")
@@ -110,7 +129,7 @@ print(f"x1 time {x1.header['DATE-OBS']}")
 # plot
 
 data1 = x1.data
-data2 = dcube[dcidx,:,:]
+data2 = ngdata[dcidx,:,:]
 
 print(f"x1 minmax: {np.min(data1)} {np.max(data1)}")
 print(f"x2 minmax: {np.min(data2)} {np.max(data2)}")
