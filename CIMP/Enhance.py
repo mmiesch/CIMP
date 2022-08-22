@@ -8,6 +8,7 @@ import sunkit_image.enhance
 import sunkit_image.radial as radial
 import sunpy.map
 
+from scipy.signal import convolve2d
 from skimage import exposure
 from skimage.filters import median
 from skimage.filters.rank import enhance_contrast_percentile
@@ -209,6 +210,8 @@ def denoise(im, filter = 'bregman'):
         c = denoise_nl_means(a, patch_size = 4)
     elif filter == 'omr':
         c = omr(im, rescaleim = False)
+    elif filter == 'atrous':
+        c = atrous(im)
     else:
         print(yellow+"Warning: no noise filter applied"+cend)
         c = im
@@ -218,6 +221,24 @@ def denoise(im, filter = 'bregman'):
         return rescale(c)
     else:
         return c
+
+def atrous(im):
+    """
+    a trous wavelet filtering
+    """
+
+    kernel_b3_spline = np.array([
+        [1 / 256, 1 / 64, 3 / 128, 1 / 64, 1 / 256],
+        [1 / 64, 1 / 16, 3 / 32, 1 / 16, 1 / 64],
+        [3 / 128, 3 / 32, 9 / 64, 3 / 32, 3 / 128],
+        [1 / 64, 1 / 16, 3 / 32, 1 / 16, 1 / 64],
+        [1 / 256, 1 / 64, 3 / 128, 1 / 64, 1 / 256]
+    ])
+
+    c0 = im
+    c1 = convolve2d(c0, kernel_b3_spline, mode='same', boundary='fill')
+
+    return c1
 
 def mask_annulus(im, rmin = 0.0, rmax = None, missingval = 0.0):
     """

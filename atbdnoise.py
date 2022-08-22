@@ -71,7 +71,7 @@ outdir = '/home/mark.miesch/Products/image_processing/figs/'
 #------------------------------------------------------------------------------
 # choose the images you want to compare
 
-fig = 10
+fig = 11
 
 x2file = None
 
@@ -362,6 +362,35 @@ if fig == 10:
     cmap2 = plt.get_cmap('soholasco2')
     x2file = '/home/mark.miesch/data/lasco_monthly/c3/2012_04_ng/ng_hybrid_fig7.fts'
     scale2 = (0.2, 1.0)
+
+elif fig == 11:
+
+    outfile = 'lasco_noise_atrous.png'
+
+    cmap = plt.get_cmap('soholasco2')
+
+    file1 = dir+'15/32296635.fts'
+    title1 = 'OMR/MGN enhanced'
+    background1 = 'ratio'
+    downsample1 = True
+    clip1       = (1.0,1.4)
+    point1      = 'omr'
+    detail1     = 'mgn'
+    params1     = (0.8,1.5)
+    noise1      = 'none'
+    equalize1   = False
+    scale1 = (0.2,1.0)
+
+    file2 = dir+'15/32296635.fts'
+    title2 = "with a trous noise filter"
+    background2 = 'ratio'
+    downsample2 = True
+    clip2       = (1.0,1.4)
+    point2      = 'omr'
+    detail2     = 'mgn'
+    noise2      = 'atrous'
+    equalize2   = False
+    scale2 = (0.2,1.0)
 
 else:
     print("pick a valid figure number")
