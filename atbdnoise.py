@@ -348,7 +348,7 @@ if fig == 10:
 
     title1 = 'Base Image'
     file1 = dir+'15/32296635.fts'
-    cmap1 = plt.get_cmap('stereocor2')
+    cmap1 = plt.get_cmap('soholasco2')
     background1 = 'ratio'
     downsample1 = False
     clip1       = None
@@ -356,7 +356,7 @@ if fig == 10:
     detail1     = 'None'
     noise1      = 'None'
     equalize1   = False
-    scale1 = (1.0, 1.3)
+    scale1 = (1.0, 1.2)
 
     title2 = 'Processed image (OMR/MGN/NG)'
     cmap2 = plt.get_cmap('soholasco2')
@@ -420,7 +420,7 @@ print(f"x2 minmax: {np.min(data2)} {np.max(data2)}")
 print(f"x1 res: {data1.shape[0]} {data1.shape[1]}")
 print(f"x2 res: {data2.shape[0]} {data2.shape[1]}")
 
-print(f"x1 time {x1.header['DATE-OBS']}")
+print(f"x1 time {x1.time}")
 
 #------------------------------------------------------------------------------
 # plot
