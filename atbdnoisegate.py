@@ -32,11 +32,16 @@ outdir = '/home/mark.miesch/Products/image_processing/figs/'
 
 #------------------------------------------------------------------------------
 
+# default - I think this is only relevant for the hybrid method
+dkfactor = 1.5
+
+dcidx = 67
+
 fig = 2
 
 if fig == 1:
 
-    outfile = 'lasco_ng_shot_f2.0.png'
+    outfile = 'lasco_ng_shot_fig1.png'
 
     cmap = plt.get_cmap('soholasco2')
     #cmap = plt.get_cmap('stereocor2')
@@ -48,12 +53,11 @@ if fig == 1:
     cubesize = (12,12,12)
     model = 'shot'
     factor = 2.0
-    dcidx = 67
     scale2 = (0.2, 1.0)
 
 elif fig == 2:
 
-    outfile = 'lasco_ng_beta.png'
+    outfile = 'lasco_ng_hybrid_fig2.png'
 
     cmap = plt.get_cmap('soholasco2')
 
@@ -63,8 +67,8 @@ elif fig == 2:
     title2 = 'Noisegate filter'
     cubesize = (12,12,12)
     model = 'hybrid'
-    factor = 10.0
-    dcidx = 67
+    factor = 4.0
+    dkfactor = 4.0
     scale2 = (0.2, 1.0)
 
 else:
@@ -116,11 +120,8 @@ print(yellow+f"Data shape: {dcube.shape}"+cend)
 #------------------------------------------------------------------------------
 # apply noisegate filter
 
-#ng.noise_gate_batch(dcube, cubesize=cubesize, model=model,
-#                    factor = factor)
-
-ngdata = ng.noise_gate_batch(dcube, cubesize=12, model='hybrid',
-                             factor = 10, dkfactor = 10)
+ngdata = ng.noise_gate_batch(dcube, cubesize=cubesize, model=model,
+                             factor = factor, dkfactor = dkfactor)
 
 #------------------------------------------------------------------------------
 print(f"x1 time {x1.header['DATE-OBS']}")
