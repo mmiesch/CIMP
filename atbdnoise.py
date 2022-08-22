@@ -9,6 +9,7 @@ import numpy as np
 import sunpy.map
 import sunpy.visualization.colormaps as cm
 
+from astropy.io import fits
 from CIMP import Snapshot as snap
 from CIMP import Enhance
 from sunpy.net import attrs as a
@@ -70,7 +71,9 @@ outdir = '/home/mark.miesch/Products/image_processing/figs/'
 #------------------------------------------------------------------------------
 # choose the images you want to compare
 
-fig = 9
+fig = 10
+
+x2file = None
 
 if fig == 1:
 
@@ -335,6 +338,31 @@ elif fig == 9:
     equalize2   = False
     scale2 = (0.1,1.0)
 
+if fig == 10:
+
+    # The goal with this figure is to compare the
+    # final product, after OMR, MGN, and NG, to the
+    # original unprocessed image
+
+    outfile = 'lasco_ng_pipeline.png'
+
+    title1 = 'Base Image'
+    file1 = dir+'15/32296635.fts'
+    cmap1 = plt.get_cmap('stereocor2')
+    background1 = 'ratio'
+    downsample1 = False
+    clip1       = None
+    point1      = 'None'
+    detail1     = 'None'
+    noise1      = 'None'
+    equalize1   = False
+    scale1 = (1.0, 1.3)
+
+    title2 = 'Processed image (OMR/MGN/NG)'
+    cmap2 = plt.get_cmap('soholasco2')
+    x2file = '/home/mark.miesch/data/lasco_monthly/c3/2012_04_ng/ng_hybrid_fig7.fts'
+    scale2 = (0.2, 1.0)
+
 else:
     print("pick a valid figure number")
     exit()
@@ -361,37 +389,41 @@ process(x1, background = background1, point = point1, detail = detail1, \
 
 print(f"file1 exposure time {x1.header['EXPTIME']}")
 
+data1 = x1.data
+
 #------------------------------------------------------------------------------
 # second image
 
-x2 = snap.snapshot(file = file2, bgfile = bgfile, instrument = instrument, \
-                   detector = detector, normalize = True)
+if x2file is None:
 
-process(x2, background = background2, point = point2, detail = detail2, \
-        noise = noise2, equalize = equalize2, downsample = downsample2, \
-        clip = clip2, rmin = rmin, rmax = rmax, params = params2, \
-        rescale_output = rescale2)
+    x2 = snap.snapshot(file = file2, bgfile = bgfile, instrument = instrument, \
+                       detector = detector, normalize = True)
 
-print(f"file2 exposure time {x2.header['EXPTIME']}")
+    process(x2, background = background2, point = point2, detail = detail2, \
+            noise = noise2, equalize = equalize2, downsample = downsample2, \
+            clip = clip2, rmin = rmin, rmax = rmax, params = params2, \
+            rescale_output = rescale2)
+
+    print(f"file2 exposure time {x2.header['EXPTIME']}")
+
+    data2 = x2.data
+
+else:
+
+    hdu = fits.open(x2file)[0]
+    data2 = hdu.data
 
 #------------------------------------------------------------------------------
-print(f"x1 minmax: {x1.min()} {x1.max()}")
-print(f"x2 minmax: {x2.min()} {x2.max()}")
+print(f"x1 minmax: {np.min(data1)} {np.max(data1)}")
+print(f"x2 minmax: {np.min(data2)} {np.max(data2)}")
 
-print(f"x1 res: {x1.data.shape[0]} {x1.data.shape[1]}")
-print(f"x2 res: {x2.data.shape[0]} {x2.data.shape[1]}")
+print(f"x1 res: {data1.shape[0]} {data1.shape[1]}")
+print(f"x2 res: {data2.shape[0]} {data2.shape[1]}")
 
 print(f"x1 time {x1.header['DATE-OBS']}")
 
 #------------------------------------------------------------------------------
 # plot
-
-if fig == 12:
-    data1 = x1.data
-    data2 = x1.background
-else:
-    data1 = x1.data
-    data2 = x2.data
 
 fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(12,6))
 
