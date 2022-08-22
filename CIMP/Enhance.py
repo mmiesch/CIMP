@@ -15,7 +15,7 @@ from skimage.filters.rank import enhance_contrast_percentile
 from skimage.measure import block_reduce
 from skimage.morphology import disk, opening, erosion, reconstruction
 from skimage.restoration import (denoise_tv_chambolle, denoise_tv_bregman,
-                                 denoise_nl_means)
+                                 denoise_nl_means, denoise_wavelet)
 from sunkit_image.utils import equally_spaced_bins
 
 # for warning / error statements; print red, yellow text to terminal
@@ -207,11 +207,13 @@ def denoise(im, filter = 'bregman'):
     elif filter == 'median':
         c = median(im, disk(1))
     elif filter == 'nl_means"':
-        c = denoise_nl_means(a, patch_size = 4)
+        c = denoise_nl_means(im, patch_size = 4)
     elif filter == 'omr':
         c = omr(im, rescaleim = False)
     elif filter == 'atrous':
         c = atrous(im)
+    elif filter == 'wavelet':
+        c = denoise_wavelet(im,mode='hard',wavelet='haar')
     else:
         print(yellow+"Warning: no noise filter applied"+cend)
         c = im
