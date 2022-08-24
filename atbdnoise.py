@@ -71,7 +71,7 @@ outdir = '/home/mark.miesch/Products/image_processing/figs/'
 #------------------------------------------------------------------------------
 # choose the images you want to compare
 
-fig = 12
+fig = 7
 
 x2file = None
 
@@ -266,7 +266,7 @@ elif fig == 7:
     scale1 = (0.2,1.0)
 
     file2 = dir+'15/32296635.fts'
-    title2 = "with Bregman noise filter"
+    title2 = "with TV-Bregman noise filter"
     background2 = 'ratio'
     downsample2 = True
     clip2       = (1.0,1.4)
@@ -338,7 +338,7 @@ elif fig == 9:
     equalize2   = False
     scale2 = (0.1,1.0)
 
-if fig == 10:
+elif fig == 10:
 
     # The goal with this figure is to compare the
     # final product, after OMR, MGN, and NG, to the
