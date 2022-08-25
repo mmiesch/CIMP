@@ -32,7 +32,26 @@ def irange(idx, N, Nref = 5):
     return range
 
 #------------------------------------------------------------------------------
-def qccheck(images, idx):
+def qc_brightness(med, refmeds):
+
+    qc1 = (0.7,1.3)
+    qc2 = (0.5,1.5)
+
+    ref = refmeds.mean()
+    if ref > 0.0:
+        rat = med/ref
+    else:
+        rat = 1.0
+
+    if (rat < qc2[0]) | (rat > qc2[1]):
+        return 2
+    elif (rat < qc1[0]) | (rat > qc1[1]):
+        return 1
+    else:
+        return 0
+
+#------------------------------------------------------------------------------
+def qc_diff(images, idx):
 
     levels = [(1, 0.2, 50), (2, 0.3, 50)]
 
@@ -59,7 +78,7 @@ outdir = '/home/mark.miesch/Products/image_processing/movies'
 fdir='/home/mark.miesch/Products/image_processing/frames/qc/lasco_2012_04'
 
 framedir = None
-skipmovie = True
+skipmovie = False
 
 if fig == 1:
 
@@ -106,35 +125,15 @@ for file in os.listdir(dir):
 meds = np.array(meds)
 
 #------------------------------------------------------------------------------
-# second pass: median brightness qc filter
+# second pass: apply qc filters
 
 Nimages = len(images)
-nx = images[0].shape[0]
-ny = images[0].shape[1]
-
-qc1 = (0.7,1.3)
-qc2 = (0.5,1.5)
-
 qcflag = np.zeros(Nimages,dtype=int)
 for idx in np.arange(Nimages):
     i = irange(idx,Nimages)
-    refmed = meds[i[0]:i[1]].mean()
-    if refmed > 0.0:
-        rat = meds[idx]/refmed
-    else:
-        rat = 1.0
-    if (rat < qc2[0]) | (rat > qc2[1]):
-       qcflag[idx] = 2
-    elif (rat < qc1[0]) | (rat > qc1[1]):
-        qcflag[idx] = 1
-
-#------------------------------------------------------------------------------
-# third pass: pixel difference qc filter
-
-for idx in np.arange(Nimages):
-    i = irange(idx,Nimages)
-    flag = qccheck(images[i[0]:i[1]], idx - i[0])
-    qcflag[idx] = np.max([qcflag[idx],flag])
+    flag1 = qc_brightness(meds[idx], meds[i[0]:i[1]])
+    flag2 = qc_diff(images[i[0]:i[1]], idx - i[0])
+    qcflag[idx] = np.max([flag1, flag2])
 
 #------------------------------------------------------------------------------
 # print flagged images
