@@ -55,6 +55,7 @@ if fig == 1:
 
     # This is processed L0.5 data from LASCO/C3
 
+    qclevel = 0
     dir='/home/mark.miesch/data/lasco_monthly/c3/2012_04_processed'
     outfile = 'lasco_proc_qc1.mp4'
     cmap = plt.get_cmap('soholasco2')
