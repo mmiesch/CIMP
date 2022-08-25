@@ -14,29 +14,39 @@ import sunpy.visualization.colormaps as cm
 from astropy.io import fits
 
 #------------------------------------------------------------------------------
-def qccheck(im, refimages):
-
-    level1 = 0.7
-
-    # first just try something similiar - compare median brightness
-
+def nzmedian(im):
     nonzero = np.ma.masked_equal(im,0.0,copy=False)
-    med = np.ma.median(nonzero)
+    return np.ma.median(nonzero)
 
-    refmeds = []
-    for ref in refimages:
-        nz = np.ma.masked_equal(ref,0.0,copy=False)
-        refmeds.append(np.ma.median(nz))
-    refmed = np.array(refmeds).mean()
-    if refmed > 0.0:
-        rat = med / refmed
+#------------------------------------------------------------------------------
+def irange(idx, N, Nref = 5):
+    """
+    Define a range of indices centered around idx, unless idx is near the edges
+    """
+    i2 = np.min([idx+3, Nimages])
+    if idx < 3:
+        range = (0, Nref)
     else:
-        rat = 1.0
+        range = (i2 - Nref, i2)
 
-    if rat < level1:
-        return 1
-    else:
-        return 0
+    return range
+
+#------------------------------------------------------------------------------
+def qccheck(images, idx):
+
+    levels = [(1, 0.2, 50), (2, 0.3, 50)]
+
+    refimages = np.array(images)
+    ref = np.nanmedian(refimages,axis=0)
+
+    flag = 0
+    for lev in reversed(levels):
+        d = fits.ImageDataDiff(images[idx], ref, rtol = lev[1])
+        if (100*d.diff_ratio > lev[2]):
+            flag = lev[0]
+            break
+
+    return flag
 
 #------------------------------------------------------------------------------
 
@@ -49,7 +59,7 @@ outdir = '/home/mark.miesch/Products/image_processing/movies'
 fdir='/home/mark.miesch/Products/image_processing/frames/qc/lasco_2012_04'
 
 framedir = None
-skipmovie = False
+skipmovie = True
 
 if fig == 1:
 
@@ -80,34 +90,56 @@ else:
 
 images = []
 files = []
+meds = []
 for file in os.listdir(dir):
     fpath = dir+'/'+file
     try:
         assert(os.path.isfile(fpath))
         hdu = fits.open(fpath)[0]
         images.append(hdu.data)
+        meds.append(nzmedian(hdu.data))
         files.append(file)
     except Exception as e:
         print(red+f"{e}\nSkipping {file}"+cend)
         pass
 
+meds = np.array(meds)
 
 #------------------------------------------------------------------------------
-# second pass: qc filter
+# second pass: median brightness qc filter
 
 Nimages = len(images)
 nx = images[0].shape[0]
 ny = images[0].shape[1]
 
+qc1 = (0.7,1.3)
+qc2 = (0.5,1.5)
+
 qcflag = np.zeros(Nimages,dtype=int)
 for idx in np.arange(Nimages):
-    i1 = np.max([0, idx-2])
-    i2 = np.min([idx+3, Nimages])
-    Nref = i2 - i1
-    refimages = np.empty((nx, ny, Nref), dtype = 'float32')
-    for ridx in np.arange(Nref):
-        refimages[:,:,ridx] = images[ridx+i1]
-    qcflag[idx] = qccheck(images[idx], refimages)
+    i = irange(idx,Nimages)
+    refmed = meds[i[0]:i[1]].mean()
+    if refmed > 0.0:
+        rat = meds[idx]/refmed
+    else:
+        rat = 1.0
+    if (rat < qc2[0]) | (rat > qc2[1]):
+       qcflag[idx] = 2
+    elif (rat < qc1[0]) | (rat > qc1[1]):
+        qcflag[idx] = 1
+
+#------------------------------------------------------------------------------
+# third pass: pixel difference qc filter
+
+for idx in np.arange(Nimages):
+    i = irange(idx,Nimages)
+    flag = qccheck(images[i[0]:i[1]], idx - i[0])
+    qcflag[idx] = np.max([qcflag[idx],flag])
+
+#------------------------------------------------------------------------------
+# print flagged images
+
+for idx in np.arange(Nimages):
     if qcflag[idx] > 0:
         print(f"{idx+1} QC={qcflag[idx]} {files[idx]}")
 
