@@ -33,6 +33,9 @@ def irange(idx, N, Nref = 5):
 
 #------------------------------------------------------------------------------
 def qc_brightness(med, refmeds):
+    """
+    QC filter based on changes in median image brightness
+    """
 
     qc1 = (0.7,1.3)
     qc2 = (0.5,1.5)
@@ -44,6 +47,7 @@ def qc_brightness(med, refmeds):
         rat = 1.0
 
     if (rat < qc2[0]) | (rat > qc2[1]):
+        print(f"qc_brightness L2 {rat}")
         return 2
     elif (rat < qc1[0]) | (rat > qc1[1]):
         return 1
@@ -52,6 +56,9 @@ def qc_brightness(med, refmeds):
 
 #------------------------------------------------------------------------------
 def qc_diff(images, idx):
+    """
+    QC filter based on direct image comparisons
+    """
 
     levels = [(1, 0.2, 50), (2, 0.3, 50)]
 
@@ -62,6 +69,7 @@ def qc_diff(images, idx):
     for lev in reversed(levels):
         d = fits.ImageDataDiff(images[idx], ref, rtol = lev[1])
         if (100*d.diff_ratio > lev[2]):
+            print(f"qc_diff flag {lev[0]} {lev[1]} {100*d.diff_ratio}")
             flag = lev[0]
             break
 
@@ -69,7 +77,7 @@ def qc_diff(images, idx):
 
 #------------------------------------------------------------------------------
 
-fig = 2
+fig = 3
 
 # default directory for movies
 outdir = '/home/mark.miesch/Products/image_processing/movies'
@@ -98,7 +106,18 @@ elif fig == 2:
     outfile = 'lasco_proc_qc2.mp4'
     cmap = plt.get_cmap('soholasco2')
     scale = (0.2,1.0)
-    #framedir=fdir+'/qc2'
+
+elif fig == 3:
+
+    # similar to fig 2 but applied to the less processed data
+    # - only background subtracted and normalized by exposure time
+
+    qclevel = 1
+    dir='/home/mark.miesch/data/lasco_monthly/c3/lasco_c3_L0.5'
+    outfile = 'lasco_proc_qc3.mp4'
+    cmap = plt.get_cmap('soholasco2')
+    scale = (1.0,1.3)
+    framedir=fdir+'/qc3'
 
 else:
     print("pick a valid figure number")
