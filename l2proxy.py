@@ -53,7 +53,7 @@ for d in os.listdir(dir):
                     normalize = False)
                 t = x.time.datetime
                 tstamp = f"{t.year}_{str(t.month).zfill(2)}_{str(t.day).zfill(2)}_{str(t.hour).zfill(2)}{str(t.minute).zfill(2)}{str(t.second).zfill(2)}"
-                outfile=outdir+'/'+f"{x.instrument}{x.detector}_{tstamp}"
+                outfile=outdir+'/'+f"{x.instrument}{x.detector}_{tstamp}.fts"
                 x.mask_background(rmin = rmin, rmax = rmax, nonzero = True)
                 x.background_ratio(rescale=False)
                 header0 = x.header
