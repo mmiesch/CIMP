@@ -16,7 +16,7 @@ outroot = '/home/mark.miesch/Products/image_processing/ATBD/data/'
 rmin = 0.16
 rmax = 1.0
 
-fig = 1
+fig = 4
 
 # set this to true to normalize by exposure time
 norm = False
@@ -44,6 +44,32 @@ elif fig == 2:
     norm = True
 
     outdir = outroot+'lasco_c3/L2proxy_2014_01'
+
+elif fig == 3:
+
+    # L1 STEREO-A data
+    name = 'STEREOA'
+    instrument = a.Instrument.secchi
+    detector = a.Detector.cor2
+    dir='/home/mark.miesch/sunpy/data/secchi_cor2/L1/2012/09'
+    bgfile = dir+'/background.fts'
+    norm = False
+
+    outdir = outroot+'stereo_a/L2proxy_2012_09'
+
+elif fig == 4:
+
+    # HAO CME model
+    name = 'Model0'
+    instrument = 'ModelHAO0'
+    detector = 'original'
+    dir = '/home/mark.miesch/data/anny/CME0/pos-30/dcmer_030W_bang_0000_fits'
+    bgfile = dir+'/tB/frame_0000.fits'
+    norm = False
+    rmin = 0.0
+    rmax = np.inf
+
+    outdir = outroot+'model/CME0_pos30'
 
 else:
     print("pick a valid figure number")
