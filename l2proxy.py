@@ -18,6 +18,9 @@ rmax = 1.0
 
 fig = 1
 
+# set this to true to normalize by exposure time
+norm = False
+
 if fig == 1:
 
     # L0.5 LASCO data
@@ -25,6 +28,7 @@ if fig == 1:
     detector = a.Detector.c3
     dir='/home/mark.miesch/data/lasco_monthly/c3/2012_04'
     bgfile = dir+'/background.fts'
+    norm = True
 
     outdir = outroot+'lasco_c3/L2proxy_2012_04'
 
@@ -36,9 +40,19 @@ if not os.path.exists(outdir):
     os.mkdir(outdir)
 
 #------------------------------------------------------------------------------
-# loop over all directories for the month
+#  Use the background file as a reference for the correct resolution
 
-for d in os.listdir(dir):
+hdu = fits.open(bgfile)[0]
+nx, ny = hdu.data.shape
+
+#------------------------------------------------------------------------------
+# The expected layout of the data here is that dir contains a month's
+# worth, organized into subdirectories that contain all the data files
+# for a particular day.
+
+dlist = ['15','16']
+#for d in os.listdir(dir):
+for d in dlist:
     day = dir+'/'+d
     print(day)
     if os.path.isdir(day):
@@ -50,12 +64,15 @@ for d in os.listdir(dir):
                 assert(fpath != bgfile)
                 x = snap.snapshot(file = fpath, bgfile = bgfile, \
                     instrument = instrument, detector = detector, \
-                    normalize = False)
+                    normalize = norm)
+                assert(x.nx == nx)
+                assert(x.ny == ny)
                 t = x.time.datetime
                 tstamp = f"{t.year}_{str(t.month).zfill(2)}_{str(t.day).zfill(2)}_{str(t.hour).zfill(2)}{str(t.minute).zfill(2)}{str(t.second).zfill(2)}"
                 outfile=outdir+'/'+f"{x.instrument}{x.detector}_{tstamp}.fts"
                 x.mask_background(rmin = rmin, rmax = rmax, nonzero = True)
                 x.background_ratio(rescale=False)
+                x.mask_annulus(rmin = rmin, rmax = rmax)
                 header0 = x.header
                 # needed for lasco data because the header includes an
                 # unprintable character that confuses astropy
@@ -68,8 +85,5 @@ for d in os.listdir(dir):
             except Exception as e:
                 print(f"{e}\nSkipping {file}")
                 pass
-
-
-
 
 #------------------------------------------------------------------------------
