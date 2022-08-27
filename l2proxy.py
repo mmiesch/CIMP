@@ -24,6 +24,7 @@ norm = False
 if fig == 1:
 
     # L0.5 LASCO data
+    name = 'LASCOC3'
     instrument = a.Instrument.lasco
     detector = a.Detector.c3
     dir='/home/mark.miesch/data/lasco_monthly/c3/2012_04'
@@ -31,6 +32,18 @@ if fig == 1:
     norm = True
 
     outdir = outroot+'lasco_c3/L2proxy_2012_04'
+
+elif fig == 2:
+
+    # L0.5 LASCO data
+    name = 'LASCOC3'
+    instrument = a.Instrument.lasco
+    detector = a.Detector.c3
+    dir='/home/mark.miesch/data/lasco_monthly/c3/2014_01'
+    bgfile = dir+'/background.fts'
+    norm = True
+
+    outdir = outroot+'lasco_c3/L2proxy_2014_01'
 
 else:
     print("pick a valid figure number")
@@ -50,9 +63,7 @@ nx, ny = hdu.data.shape
 # worth, organized into subdirectories that contain all the data files
 # for a particular day.
 
-dlist = ['15','16']
-#for d in os.listdir(dir):
-for d in dlist:
+for d in os.listdir(dir):
     day = dir+'/'+d
     print(day)
     if os.path.isdir(day):
@@ -69,7 +80,7 @@ for d in dlist:
                 assert(x.ny == ny)
                 t = x.time.datetime
                 tstamp = f"{t.year}_{str(t.month).zfill(2)}_{str(t.day).zfill(2)}_{str(t.hour).zfill(2)}{str(t.minute).zfill(2)}{str(t.second).zfill(2)}"
-                outfile=outdir+'/'+f"{x.instrument}{x.detector}_{tstamp}.fts"
+                outfile=outdir+'/'+name+f"_{tstamp}.fts"
                 x.mask_background(rmin = rmin, rmax = rmax, nonzero = True)
                 x.background_ratio(rescale=False)
                 x.mask_annulus(rmin = rmin, rmax = rmax)
