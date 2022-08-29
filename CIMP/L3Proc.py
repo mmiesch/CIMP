@@ -64,7 +64,7 @@ class l3proc_ng:
         # resolution of downsampled image
         self.nx, self.ny = int(self.Nx/2), int(self.Ny/2)
 
-        print(f"MSM {self.Nx}, {self.Ny} : {self.nx} {self.ny}")
+        # mask annulus, downsample, and QC check during the initial read
 
         self.files = []
         self.headers = []
@@ -87,9 +87,3 @@ class l3proc_ng:
             self.headers.append(hdu[0].header)
             hdu.close()
             idx -= 1
-
-        for file in self.files:
-            print(file)
-
-        print(len(self.files))
-
