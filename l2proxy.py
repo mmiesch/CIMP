@@ -119,6 +119,7 @@ for d in os.listdir(dir):
                     pass
                 hdu_out = fits.PrimaryHDU(x.data,header0)
                 hdu_out.writeto(outfile, overwrite = True)
+                x.close()
             except Exception as e:
                 print(f"{e}\nSkipping {file}")
                 pass

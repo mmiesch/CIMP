@@ -53,11 +53,24 @@ class l3proc_ng:
             print(red+"ERROR: infile not found"+cend)
             exit()
 
+        # get resolution from first file
+        hdu = fits.open(self.indir+'/'+flist[idx])
+        self.Nx, self.Ny = hdu[0].data.shape
+        hdu.close()
+
+        # resolution of downsampled image
+        self.nx, self.ny = int(self.Nx/2), int(self.Ny/2)
+
+        print(f"MSM {self.Nx}, {self.Ny} : {self.nx} {self.ny}")
+
         self.files = []
-        self.images = []
         self.headers = []
+        self.images = np.zeros((self.Nimages, self.nx, self.ny), dtype='float32')
         while len(self.files) < self.Nimages:
+            hdu = fits.open(self.indir+'/'+flist[idx])
+            self.headers.append(hdu[0].header)
             self.files.append(flist[idx])
+            hdu.close()
             idx -= 1
 
         for file in self.files:

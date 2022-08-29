@@ -82,7 +82,7 @@ class snapshot:
         # Now read in the data from files.  The assumption here is that there is one image per file.
         # If that is not the case, then we can generalize this as needed.
         try:
-            hdu = fits.open(file)[0]
+            self.hdu = fits.open(file)
         except FileNotFoundError as fnf_err:
             logging.exception(red+"Fatal Error in CIMP.Event.event constructor: {}".format(fnf_err)+cend)
             raise
@@ -93,6 +93,7 @@ class snapshot:
             logging.exception(red+"Fatal Error in CIMP.Event.event constructor: reading file {} : {}".format(file, err)+cend)
             raise
 
+        hdu = self.hdu[0]
         self.rawdata = hdu.data.astype('float')
         self.data = self.rawdata.copy()
         self.header = hdu.header
@@ -323,6 +324,9 @@ class snapshot:
             return False
         else:
             return True
+
+    def close(self):
+        self.hdu.close()
 
     def __str__(self):
         return (f'Instrument = {self.instrument} \n'
