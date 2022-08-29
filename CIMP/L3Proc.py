@@ -7,6 +7,7 @@ import numpy as np
 import os
 
 from astropy.io import fits
+from CIMP import Enhance
 
 # for warning / error statements; print red, yellow text to terminal
 red = '\033[91m'
@@ -18,13 +19,15 @@ class l3proc_ng:
     Class for CCOR L3 data processing with noise-gate.  The use of noise-gate filtering requires the analysis of N image
     """
 
-    def __init__(self, infile, outdir, Nimages = 18):
+    def __init__(self, infile, outdir, Nimages = 18, rmin = 0.0, rmax = np.inf):
         """
         infile: This is intended to represent a new L1b (CCOR-1) or L2 (CCOR-2) input file that has been created as part of a real-time operational pipeline.
 
         outdir: The output directory where the L3 data should be written
 
         Nimages: the number of images in the image sequence.  This is used by the noise-gate filter to estimate the noise spectrum.
+
+        rmin, rmax: FOV (normalized for minimum extent of image axes) for mask_annulus
 
         """
 
@@ -68,8 +71,20 @@ class l3proc_ng:
         self.images = np.zeros((self.Nimages, self.nx, self.ny), dtype='float32')
         while len(self.files) < self.Nimages:
             hdu = fits.open(self.indir+'/'+flist[idx])
-            self.headers.append(hdu[0].header)
+            data = hdu[0].data
+            header = hdu[0].header
+            Enhance.mask_annulus(data, rmin = rmin, rmax = rmax)
+            data = Enhance.downsample(data)
+            assert(data.shape == (self.nx, self.ny))
+            header['NAXIS1'] = self.nx
+            header['NAXIS2'] = self.ny
+            header['CRPIX1'] /= 2
+            header['CRPIX2'] /= 2
+            header['CDELT1'] *= 2
+            header['CDELT2'] *= 2
+            self.images[len(self.files),:,:] = data
             self.files.append(flist[idx])
+            self.headers.append(hdu[0].header)
             hdu.close()
             idx -= 1
 
