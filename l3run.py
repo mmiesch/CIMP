@@ -6,13 +6,16 @@ import os
 import numpy as np
 
 from CIMP import L3Proc as proc
+from time import perf_counter
 
 #------------------------------------------------------------------------------
 
-dir = '/home/mark.miesch/Products/image_processing/ATBD/data/'
+dir = '/home/mark.miesch/Products/image_processing/ATBD/data'
 
+# default parameters for all
 rmin = 0.16
 rmax = 1.0
+clip = (1.0, 1.4)
 
 # if Nfiles list is None, do all files in directory
 Nfiles = None
@@ -78,10 +81,21 @@ else:
 
 #------------------------------------------------------------------------------
 
+tstart = perf_counter()
+
 for file in flist:
     fpath = indir+'/'+file
     x = proc.l3proc(fpath, outdir)
-    x.process(rmin = rmin, rmax = rmax)
+    x.process(rmin = rmin, rmax = rmax, clip = clip)
     x.write()
+
+tstop = perf_counter()
+
+dt = tstop - tstart
+dtavg = dt / len(flist)
+
+print(f"{outdir}")
+print(f"Total Time (s)   : {dt}")
+print(f"Time per file (s) : {dtavg}")
 
 #------------------------------------------------------------------------------

@@ -8,6 +8,7 @@ import os
 
 from astropy.io import fits
 from CIMP import Enhance
+from sunkit_image.enhance import mgn
 
 # for warning / error statements; print red, yellow text to terminal
 red = '\033[91m'
@@ -37,15 +38,12 @@ class l3proc:
         self.outfile = outdir+'/'+'_'.join(filename)
 
 
-    def process(self, rmin = 0.0, rmax = np.inf):
+    def process(self, rmin = 0.0, rmax = np.inf, clip = None):
         # Basic L3 pipeline
 
         hdu = fits.open(self.infile)
         indata = hdu[0].data
         self.header = hdu[0].header
-
-        # mask annulus
-        Enhance.mask_annulus(indata, rmin = rmin, rmax = rmax)
 
         # median downsample
         self.data = Enhance.downsample(indata)
@@ -56,6 +54,21 @@ class l3proc:
         self.header['CRPIX2'] /= 2
         self.header['CDELT1'] *= 2
         self.header['CDELT2'] *= 2
+
+        # mask annulus
+        Enhance.mask_annulus(self.data, rmin = rmin, rmax = rmax)
+
+        # OMR point removal
+        self.data = Enhance.omr(self.data, rescaleim = False)
+
+        # clip and rescale
+        self.data = Enhance.clip(self.data, min = clip[0], max = clip[1], rescale_output = True)
+
+        # MGN feature enhancement
+        self.data = mgn(self.data, h = 0.8, gamma = 1.5)
+
+        # mask annulus again
+        Enhance.mask_annulus(self.data, rmin = rmin, rmax = rmax)
 
         hdu.close()
 
