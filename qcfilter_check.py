@@ -40,7 +40,7 @@ def qc_brightness(med, refmeds):
     qc1 = (0.7,1.3)
     qc2 = (0.5,1.5)
 
-    ref = refmeds.mean()
+    ref = refmeds.median()
     if ref > 0.0:
         rat = med/ref
     else:
