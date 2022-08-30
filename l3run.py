@@ -20,6 +20,10 @@ clip = (1.0, 1.4)
 # if Nfiles list is None, do all files in directory
 Nfiles = None
 
+# if true, wipe output directory before writing to it
+# the QC filter may not function properly if you do not do this
+wipe = True
+
 fig = 1
 
 if fig == 1:
@@ -60,6 +64,15 @@ if not os.path.exists(outdir):
     os.mkdir(outdir)
 
 #------------------------------------------------------------------------------
+# clean output directory
+
+if wipe:
+    for file in os.listdir(outdir):
+        fpath = outdir+'/'+file
+        if os.path.isfile(fpath):
+            os.remove(fpath)
+
+#------------------------------------------------------------------------------
 # get a list of files of length Nfiles, ending at endfile
 
 indir = os.path.dirname(endfile)
@@ -87,6 +100,7 @@ for file in flist:
     fpath = indir+'/'+file
     x = proc.l3proc(fpath, outdir)
     x.process(rmin = rmin, rmax = rmax, clip = clip)
+    x.qcfilter()
     x.write()
 
 tstop = perf_counter()
