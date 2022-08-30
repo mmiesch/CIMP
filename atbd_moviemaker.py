@@ -24,9 +24,11 @@ def get_time(header, source):
 
 #------------------------------------------------------------------------------
 
-fig = 1
+fig = 3
 
 rootdir = '/home/mark.miesch/Products/image_processing/ATBD'
+noisegate = True
+framedir = None
 
 if fig == 1:
     source = 'lasco'
@@ -36,9 +38,35 @@ if fig == 1:
     endfile = 'LASCOC3_L3_2012_04_15_064205.fts'
     duration = 1.0  # duration of movie in days
     Nframes = 6 # number of movie frames
-    scale = (0.2, 1.0)
+    scale = (0.0, 1.0)
     outfile = rootdir+'/movies/beta.mp4'
 
+elif fig == 2:
+    source = 'lasco'
+    title = 'LASCO/C3 April 15-16, 2012'
+    cmap = plt.get_cmap('soholasco2')
+    dir = rootdir + '/data/lasco_c3/L3_2012_04'
+    endfile = 'LASCOC3_L3_2012_04_16_111805.fts'
+    duration = 2.0
+    Nframes = 60
+    scale = (0.0, 1.0)
+    outfile = rootdir+'/movies/beta.mp4'
+
+elif fig == 3:
+    source = 'lasco'
+    title = 'LASCO/C3 Jan 14-16, 2014'
+    cmap = plt.get_cmap('soholasco2')
+    dir = rootdir + '/data/lasco_c3/L3_2014_01'
+    endfile = 'LASCOC3_L3_2014_01_16_181805.fts'
+    duration = 2.0
+    Nframes = 96
+    scale = (0.0, 1.0)
+    outfile = rootdir+'/movies/beta.mp4'
+    #framedir = '/home/mark.miesch/Products/image_processing/frames/debug'
+
+else:
+    print("pick a valid figure number")
+    exit()
 #------------------------------------------------------------------------------
 
 # Compile list of valid files in time range of interest,
@@ -87,30 +115,40 @@ for t in tgrid:
     print(f"{t} {idx} {tin[idx]} {files[idx]}")
 
 #------------------------------------------------------------------------------
-# load images
+# load images and apply noisegate
 
 images = []
 for file in fgrid:
-   hdu = fits.open(dir+'/'+fgrid[0])
+   hdu = fits.open(dir+'/'+file)
    images.append(hdu[0].data)
    hdu.close()
 
-images = np.array(images)
+if noisegate:
+    dcube = np.array(images, dtype='float')
+    print(f"dcube shape {dcube.shape}")
+    images = ng.noise_gate_batch(dcube, cubesize=12, model='hybrid',
+                                 factor = 4.0, dkfactor = 1.5)
+else:
+    images = np.array(images)
 
 #------------------------------------------------------------------------------
 # make movie
 fig = plt.figure()
 frames = []
 for idx in np.arange(Nframes):
-    f = plt.figimage(images[idx,:,:], cmap = cmap, vmin = scale[0], \
+    f = plt.figimage(images[Nframes-1-idx,:,:], cmap = cmap, vmin = scale[0], \
             vmax = scale[1], origin='lower', resize=True)
     if title is not None:
         plt.title(title)
     frames.append([f])
+    if framedir is not None:
+        frame = str(len(frames)).zfill(3)
+        plt.savefig(framedir+f"/frame_{frame}.png")
 
 mov = animation.ArtistAnimation(fig, frames, interval = 50, blit = False,
         repeat = True, repeat_delay = 1000)
 
+print(f"Number of valid files = {Nfiles}")
 print(f"Number of frames = {len(frames)}")
 mov.save(outfile)
 

@@ -44,9 +44,10 @@ def qc_brightness(images, idx0 = 0):
         rat = 1.0
 
     if (rat < qc2[0]) | (rat > qc2[1]):
-        print(f"qc_brightness L2 {rat}")
+        print(f"qc_brightness flag 2 {rat}")
         return 2
     elif (rat < qc1[0]) | (rat > qc1[1]):
+        print(f"qc_brightness flag 1 {rat}")
         return 1
     else:
         return 0

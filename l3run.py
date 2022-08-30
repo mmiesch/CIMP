@@ -24,7 +24,7 @@ Nfiles = None
 # the QC filter may not function properly if you do not do this
 wipe = True
 
-fig = 1
+fig = 3
 
 if fig == 1:
 
@@ -38,18 +38,26 @@ if fig == 1:
 elif fig == 2:
 
     # L0.5 LASCO data
-    Nfiles = 10
-    endfile = dir+'lasco_c3/L2proxy_2014_01/LASCOC3_2014_01_15_125405.fts'
-    outdir = dir+'lasco_c3/L3_2014_01'
+    # This is the same endfile as 1 but should span 2 days
+    Nfiles = 200
+    endfile = dir+'/lasco_c3/L2proxy_2012_04/LASCOC3_2012_04_16_111805.fts'
+    outdir = dir+'/lasco_c3/L3_2012_04'
 
 elif fig == 3:
+
+    # L0.5 LASCO data
+    Nfiles = 400
+    endfile = dir+'/lasco_c3/L2proxy_2014_01/LASCOC3_2014_01_16_181805.fts'
+    outdir = dir+'/lasco_c3/L3_2014_01'
+
+elif fig == 4:
 
     # L1 STEREO-A data
     Nfiles = 10
     endfile = dir+'/stereo_a/L2proxy_2012_09/STEREOA_2012_09_15_183900.fts'
     outdir = dir+'/stereo_a/L3_2012_09'
 
-elif fig == 4:
+elif fig == 5:
 
     # HAO CME model
     Nfiles = 10
