@@ -165,7 +165,7 @@ elif fig == 7:
     dkfactor = 1.5
     scale2 = (0.2, 1.0)
 
-    outfits = 'ng_hybrid_fig7.fts'
+    #outfits = 'ng_hybrid_fig7.fts'
 
 else:
     print("pick a valid figure number")
@@ -233,6 +233,8 @@ print(f"x1 time {x1.header['DATE-OBS']}")
 
 data1 = x1.data
 data2 = ngdata[dcidx,:,:]
+#data2 = ngdata[0,:,:]
+#data2 = ngdata[-1,:,:]
 
 print(f"x1 minmax: {np.min(data1)} {np.max(data1)}")
 print(f"x2 minmax: {np.min(data2)} {np.max(data2)}")
@@ -269,6 +271,6 @@ if label:
                  fontsize = 'x-large', fontweight = 'semibold')
 
 
-plt.savefig(outdir+outfile)
+#plt.savefig(outdir+outfile)
 
 plt.show()

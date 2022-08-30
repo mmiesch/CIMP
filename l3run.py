@@ -5,6 +5,7 @@ This is a simple driver for the L3Proc class
 import os
 import numpy as np
 
+from astropy.io import fits
 from CIMP import L3Proc as proc
 from time import perf_counter
 
@@ -48,7 +49,7 @@ elif fig == 3:
     # L0.5 LASCO data
     Nfiles = 400
     endfile = dir+'/lasco_c3/L2proxy_2014_01/LASCOC3_2014_01_16_181805.fts'
-    outdir = dir+'/lasco_c3/L3_2014_01'
+    outdir = dir+'/lasco_c3/L3_2014_01_preqc'
 
 elif fig == 4:
 
@@ -111,8 +112,8 @@ for file in flist:
     print(file)
     fpath = indir+'/'+file
     x = proc.l3proc(fpath, outdir)
-    x.process(rmin = rmin, rmax = rmax, clip = clip)
     x.qcfilter()
+    x.process(rmin = rmin, rmax = rmax, clip = clip)
     x.write()
 
 tstop = perf_counter()
@@ -123,5 +124,21 @@ dtavg = dt / len(flist)
 print(f"{outdir}")
 print(f"Total Time (s)   : {dt}")
 print(f"Time per file (s) : {dtavg}")
+
+#------------------------------------------------------------------------------
+
+qc1 = 0
+qc2 = 0
+for file in os.listdir(outdir):
+    hdu = fits.open(outdir+'/'+file)
+    if hdu[0].header['L3QCFLAG'] == 1:
+        qc1 += 1
+    if hdu[0].header['L3QCFLAG'] == 2:
+        qc2 +=1
+    hdu.close()
+
+print(80*'-'+'\n'+f"Nfiles = {Nfiles}")
+print(f"QC=1   : {qc1}")
+print(f"QC=2   : {qc2}")
 
 #------------------------------------------------------------------------------

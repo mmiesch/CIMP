@@ -8,6 +8,7 @@ import os
 
 from astropy.io import fits
 from CIMP import Enhance
+from skimage.restoration import denoise_tv_bregman
 from sunkit_image.enhance import mgn
 
 # for warning / error statements; print red, yellow text to terminal
@@ -127,6 +128,9 @@ class l3proc:
 
         # MGN feature enhancement
         self.data = mgn(self.data, h = 0.8, gamma = 1.5)
+
+        # Bregman noise filter
+        self.data = denoise_tv_bregman(self.data, weight = 10)
 
         # mask annulus again
         Enhance.mask_annulus(self.data, rmin = rmin, rmax = rmax)
