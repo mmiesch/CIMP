@@ -97,6 +97,7 @@ else:
 tstart = perf_counter()
 
 for file in flist:
+    print(file)
     fpath = indir+'/'+file
     x = proc.l3proc(fpath, outdir)
     x.process(rmin = rmin, rmax = rmax, clip = clip)

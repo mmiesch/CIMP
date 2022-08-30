@@ -24,20 +24,7 @@ def nzmedian(im):
     return np.ma.median(nonzero)
 
 #------------------------------------------------------------------------------
-def irange(idx, Nimages, Nref = 5):
-    """
-    Define a range of indices centered around idx, unless idx is near the edges
-    """
-    i2 = np.min([idx+3, Nimages])
-    if idx < 3:
-        range = (0, Nref)
-    else:
-        range = (i2 - Nref, i2)
-
-    return range
-
-#------------------------------------------------------------------------------
-def qc_brightness(med, refmeds):
+def qc_brightness(images, idx0 = 0):
     """
     QC filter based on changes in median image brightness
     """
@@ -45,9 +32,14 @@ def qc_brightness(med, refmeds):
     qc1 = (0.7,1.3)
     qc2 = (0.5,1.5)
 
+    N = len(images)
+    refmeds = np.zeros(N)
+    for idx in np.arange(N):
+        refmeds[idx] = nzmedian(images[idx])
+
     ref = refmeds.mean()
     if ref > 0.0:
-        rat = med/ref
+        rat = refmeds[idx0]/ref
     else:
         rat = 1.0
 
@@ -60,7 +52,7 @@ def qc_brightness(med, refmeds):
         return 0
 
 #------------------------------------------------------------------------------
-def qc_diff(images, idx):
+def qc_diff(images, idx0 = 0):
     """
     QC filter based on direct image comparisons
     """
@@ -72,7 +64,7 @@ def qc_diff(images, idx):
 
     flag = 0
     for lev in reversed(levels):
-        d = fits.ImageDataDiff(images[idx], ref, rtol = lev[1])
+        d = fits.ImageDataDiff(images[idx0], ref, rtol = lev[1])
         if (100*d.diff_ratio > lev[2]):
             print(f"qc_diff flag {lev[0]} {lev[1]} {100*d.diff_ratio}")
             flag = lev[0]
@@ -142,7 +134,7 @@ class l3proc:
 
     def qcfilter(self, Nref = 5):
         """
-        Apply QC filter based on Nref-1 adjacent reference images.
+        Apply QC filter based on Nref-1 previous reference images.
         Assume for now files are ordered alphabetically via time stamp.
         """
 
@@ -153,21 +145,28 @@ class l3proc:
         slist = list(sorted(dirlist, reverse=True))
         idx = slist.index(ofile) + 1
 
-        print("-------------------------------")
         images = [self.data]
         rfiles = []
         while (len(images) < Nref) and (idx < len(slist)):
             fpath = self.outdir+'/'+slist[idx]
             hdu = fits.open(fpath)
-            images.append(hdu[0].data)
-            rfiles.append(slist[idx])
+            try:
+                flag = hdu[0].header['L3QCFLAG']
+            except:
+                flag = 0
+            if flag < 2:
+                images.append(hdu[0].data)
+                rfiles.append(slist[idx])
             idx += 1
-        print(f"{ofile} {len(images)}")
-        for r in rfiles:
-            print(r)
-        images = np.array(images)
-        print(f"shape {images.shape}")
 
+        if len(images) < 2:
+            self.header['L3QCFLAG'] = 0
+            return
+
+        flag1 = qc_brightness(images)
+        flag2 = qc_diff(images)
+        self.header['L3QCFLAG']= np.max([flag1, flag2])
+        return
 
     def write(self):
 
