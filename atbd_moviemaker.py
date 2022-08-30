@@ -3,10 +3,12 @@ Make a movie by reading in L3 data files, removing corrupted images, applying a 
 """
 #------------------------------------------------------------------------------
 import datetime
+import matplotlib.animation as animation
 import matplotlib.pyplot as plt
 import noisegate as ng
 import numpy as np
 import os
+import sunpy.visualization.colormaps as cm
 from astropy.io import fits
 
 #------------------------------------------------------------------------------
@@ -28,6 +30,8 @@ rootdir = '/home/mark.miesch/Products/image_processing/ATBD'
 
 if fig == 1:
     source = 'lasco'
+    title = 'LASCO/C3 April 14-15, 2012'
+    cmap = plt.get_cmap('soholasco2')
     dir = rootdir + '/data/lasco_c3/L3_2012_04'
     endfile = 'LASCOC3_L3_2012_04_15_064205.fts'
     duration = 1.0  # duration of movie in days
@@ -64,7 +68,7 @@ while (dt <= dtmax) and (idx < len(flist)):
     idx += 1
 #------------------------------------------------------------------------------
 # define regular time grid for movie and identify associated files
-# effectively this is nearest-neighbor interpolation, but more 
+# effectively this is nearest-neighbor interpolation, but more
 # memory efficient than reading in all images.
 
 Nfiles = len(files)
@@ -83,20 +87,30 @@ for t in tgrid:
     print(f"{t} {idx} {tin[idx]} {files[idx]}")
 
 #------------------------------------------------------------------------------
+# load images
+
+images = []
+for file in fgrid:
+   hdu = fits.open(dir+'/'+fgrid[0])
+   images.append(hdu[0].data)
+   hdu.close()
+
+images = np.array(images)
+
+#------------------------------------------------------------------------------
 # make movie
-#fig = plt.figure()
-#frames = []
-#for idx in np.arange(Nimages):
-#    im = plt.figimage(images[idx], cmap=self.cmap, vmin = scale[0], \
-#                    vmax = scale[1], origin='lower', resize=True)
-#    if title is not None:
-#        plt.title(title)
-#    frames.append([im])
-#    frame = str(len(frames)).zfill(3)
-#    if framedir is not None:
-#        plt.savefig(framedir+f"/frame_{frame}.png")
-#    mov = animation.ArtistAnimation(fig, frames, interval = 50, blit = False,
-#          repeat = True, repeat_delay = 1000)
-#    print(f"Number of frames = {len(frames)}")
-#    mov.save(outfile)
+fig = plt.figure()
+frames = []
+for idx in np.arange(Nframes):
+    f = plt.figimage(images[idx,:,:], cmap = cmap, vmin = scale[0], \
+            vmax = scale[1], origin='lower', resize=True)
+    if title is not None:
+        plt.title(title)
+    frames.append([f])
+
+mov = animation.ArtistAnimation(fig, frames, interval = 50, blit = False,
+        repeat = True, repeat_delay = 1000)
+
+print(f"Number of frames = {len(frames)}")
+mov.save(outfile)
 
