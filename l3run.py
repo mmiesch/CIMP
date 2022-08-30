@@ -29,8 +29,10 @@ fig = 1
 if fig == 1:
 
     # L0.5 LASCO data
+    # this sample of 10 includes a corrupted image, at 063005, so it 
+    # should flag that if it is operating correctly
     Nfiles = 10
-    endfile = dir+'/lasco_c3/L2proxy_2012_04/LASCOC3_2012_04_15_063005.fts'
+    endfile = dir+'/lasco_c3/L2proxy_2012_04/LASCOC3_2012_04_15_064205.fts'
     outdir = dir+'/lasco_c3/L3_2012_04'
 
 elif fig == 2:
@@ -97,6 +99,7 @@ else:
 tstart = perf_counter()
 
 for file in flist:
+    print(80*'-')
     print(file)
     fpath = indir+'/'+file
     x = proc.l3proc(fpath, outdir)

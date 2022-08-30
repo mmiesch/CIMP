@@ -36,8 +36,8 @@ def qc_brightness(images, idx0 = 0):
     refmeds = np.zeros(N)
     for idx in np.arange(N):
         refmeds[idx] = nzmedian(images[idx])
+    ref = np.nanmedian(refmeds)
 
-    ref = refmeds.mean()
     if ref > 0.0:
         rat = refmeds[idx0]/ref
     else:
