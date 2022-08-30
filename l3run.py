@@ -112,8 +112,8 @@ for file in flist:
     print(file)
     fpath = indir+'/'+file
     x = proc.l3proc(fpath, outdir)
-    x.qcfilter()
     x.process(rmin = rmin, rmax = rmax, clip = clip)
+    #x.qcfilter()
     x.write()
 
 tstop = perf_counter()

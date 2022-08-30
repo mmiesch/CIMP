@@ -120,6 +120,9 @@ class l3proc:
         # mask annulus
         Enhance.mask_annulus(self.data, rmin = rmin, rmax = rmax)
 
+        # qc filter
+        self.qcfilter()
+
         # OMR point removal
         self.data = Enhance.omr(self.data, rescaleim = False)
 
