@@ -54,11 +54,11 @@ elif fig == 3:
     source = 'lasco'
     title = 'LASCO/C3 Jan 14-16, 2014'
     cmap = plt.get_cmap('soholasco2')
-    dir = rootdir + '/data/lasco_c3/L3_2014_01_postqc'
+    dir = rootdir + '/data/lasco_c3/L3_2014_01'
     endfile = 'LASCOC3_L3_2014_01_16_181805.fts'
     duration = 2.0
     scale = (0.0, 1.0)
-    outfile = rootdir+'/movies/beta_postqc.mp4'
+    outfile = rootdir+'/movies/beta.mp4'
     #framedir = '/home/mark.miesch/Products/image_processing/frames/debug'
 
 else:
