@@ -19,7 +19,7 @@ def nzmedian(im):
     return np.ma.median(nonzero)
 
 #------------------------------------------------------------------------------
-def irange(idx, N, Nref = 5):
+def irange(idx, Nimages, Nref = 5):
     """
     Define a range of indices centered around idx, unless idx is near the edges
     """
@@ -76,8 +76,20 @@ def qc_diff(images, idx):
     return flag
 
 #------------------------------------------------------------------------------
+def qc_range(image, range=(0.99,1.4), levels = (0.2, 0.5)):
+    """
+    Flag images outside of a given range
+    range = desired range
+    levels = threshold pixel fraction for flag values of 1 and 2
+    """
+    x = np.ma.masked_inside(image, range[0], range[1])
+    valid = float(x.count)/float(image.size)
+    print(f"valid {valid}")
+    return 0
 
-fig = 3
+#------------------------------------------------------------------------------
+
+fig = 4
 
 # default directory for movies
 outdir = '/home/mark.miesch/Products/image_processing/movies'
@@ -86,7 +98,7 @@ outdir = '/home/mark.miesch/Products/image_processing/movies'
 fdir='/home/mark.miesch/Products/image_processing/frames/qc/lasco_2012_04'
 
 framedir = None
-skipmovie = False
+skipmovie = True
 
 if fig == 1:
 
@@ -118,6 +130,14 @@ elif fig == 3:
     cmap = plt.get_cmap('soholasco2')
     scale = (1.0,1.3)
     framedir=fdir+'/qc3'
+
+elif fig == 4:
+
+    qclevel = 1
+    dir='/home/mark.miesch/Products/image_processing/ATBD/data/lasco_c3/L2proxy_2014_01'
+    outfile = 'lasco_l2proxy_2014.mp4'
+    cmap = plt.get_cmap('soholasco2')
+    scale = (0.2,1.0)
 
 else:
     print("pick a valid figure number")
@@ -163,6 +183,8 @@ for idx in np.arange(Nimages):
 
 #------------------------------------------------------------------------------
 # remove images that do not pass the qc check
+if skipmovie:
+    exit()
 
 for idx in sorted(np.arange(Nimages), reverse=True):
     if qcflag[idx] >= qclevel:
@@ -171,9 +193,6 @@ for idx in sorted(np.arange(Nimages), reverse=True):
 
 #------------------------------------------------------------------------------
 # make movie
-
-if skipmovie:
-    exit()
 
 fig = plt.figure()
 frames = []
