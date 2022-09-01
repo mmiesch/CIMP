@@ -49,7 +49,7 @@ elif fig == 3:
     # L0.5 LASCO data
     Nfiles = 400
     endfile = dir+'/lasco_c3/L2proxy_2014_01/LASCOC3_2014_01_16_181805.fts'
-    outdir = dir+'/lasco_c3/L3_2014_01_postqc'
+    outdir = dir+'/lasco_c3/L3_2014_01_preqc'
 
 elif fig == 4:
 
@@ -113,7 +113,6 @@ for file in flist:
     fpath = indir+'/'+file
     x = proc.l3proc(fpath, outdir)
     x.process(rmin = rmin, rmax = rmax, clip = clip)
-    x.qcfilter()
     x.write()
 
 tstop = perf_counter()

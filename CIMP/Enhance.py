@@ -242,31 +242,24 @@ def atrous(im):
 
     return c1
 
-def mask_annulus(im, rmin = 0.0, rmax = None, missingval = 0.0):
+def mask_annulus(im, rmin = 0.0, rmax = np.inf, missingval = 0.0):
     """
     This sets the pixels inside rmin and/or outside rmax to the missing value (default 0)
     """
-
-    nx = im.shape[0]
-    ny = im.shape[1]
-
-    nn = 0.5 * float(np.min((nx, ny)))
-
+    # annular radii in pixels (squared)
+    nn = 0.5 * float(np.min((im.shape[0], im.shape[1])))
     rr1 = (rmin*nn)**2
+    rr2 = (rmax*nn)**2
 
-    if rmax is None:
-        rr2 = np.inf
-    else:
-        rr2 = (rmax*nn)**2
-
+    # center of image
     x0 = 0.5*float(im.shape[0])
     y0 = 0.5*float(im.shape[1])
 
-    for i in np.arange(0,im.shape[0]):
-        for j in np.arange(0,im.shape[1]):
-            r2 = (float(i)-x0)**2 + (float(j)-y0)**2
-            if (r2 < rr1) or (r2 > rr2):
-                im[i,j] = missingval
+    x = np.tile(np.arange(im.shape[0]),(im.shape[1],1)).T
+    y = np.tile(np.arange(im.shape[1]),(im.shape[0],1))
+    rr = (x-x0)**2 + (y-y0)**2
+    mask = (rr <= rr1) | (rr >= rr2)
+    return np.where(mask, missingval, im)
 
 def downsample(im):
     """

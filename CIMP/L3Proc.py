@@ -134,13 +134,18 @@ class l3proc:
         self.header['CDELT2'] *= 2
 
         # mask annulus
-        Enhance.mask_annulus(self.data, rmin = rmin, rmax = rmax)
+        Enhance.mask_annulus(self.data, rmin = rmin, rmax = rmax, \
+                             missingval = 1.0)
 
         # OMR point removal
         self.data = Enhance.omr(self.data, rescaleim = False)
 
+        # QC filter
+        self.header['L3QCFLAG'] = qc_range(self.data)
+
         # clip and rescale
-        self.data = Enhance.clip(self.data, min = clip[0], max = clip[1], rescale_output = True)
+        self.data = (self.data - clip[0])/(clip[1] - clip[0])
+        self.data = self.data.clip(min = 0.0, max = 1.0)
 
         # MGN feature enhancement
         self.data = mgn(self.data, h = 0.8, gamma = 1.5)
