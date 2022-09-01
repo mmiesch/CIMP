@@ -49,7 +49,7 @@ elif fig == 3:
     # L0.5 LASCO data
     Nfiles = 400
     endfile = dir+'/lasco_c3/L2proxy_2014_01/LASCOC3_2014_01_16_181805.fts'
-    outdir = dir+'/lasco_c3/L3_2014_01_preqc'
+    outdir = dir+'/lasco_c3/L3_2014_01_postqc'
 
 elif fig == 4:
 
@@ -113,7 +113,7 @@ for file in flist:
     fpath = indir+'/'+file
     x = proc.l3proc(fpath, outdir)
     x.process(rmin = rmin, rmax = rmax, clip = clip)
-    #x.qcfilter()
+    x.qcfilter()
     x.write()
 
 tstop = perf_counter()
@@ -127,18 +127,23 @@ print(f"Time per file (s) : {dtavg}")
 
 #------------------------------------------------------------------------------
 
-qc1 = 0
-qc2 = 0
+qc1 = []
+qc2 = []
 for file in os.listdir(outdir):
     hdu = fits.open(outdir+'/'+file)
     if hdu[0].header['L3QCFLAG'] == 1:
-        qc1 += 1
+        qc1.append(file)
     if hdu[0].header['L3QCFLAG'] == 2:
-        qc2 +=1
+        qc2.append(file)
     hdu.close()
 
 print(80*'-'+'\n'+f"Nfiles = {Nfiles}")
-print(f"QC=1   : {qc1}")
-print(f"QC=2   : {qc2}")
+print(f"QC=1   : {len(qc1)}")
+for file in qc1:
+    print(f"    {file}")
+
+print(f"QC=2   : {len(qc2)}")
+for file in qc2:
+    print(f"    {file}")
 
 #------------------------------------------------------------------------------

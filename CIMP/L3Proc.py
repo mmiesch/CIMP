@@ -25,6 +25,22 @@ def nzmedian(im):
     return np.ma.median(nonzero)
 
 #------------------------------------------------------------------------------
+def qc_range(image, range=(0.99, 1.4), levels = (0.4, 0.5)):
+    """
+    Flag images outside of a given range
+    """
+    x = np.ma.masked_inside(image, range[0], range[1])
+    outside = float(x.count())/float(image.size)
+    if outside > levels[1]:
+        print(f"qc_range flag 2 {outside}")
+        return 2
+    elif outside > levels[0]:
+        print(f"qc_range flag 1 {outside}")
+        return 1
+    else:
+        return 0
+
+#------------------------------------------------------------------------------
 def qc_brightness(images, idx0 = 0):
     """
     QC filter based on changes in median image brightness
@@ -120,9 +136,6 @@ class l3proc:
         # mask annulus
         Enhance.mask_annulus(self.data, rmin = rmin, rmax = rmax)
 
-        # qc filter
-        self.qcfilter()
-
         # OMR point removal
         self.data = Enhance.omr(self.data, rescaleim = False)
 
@@ -171,9 +184,10 @@ class l3proc:
             self.header['L3QCFLAG'] = 0
             return
 
-        flag1 = qc_brightness(images)
+        #flag1 = qc_brightness(images)
         flag2 = qc_diff(images)
-        self.header['L3QCFLAG']= np.max([flag1, flag2])
+        #self.header['L3QCFLAG']= np.max([flag1, flag2])
+        self.header['L3QCFLAG']= flag2
         return
 
     def write(self):
