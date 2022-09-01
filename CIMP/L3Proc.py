@@ -25,7 +25,7 @@ def nzmedian(im):
     return np.ma.median(nonzero)
 
 #------------------------------------------------------------------------------
-def qc_range(image, range=(0.99, 1.4), levels = (0.4, 0.5)):
+def qc_range(image, range=(0.9, 1.4), levels = (0.4, 0.5)):
     """
     Flag images outside of a given range
     """

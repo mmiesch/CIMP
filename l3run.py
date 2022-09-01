@@ -25,7 +25,7 @@ Nfiles = None
 # the QC filter may not function properly if you do not do this
 wipe = True
 
-fig = 3
+fig = 2
 
 if fig == 1:
 
