@@ -149,7 +149,8 @@ class l3proc:
         self.data = self.data.clip(min = 0.0, max = 1.0)
 
         # MGN feature enhancement
-        self.data = mgn(self.data, h = 0.8, gamma = 1.5)
+        self.data = mgn(self.data, h = 0.8, gamma = 1.5, gamma_min = 0.0, \
+                        gamma_max = 1.0)
 
         # Bregman noise filter
         if noisefilter:

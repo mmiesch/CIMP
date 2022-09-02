@@ -12,11 +12,23 @@ import sunpy.visualization.colormaps as cm
 from astropy.io import fits
 
 #------------------------------------------------------------------------------
-def brightness_equalization(images, method='mean'):
+def brightness_equalization(images, method = None):
     """
     Experiment with brightness equalization for a series of images
     images = 3D numpy array with dimensions (Nt, Nx, Ny)
     """
+
+    if method is None:
+        return
+
+    if method == 'mean':
+        means = np.nanmean(images, axis=(1,2))
+        totmean = np.nanmean(images)
+        assert((totmean > 0.0), f"ERROR: mean brightness {totmean}")
+        for i in np.arange(len(means)):
+            images[i,:,:] *= totmean/means[i]
+
+    return
 
 #------------------------------------------------------------------------------
 def get_time(header, source):
@@ -36,6 +48,7 @@ fig = 3
 rootdir = '/home/mark.miesch/Products/image_processing/ATBD'
 noisegate = False
 framedir = None
+beqmethod = None
 
 if fig == 1:
     source = 'lasco'
@@ -64,12 +77,15 @@ elif fig == 3:
     dir = rootdir + '/data/lasco_c3/L3_2014_01'
     endfile = 'LASCOC3_L3_2014_01_16_181805.fts'
     duration = 2.0
-    scale = (0.0, 1.0)
+    scale = (0.0, 0.6)
     #outfile = rootdir+'/movies/beta.mp4'
+    #beqmethod = 'mean'
+    beqmethod = None
     pdir = '/home/mark.miesch/Products/image_processing'
-    outfile = pdir+'/movies/lasco2014_nobeq.mp4'
-    framedir = pdir+'/frames/lasco2014_nobeq'
-
+    #outfile = pdir+f'/movies/lasco2014_beq{beqmethod}.mp4'
+    #framedir = pdir+f'/frames/lasco2014_beq{beqmethod}'
+    outfile = pdir+f'/movies/lasco2014_beqnorm.mp4'
+    framedir = pdir+f'/frames/lasco2014_beqnorm'
 else:
     print("pick a valid figure number")
     exit()
@@ -115,6 +131,8 @@ for idx in np.arange(Nfiles):
    hdu = fits.open(dir+'/'+files[idx])
    images[Nfiles-1-idx,:,:] = hdu[0].data
    hdu.close()
+
+#brightness_equalization(images, method = beqmethod)
 
 if noisegate:
     dcube = images
