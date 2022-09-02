@@ -115,7 +115,8 @@ class l3proc:
         filename.insert(1,'L3')
         self.outfile = outdir+'/'+'_'.join(filename)
 
-    def process(self, rmin = 0.0, rmax = np.inf, clip = None):
+    def process(self, rmin = 0.0, rmax = np.inf, clip = None, \
+                noisefilter = False):
         # Proposed L3 pipeline
         # not including noise reduction and QC
 
@@ -151,10 +152,11 @@ class l3proc:
         self.data = mgn(self.data, h = 0.8, gamma = 1.5)
 
         # Bregman noise filter
-        self.data = denoise_tv_bregman(self.data, weight = 10)
+        if noisefilter:
+            self.data = denoise_tv_bregman(self.data, weight = 10)
 
         # mask annulus again
-        Enhance.mask_annulus(self.data, rmin = rmin, rmax = rmax)
+        self.data = Enhance.mask_annulus(self.data, rmin = rmin, rmax = rmax)
 
         hdu.close()
 

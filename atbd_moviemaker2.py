@@ -12,6 +12,13 @@ import sunpy.visualization.colormaps as cm
 from astropy.io import fits
 
 #------------------------------------------------------------------------------
+def brightness_equalization(images, method='mean'):
+    """
+    Experiment with brightness equalization for a series of images
+    images = 3D numpy array with dimensions (Nt, Nx, Ny)
+    """
+
+#------------------------------------------------------------------------------
 def get_time(header, source):
 
     if source == 'lasco':
@@ -52,14 +59,16 @@ elif fig == 2:
 
 elif fig == 3:
     source = 'lasco'
-    title = 'LASCO/C3 Jan 14-16, 2014'
+    title = 'LASCO/C3 Jan 14-16, 2014: no beq'
     cmap = plt.get_cmap('soholasco2')
     dir = rootdir + '/data/lasco_c3/L3_2014_01'
     endfile = 'LASCOC3_L3_2014_01_16_181805.fts'
     duration = 2.0
     scale = (0.0, 1.0)
-    outfile = rootdir+'/movies/beta.mp4'
-    #framedir = '/home/mark.miesch/Products/image_processing/frames/debug'
+    #outfile = rootdir+'/movies/beta.mp4'
+    pdir = '/home/mark.miesch/Products/image_processing'
+    outfile = pdir+'/movies/lasco2014_nobeq.mp4'
+    framedir = pdir+'/frames/lasco2014_nobeq'
 
 else:
     print("pick a valid figure number")
