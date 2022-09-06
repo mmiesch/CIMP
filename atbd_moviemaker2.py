@@ -43,7 +43,7 @@ def get_time(header, source):
 
 #------------------------------------------------------------------------------
 
-fig = 4
+fig = 6
 
 rootdir = '/home/mark.miesch/Products/image_processing/ATBD'
 noisegate = False
@@ -95,6 +95,33 @@ elif fig == 4:
     outfile = rootdir+'/movies/lasco_2021_05_16.mp4'
     framedir = pdir+f'/frames/2021_05_16'
 
+elif fig == 5:
+    source = 'lasco'
+    title = 'LASCO/C3 May 15-17, 2021'
+    cmap = plt.get_cmap('soholasco2')
+    dir = rootdir + '/data/lasco_c3/L3_2021_05'
+    endfile = 'LASCOC3_L3_2021_05_17_013020.fts'
+    duration = 2.0
+    scale = (0.0, 0.6)
+    pdir = '/home/mark.miesch/Products/image_processing'
+    outfile = rootdir+'/movies/lasco_2021_05_16_ng.mp4'
+    framedir = pdir+f'/frames/2021_05_16_ng'
+    noisegate = True
+
+elif fig == 6:
+    # try to replicate the atbd
+    source = 'lasco'
+    title = 'ATBD'
+    cmap = plt.get_cmap('soholasco2')
+    dir = '/home/mark.miesch/data/lasco_monthly/c3/2012_04_processed'
+    endfile = 'image167.fts'
+    duration = 2.0
+    scale = (0.2, 1.0)
+    pdir = '/home/mark.miesch/Products/image_processing'
+    outfile = rootdir+'/movies/ngcheck.mp4'
+    framedir = pdir+f'/frames/ngcheck'
+    noisegate = True
+
 else:
     print("pick a valid figure number")
     exit()
@@ -129,6 +156,10 @@ while (dt <= dtmax) and (idx < len(flist)):
 #------------------------------------------------------------------------------
 # load images and apply noisegate
 
+#DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD debugging
+files = os.listdir(dir)
+#DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD debugging
+
 Nfiles = len(files)
 
 hdu = fits.open(dir+'/'+files[0])
@@ -143,17 +174,23 @@ for idx in np.arange(Nfiles):
 
 #brightness_equalization(images, method = beqmethod)
 
+print(f"MSM {len(images)} {images.shape}")
+
 if noisegate:
-    dcube = images
-    images = ng.noise_gate_batch(dcube, cubesize=12, model='hybrid',
-                                 factor = 10, dkfactor = 10)
+#    dcube = images.copy()
+#    images = ng.noise_gate_batch(dcube, cubesize=18, model='hybrid',
+#                                 factor = 4.0, dkfactor = 4.0)
+    dcube = ng.noise_gate_batch(images, cubesize=(18,18,18), model='hybrid',
+                                 factor = 4.0, dkfactor = 1.5)
 
 #------------------------------------------------------------------------------
 # make movie
 fig = plt.figure()
 frames = []
 for idx in np.arange(Nfiles):
-    f = plt.figimage(images[idx,:,:], cmap = cmap, vmin = scale[0], \
+#    f = plt.figimage(images[idx,:,:], cmap = cmap, vmin = scale[0], \
+#            vmax = scale[1], origin='lower', resize=True)
+    f = plt.figimage(dcube[idx,:,:], cmap = cmap, vmin = scale[0], \
             vmax = scale[1], origin='lower', resize=True)
     if title is not None:
         plt.title(title)

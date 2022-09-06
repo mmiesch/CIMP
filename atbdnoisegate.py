@@ -23,7 +23,8 @@ cend = '\033[0m'
 # parameters common to all images
 
 # L0.5 LASCO data processed and qc filtered
-dir = '/home/mark.miesch/data/lasco_monthly/c3/2012_04_qc'
+#dir = '/home/mark.miesch/data/lasco_monthly/c3/2012_04_qc'
+dir = '/home/mark.miesch/data/lasco_monthly/c3/2012_04_processed'
 
 # This is the image before noisegate is applied
 file1 = dir+'/image068.fts'
@@ -151,7 +152,7 @@ elif fig == 7:
 
     # fig3 with a smaller dkfactor
 
-    outfile = 'lasco_ng_hybrid_fig7.png'
+    outfile = 'lasco_ng_hybrid_fig7p.png'
 
     cmap = plt.get_cmap('soholasco2')
 
