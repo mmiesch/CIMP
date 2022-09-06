@@ -24,7 +24,7 @@ def brightness_equalization(images, method = None):
     if method == 'mean':
         means = np.nanmean(images, axis=(1,2))
         totmean = np.nanmean(images)
-        assert((totmean > 0.0), f"ERROR: mean brightness {totmean}")
+        assert totmean > 0.0, f"ERROR: mean brightness {totmean}"
         for i in np.arange(len(means)):
             images[i,:,:] *= totmean/means[i]
 
@@ -43,7 +43,7 @@ def get_time(header, source):
 
 #------------------------------------------------------------------------------
 
-fig = 3
+fig = 4
 
 rootdir = '/home/mark.miesch/Products/image_processing/ATBD'
 noisegate = False
@@ -78,14 +78,23 @@ elif fig == 3:
     endfile = 'LASCOC3_L3_2014_01_16_181805.fts'
     duration = 2.0
     scale = (0.0, 0.6)
-    #outfile = rootdir+'/movies/beta.mp4'
-    #beqmethod = 'mean'
     beqmethod = None
     pdir = '/home/mark.miesch/Products/image_processing'
-    #outfile = pdir+f'/movies/lasco2014_beq{beqmethod}.mp4'
-    #framedir = pdir+f'/frames/lasco2014_beq{beqmethod}'
     outfile = pdir+f'/movies/lasco2014_beqnorm.mp4'
     framedir = pdir+f'/frames/lasco2014_beqnorm'
+
+elif fig == 4:
+    source = 'lasco'
+    title = 'LASCO/C3 May 15-17, 2021'
+    cmap = plt.get_cmap('soholasco2')
+    dir = rootdir + '/data/lasco_c3/L3_2021_05'
+    endfile = 'LASCOC3_L3_2021_05_17_013020.fts'
+    duration = 2.0
+    scale = (0.0, 0.6)
+    pdir = '/home/mark.miesch/Products/image_processing'
+    outfile = rootdir+'/movies/lasco_2021_05_16.mp4'
+    framedir = pdir+f'/frames/2021_05_16'
+
 else:
     print("pick a valid figure number")
     exit()
