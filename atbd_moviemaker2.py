@@ -177,10 +177,8 @@ for idx in np.arange(Nfiles):
 print(f"MSM {len(images)} {images.shape}")
 
 if noisegate:
-#    dcube = images.copy()
-#    images = ng.noise_gate_batch(dcube, cubesize=18, model='hybrid',
-#                                 factor = 4.0, dkfactor = 4.0)
-    dcube = ng.noise_gate_batch(images, cubesize=(18,18,18), model='hybrid',
+    dcube = images.copy()
+    images = ng.noise_gate_batch(dcube, cubesize=(18,18,18), model='hybrid',
                                  factor = 4.0, dkfactor = 1.5)
 
 #------------------------------------------------------------------------------
@@ -188,9 +186,7 @@ if noisegate:
 fig = plt.figure()
 frames = []
 for idx in np.arange(Nfiles):
-#    f = plt.figimage(images[idx,:,:], cmap = cmap, vmin = scale[0], \
-#            vmax = scale[1], origin='lower', resize=True)
-    f = plt.figimage(dcube[idx,:,:], cmap = cmap, vmin = scale[0], \
+    f = plt.figimage(images[idx,:,:], cmap = cmap, vmin = scale[0], \
             vmax = scale[1], origin='lower', resize=True)
     if title is not None:
         plt.title(title)
