@@ -115,7 +115,7 @@ elif fig == 6:
     cmap = plt.get_cmap('soholasco2')
     dir = '/home/mark.miesch/data/lasco_monthly/c3/2012_04_processed'
     endfile = 'image167.fts'
-    duration = 3.0
+    duration = 2.0
     scale = (0.2, 1.0)
     pdir = '/home/mark.miesch/Products/image_processing'
     outfile = rootdir+'/movies/ngcheck.mp4'
@@ -156,11 +156,6 @@ while (dt <= dtmax) and (idx < len(flist)):
 #------------------------------------------------------------------------------
 # load images and apply noisegate
 
-#DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD debugging
-for f in files:
-    print(f)
-#DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD debugging
-
 Nfiles = len(files)
 
 hdu = fits.open(dir+'/'+files[0])
@@ -179,7 +174,7 @@ print(f"MSM {len(images)} {images.shape}")
 
 if noisegate:
     dcube = images.copy()
-    images = ng.noise_gate_batch(dcube, cubesize=(18,18,18), model='hybrid',
+    images = ng.noise_gate_batch(dcube, cubesize=(12,12,12), model='hybrid',
                                  factor = 4.0, dkfactor = 1.5)
 
 #------------------------------------------------------------------------------
