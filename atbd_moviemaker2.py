@@ -154,6 +154,20 @@ elif fig == 6:
     factor = 4.0
     dkfactor = 1.5
 
+elif fig == 7:
+    # same as fig 5 but using L2 proxy data
+    source = 'lasco'
+    title = 'LASCO/C3 May 15-17, 2021'
+    cmap = plt.get_cmap('stereocor2')
+    dir = rootdir + '/data/lasco_c3/L2proxy_2021_05'
+    endfile = 'LASCOC3_2021_05_17_013020.fts'
+    duration = 2.0
+    scale = (1.0, 1.3)
+    pdir = '/home/mark.miesch/Products/image_processing'
+    outfile = rootdir+'/movies/lasco_2021_05_16_L2.mp4'
+    framedir = pdir+f'/frames/2021_05_16_L2'
+    ngflag = False
+
 else:
     print("pick a valid figure number")
     exit()
