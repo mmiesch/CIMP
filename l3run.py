@@ -25,7 +25,7 @@ Nfiles = None
 # the QC filter may not function properly if you do not do this
 wipe = True
 
-fig = 6
+fig = 4
 
 if fig == 1:
 
@@ -54,8 +54,8 @@ elif fig == 3:
 elif fig == 4:
 
     # L1 STEREO-A data
-    Nfiles = 10
-    endfile = dir+'/stereo_a/L2proxy_2012_09/STEREOA_2012_09_15_183900.fts'
+    Nfiles = 300
+    endfile = dir+'/stereo_a/L2proxy_2012_09/STEREOA_2012_09_17_022400.fts'
     outdir = dir+'/stereo_a/L3_2012_09'
 
 elif fig == 5:

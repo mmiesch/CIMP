@@ -37,6 +37,9 @@ def get_time(header, source):
         d = np.array(header['DATE-OBS'].split('/'),dtype='int')
         t = np.rint(np.array(header['TIME-OBS'].split(':'),dtype='float')).astype('int')
         return datetime.datetime(d[0],d[1],d[2],t[0],t[1],t[2])
+    elif source == 'stereo':
+        d = header['DATE-OBS']
+        return datetime.datetime.fromisoformat(d)
     else:
         print("ERROR: cannot find time")
         return 0
@@ -66,7 +69,7 @@ def noisegate(images, cubesize=(12,12,12), model='hybrid', factor = 4.0, \
 
 #------------------------------------------------------------------------------
 
-fig = 5
+fig = 11
 
 rootdir = '/home/mark.miesch/Products/image_processing/ATBD'
 ngflag = False
@@ -166,6 +169,63 @@ elif fig == 7:
     pdir = '/home/mark.miesch/Products/image_processing'
     outfile = rootdir+'/movies/lasco_2021_05_16_L2.mp4'
     framedir = pdir+f'/frames/2021_05_16_L2'
+    ngflag = False
+
+elif fig == 8:
+    source = 'stereo'
+    title = 'STEREO-A/COR2 Sept 15-17, 2012'
+    cmap = plt.get_cmap('soholasco2')
+    dir = rootdir + '/data/stereo_a/L3_2012_09'
+    endfile = 'STEREOA_L3_2012_09_17_022400.fts'
+    duration = 2.0
+    scale = (0.0, 1.0)
+    pdir = '/home/mark.miesch/Products/image_processing'
+    outfile = rootdir+'/movies/stereoa_2012_09_16.mp4'
+    framedir = pdir+f'/frames/2012_09_16'
+    ngflag = False
+
+elif fig == 9:
+    source = 'stereo'
+    title = 'STEREO-A/COR2 Sept 15-17, 2012'
+    cmap = plt.get_cmap('soholasco2')
+    dir = rootdir + '/data/stereo_a/L3_2012_09'
+    endfile = 'STEREOA_L3_2012_09_17_022400.fts'
+    duration = 2.0
+    scale = (0.0, 1.0)
+    pdir = '/home/mark.miesch/Products/image_processing'
+    outfile = rootdir+'/movies/stereoa_2012_09_16_ngc.mp4'
+    #framedir = pdir+f'/frames/2012_09_16_ngc'
+    ngflag = True
+    model = 'constant'
+    factor = 4.0
+
+elif fig == 10:
+    source = 'stereo'
+    title = 'STEREO-A/COR2 Sept 15-17, 2012'
+    cmap = plt.get_cmap('soholasco2')
+    dir = rootdir + '/data/stereo_a/L3_2012_09'
+    endfile = 'STEREOA_L3_2012_09_17_022400.fts'
+    duration = 2.0
+    scale = (0.0, 1.0)
+    pdir = '/home/mark.miesch/Products/image_processing'
+    outfile = rootdir+'/movies/stereoa_2012_09_16_ngh.mp4'
+    #framedir = pdir+f'/frames/2012_09_16_ngh'
+    ngflag = True
+    model = 'hybrid'
+    factor = 4.0
+    dkfactor = 1.4
+
+elif fig == 11:
+    source = 'stereo'
+    title = 'STEREO-A/COR2 Sept 15-17, 2012'
+    cmap = plt.get_cmap('stereocor2')
+    dir = rootdir + '/data/stereo_a/L2proxy_2012_09'
+    endfile = 'STEREOA_2012_09_17_022400.fts'
+    duration = 2.0
+    scale = (1.0, 1.4)
+    pdir = '/home/mark.miesch/Products/image_processing'
+    outfile = rootdir+'/movies/stereoa_2012_09_16_L2.mp4'
+    #framedir = pdir+f'/frames/2012_09_16_L2'
     ngflag = False
 
 else:
