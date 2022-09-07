@@ -157,7 +157,7 @@ while (dt <= dtmax) and (idx < len(flist)):
 # load images and apply noisegate
 
 #DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD debugging
-files = os.listdir(dir)
+files = list(reversed(os.listdir(dir)))
 #DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD debugging
 
 Nfiles = len(files)
