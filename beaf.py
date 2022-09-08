@@ -3,12 +3,44 @@
 Script to create movies showing images before and after processing
 """
 
+import datetime
 import matplotlib.pyplot as plt
+import noisegate as ng
 import numpy as np
 import os
 import sunpy.visualization.colormaps as cm
 
 from astropy.io import fits
+
+#------------------------------------------------------------------------------
+def get_time(header, source):
+
+    if source == 'lasco':
+        d = np.array(header['DATE-OBS'].split('/'),dtype='int')
+        t = np.rint(np.array(header['TIME-OBS'].split(':'),dtype='float')).astype('int')
+        return datetime.datetime(d[0],d[1],d[2],t[0],t[1],t[2])
+    elif source == 'stereo':
+        d = header['DATE-OBS']
+        return datetime.datetime.fromisoformat(d)
+    else:
+        print("ERROR: cannot find time")
+        return 0
+
+#------------------------------------------------------------------------------
+def noisegate(images, cubesize=(12,12,12), factor = 4.0):
+
+    nap = int((2*cubesize[0])/3)
+    nt, nx, ny = images.shape
+    dcube = np.zeros((nt+nap, nx, ny), dtype = 'float')
+    dcube[0:nt,:,:] = images
+    dcube[nt:,:,:] = np.flip(images[nt-nap:,:,:], axis = 0)
+
+    print(f"Applying noisegate {images.shape} {dcube.shape}")
+
+    dcubeng = ng.noise_gate_batch(dcube, cubesize=cubesize, model='constant',
+                factor = factor)
+
+    return dcubeng[nap:-nap,:,:]
 
 #------------------------------------------------------------------------------
 fig = 1
@@ -21,7 +53,7 @@ if fig == 1:
     source = 'lasco'
     dir2 = rootdir + '/data/lasco_c3/L3_2021_05'
     cmap2 = plt.get_cmap('soholasco2')
-    endfile2 = 'LASCOC3_L3_2021_05_17_013020.fts'
+    endfile = 'LASCOC3_L3_2021_05_17_013020.fts'
     duration = 2.0
     ngflag = False
     scale2 = (0.0, 0.5)
@@ -37,6 +69,33 @@ if fig == 1:
 else:
     print("pick a valid figure number")
     exit()
+#------------------------------------------------------------------------------
+# Compile list of valid L3 files in time range of interest,
+# with time stamps
+
+dirlist = os.listdir(dir2)
+flist = list(sorted(dirlist, reverse=True))
+idx = flist.index(endfile)
+
+dtmax = datetime.timedelta(days=duration)
+dt = datetime.timedelta(days=0.0)
+
+files = []
+times = []
+while (dt <= dtmax) and (idx < len(flist)):
+    hdu = fits.open(dir2+'/'+flist[idx])
+    try:
+        flag = hdu[0].header['L3QCFLAG']
+    except:
+        flag = 0
+    if flag < 2:
+        t = get_time(hdu[0].header, source)
+        if len(times) > 0:
+            dt = times[0] - t
+        print(f"{flist[idx]} {dt}")
+        files.append(flist[idx])
+        times.append(t)
+    idx += 1
 
 #------------------------------------------------------------------------------
 
