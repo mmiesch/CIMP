@@ -44,19 +44,19 @@ def noisegate(images, cubesize=(12,12,12), factor = 4.0):
     return dcubeng[nap:-nap,:,:]
 
 #------------------------------------------------------------------------------
-fig = 1
+fig = 2
 
 rootdir = '/home/mark.miesch/Products/image_processing/ATBD'
-ngflag = False
+ngflag = True
 framedir = None
+factor = 4.0
 
 if fig == 1:
     source = 'lasco'
     dir2 = rootdir + '/data/lasco_c3/L3_2021_05'
     cmap2 = plt.get_cmap('soholasco2')
     endfile = 'LASCOC3_L3_2021_05_17_013020.fts'
-    duration = 1.0
-    ngflag = False
+    duration = 2.0
     scale2 = (0.0, 0.5)
 
     dir1 = rootdir + '/data/lasco_c3/L2proxy_2021_05'
@@ -65,7 +65,23 @@ if fig == 1:
 
     pdir = '/home/mark.miesch/Products/image_processing'
     outfile = rootdir+'/movies/lasco_2021_05_16_ba.mp4'
-    framedir = pdir+f'/frames/debug'
+    #framedir = pdir+f'/frames/2021_05_16_ba'
+
+elif fig == 2:
+    source = 'stereo'
+    dir2 = rootdir + '/data/stereo_a/L3_2012_09'
+    cmap2 = plt.get_cmap('soholasco2')
+    endfile = 'STEREOA_L3_2012_09_17_022400.fts'
+    duration = 2.0
+    scale2 = (0.0, 1.0)
+
+    dir1 = rootdir + '/data/stereo_a/L2proxy_2012_09'
+    cmap1 = plt.get_cmap('stereocor2')
+    scale1 = (1.0, 1.4)
+
+    pdir = '/home/mark.miesch/Products/image_processing'
+    outfile = rootdir+'/movies/stereo_2012_09_16_ba.mp4'
+    #framedir = pdir+f'/frames/2012_09_16_ba'
 
 else:
     print("pick a valid figure number")
@@ -97,6 +113,7 @@ while (dt <= dtmax) and (idx < len(flist)):
         files.append(flist[idx])
         times.append(t)
     idx += 1
+
 #------------------------------------------------------------------------------
 # load images and apply noisegate
 
@@ -122,6 +139,9 @@ for idx in np.arange(Nfiles):
    images1[Nfiles-1-idx,:,:] = hdu1[0].data
    hdu1.close()
 
+if ngflag:
+    images = noisegate(images2, factor = factor)
+
 #------------------------------------------------------------------------------
 
 fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(12,6))
@@ -139,6 +159,9 @@ for idx in np.arange(images2.shape[0]):
                  origin='lower')
     ax[1].axis('off')
     frames.append([f1,f2])
+    if framedir is not None:
+        frame = str(len(frames)).zfill(3)
+        plt.savefig(framedir+f"/frame_{frame}.png")
 
 mov = animation.ArtistAnimation(fig, frames, interval = 50, blit = False,
         repeat = True, repeat_delay = 1000)
