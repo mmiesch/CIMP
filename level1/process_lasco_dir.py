@@ -50,39 +50,26 @@ for subdir in os.listdir(targetdir):
     if os.path.isdir(ddir):
         day = subdir
         print(80*'-'+f"\nday {day}")
+
+        savepath = outdir + '/' + day
+        if not os.path.exists(savepath):
+            os.makedirs(savepath)
+
         for file in os.listdir(ddir):
-            print(file)
+            fpath = ddir+'/'+file
+            try:
+                assert("median" not in file)
+                assert("fts" in file)
+                print(file)
+                hdu = fits.open(fpath)
+                nx = hdu[0].header['NAXIS1']
+                ny = hdu[0].header['NAXIS2']
+                assert(nx == 1024)
+                assert(ny == 1024)
+            except:
+                print(red+f"Skipping file {file}"+cend)
+                continue
 
-#------------------------------------------------------------------------------
-# now loop over files
+            idlcommand = f"reduce_level_1,'{fpath}',savedir='{savepath}'"
+            subprocess.run([sswidl,"-e",idlcommand], env=os.environ)
 
-# remaining files to be processed
-#filelist = files.copy()
-#
-#for file in files:
-#
-#    fname = file.split('/')[-1]
-#
-#    hdu = fits.open(file)[0]
-#    d = hdu.header['DATE-OBS'].replace('/','-')
-#    time = Time(d)
-#
-#    day = time.strftime('%d')
-#
-#    nx = hdu.header['NAXIS1']
-#    ny = hdu.header['NAXIS2']
-#
-#    savepath = outdir + '/' + day
-#
-#    if (nx == 1024) and (ny == 1024):
-#
-#        print(yellow+f"{fname} {day} {nx} {ny}"+cend)
-#
-#        if not os.path.exists(savepath):
-#            os.makedirs(savepath)
-#
-#
-#    idlcommand = f"reduce_level_1,'{file}',savedir='{savepath}'"
-#    subprocess.run([sswidl,"-e",idlcommand], env=os.environ)
-#
-#
