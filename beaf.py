@@ -96,6 +96,30 @@ while (dt <= dtmax) and (idx < len(flist)):
         files.append(flist[idx])
         times.append(t)
     idx += 1
+#------------------------------------------------------------------------------
+# load images and apply noisegate
+
+Nfiles = len(files)
+
+hdu2 = fits.open(dir2+'/'+files[0])
+nx2, ny2 = hdu2[0].data.shape
+hdu2.close()
+
+file1 = files[0].replace('_L3','')
+hdu1 = fits.open(dir1+'/'+file1)
+nx1, ny1 = hdu1[0].data.shape
+hdu1.close()
+
+images1 = np.zeros((Nfiles,nx1,ny1), dtype = 'float')
+images2 = np.zeros((Nfiles,nx2,ny2), dtype = 'float')
+for idx in np.arange(Nfiles):
+   hdu2 = fits.open(dir2+'/'+files[idx])
+   images2[Nfiles-1-idx,:,:] = hdu2[0].data
+   hdu2.close()
+   file1 = files[idx].replace('_L3','')
+   hdu1 = fits.open(dir1+'/'+file1)
+   images1[Nfiles-1-idx,:,:] = hdu1[0].data
+   hdu1.close()
 
 #------------------------------------------------------------------------------
 
