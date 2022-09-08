@@ -4,6 +4,7 @@ Script to create movies showing images before and after processing
 """
 
 import datetime
+import matplotlib.animation as animation
 import matplotlib.pyplot as plt
 import noisegate as ng
 import numpy as np
@@ -54,7 +55,7 @@ if fig == 1:
     dir2 = rootdir + '/data/lasco_c3/L3_2021_05'
     cmap2 = plt.get_cmap('soholasco2')
     endfile = 'LASCOC3_L3_2021_05_17_013020.fts'
-    duration = 2.0
+    duration = 1.0
     ngflag = False
     scale2 = (0.0, 0.5)
 
@@ -123,16 +124,26 @@ for idx in np.arange(Nfiles):
 
 #------------------------------------------------------------------------------
 
-#fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(12,6))
-#
-#ax[0].imshow(im1,cmap=cmap1,vmin=scale1[0],vmax=scale1[1], \
-#             origin='lower')
-#ax[0].axis('off')
-#
-#ax[1].imshow(im2,cmap=cmap2,vmin=scale2[0],vmax=scale2[1], \
-#             origin='lower')
-#ax[1].axis('off')
-#
-#fig.tight_layout(pad=1,rect=(0.01,0.01,.99,.99))
+fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(12,6))
+fig.tight_layout(pad=1,rect=(0.01,0.01,.99,.99))
 
-#plt.show()
+frames = []
+
+for idx in np.arange(images2.shape[0]):
+
+    f1 = ax[0].imshow(images1[idx,:,:],cmap=cmap1, vmin=scale1[0], vmax=scale1[1], \
+                 origin='lower')
+    ax[0].axis('off')
+
+    f2 = ax[1].imshow(images2[idx,:,:],cmap=cmap2, vmin=scale2[0], vmax=scale2[1], \
+                 origin='lower')
+    ax[1].axis('off')
+    frames.append([f1,f2])
+
+mov = animation.ArtistAnimation(fig, frames, interval = 50, blit = False,
+        repeat = True, repeat_delay = 1000)
+
+print(f"Number of valid files = {Nfiles}")
+print(f"Number of frames = {len(frames)}")
+mov.save(outfile)
+
