@@ -52,16 +52,17 @@ framedir = None
 factor = 4.0
 
 if fig == 1:
-    source = 'lascoL1'
+    source = 'lasco'
     dir2 = rootdir + '/data/lasco_c3/L3_2014_01'
     cmap2 = plt.get_cmap('soholasco2')
-    endfile = 'LASCOC3_L3_L1_2014_01_16_181644.fts'
+    endfile = 'LASCOC3_L3_2014_01_17_053005.fts'
     duration = 2.0
-    scale2 = (0.0, 1.0)
+    scale2 = (0.0, 0.6)
+    factor = 10.0
 
     dir1 = rootdir + '/data/lasco_c3/L2proxy_2014_01'
     cmap1 = plt.get_cmap('stereocor2')
-    scale1 = (1.0, 1.4)
+    scale1 = (1.0, 1.2)
 
     pdir = '/home/mark.miesch/Products/image_processing'
     outfile = rootdir+'/movies/lasco_2014_01_16_ba.mp4'
@@ -82,6 +83,23 @@ elif fig == 2:
     pdir = '/home/mark.miesch/Products/image_processing'
     outfile = rootdir+'/movies/stereo_2012_09_16_ba.mp4'
     #framedir = pdir+f'/frames/2012_09_16_ba'
+
+elif fig == 3:
+    source = 'lascoL1'
+    dir2 = rootdir + '/data/lasco_c3/L3_L1_2014_01'
+    cmap2 = plt.get_cmap('soholasco2')
+    endfile = 'LASCOC3_L3_L1_2014_01_17_050449.fts'
+    duration = 2.0
+    scale2 = (0.0, 0.6)
+    factor = 6.0
+
+    dir1 = rootdir + '/data/lasco_c3/L2proxy1_2014_01'
+    cmap1 = plt.get_cmap('stereocor2')
+    scale1 = (1.0, 1.2)
+
+    pdir = '/home/mark.miesch/Products/image_processing'
+    outfile = rootdir+'/movies/lascoL1_2014_01_16_ba.mp4'
+    #framedir = pdir+f'/frames/2021_05_16_ba'
 
 else:
     print("pick a valid figure number")

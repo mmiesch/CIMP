@@ -20,10 +20,12 @@ cend = '\033[0m'
 # define platform-specific parameters
 
 # this is the input directory
-targetdir = '/home/mark.miesch/data/lasco_monthly/c3/2014_01/'
+#targetdir = '/home/mark.miesch/data/lasco_monthly/c3/2014_01/'
+targetdir = '/home/mark.miesch/data/lasco_monthly/c3/2021_05/'
 
 #output directory (+ month/day)
-outdir = '/home/mark.miesch/data/lasco_monthly/c3/L1/2014_01/'
+#outdir = '/home/mark.miesch/data/lasco_monthly/c3/L1/2014_01/'
+outdir = '/home/mark.miesch/data/lasco_monthly/c3/L1/2021_05/'
 
 # location of sswidl executable
 sswidl = "/usr/local/ssw/gen/setup/ssw_idl"

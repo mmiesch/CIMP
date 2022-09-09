@@ -31,7 +31,7 @@ if fig == 1:
     bgfile = dir+'/background.fts'
     norm = True
 
-    outdir = outroot+'lasco_c3/L2proxy0_2012_04'
+    outdir = outroot+'lasco_c3/L2proxy_2012_04'
 
 elif fig == 2:
 
@@ -43,7 +43,7 @@ elif fig == 2:
     bgfile = dir+'/background.fts'
     norm = True
 
-    outdir = outroot+'lasco_c3/L2proxy0_2014_01'
+    outdir = outroot+'lasco_c3/L2proxy_2014_01'
 
 elif fig == 3:
 
@@ -93,7 +93,7 @@ elif fig == 6:
     bgfile = dir+'/background.fts'
     norm = False
 
-    outdir = outroot+'lasco_c3/L2proxy_2014_01'
+    outdir = outroot+'lasco_c3/L2proxy1_2014_01'
 
 else:
     print("pick a valid figure number")
