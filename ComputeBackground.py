@@ -16,14 +16,17 @@ print("Starting")
 #dir = "/home/mark.miesch/data/lasco_monthly/c3/2014_01"
 
 # another lasco test set
-dir = "/home/mark.miesch/data/lasco_monthly/c3/2021_05"
+#dir = "/home/mark.miesch/data/lasco_monthly/c3/2021_05"
+
+# LASCO L1
+dir = "/home/mark.miesch/data/lasco_monthly/c3/L1/2014_01"
 
 # for full-res STEREO-A L1 data
 #dir = "/home/mark.miesch/sunpy/data/secchi_cor2/L1/2012/09"
 
 bg = bg.background(dir)
 
-bg.daily_medians(normalize = True)
+bg.daily_medians(normalize = False)
 bg.minimize_medians()
 bg.write_background()
 

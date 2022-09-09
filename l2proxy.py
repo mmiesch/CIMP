@@ -16,7 +16,7 @@ outroot = '/home/mark.miesch/Products/image_processing/ATBD/data/'
 rmin = 0.16
 rmax = 1.0
 
-fig = 5
+fig = 6
 
 # set this to true to normalize by exposure time
 norm = False
@@ -31,7 +31,7 @@ if fig == 1:
     bgfile = dir+'/background.fts'
     norm = True
 
-    outdir = outroot+'lasco_c3/L2proxy_2012_04'
+    outdir = outroot+'lasco_c3/L2proxy0_2012_04'
 
 elif fig == 2:
 
@@ -43,7 +43,7 @@ elif fig == 2:
     bgfile = dir+'/background.fts'
     norm = True
 
-    outdir = outroot+'lasco_c3/L2proxy_2014_01'
+    outdir = outroot+'lasco_c3/L2proxy0_2014_01'
 
 elif fig == 3:
 
@@ -82,6 +82,18 @@ elif fig == 5:
     norm = True
 
     outdir = outroot+'lasco_c3/L2proxy_2021_05'
+
+elif fig == 6:
+
+    # L1 LASCO data
+    name = 'LASCOC3_L1'
+    instrument = a.Instrument.lasco
+    detector = a.Detector.c3
+    dir='/home/mark.miesch/data/lasco_monthly/c3/L1/2014_01'
+    bgfile = dir+'/background.fts'
+    norm = False
+
+    outdir = outroot+'lasco_c3/L2proxy_2014_01'
 
 else:
     print("pick a valid figure number")

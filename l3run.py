@@ -25,7 +25,7 @@ Nfiles = None
 # the QC filter may not function properly if you do not do this
 wipe = True
 
-fig = 4
+fig = 3
 
 if fig == 1:
 
@@ -46,9 +46,9 @@ elif fig == 2:
 
 elif fig == 3:
 
-    # L0.5 LASCO data
+    # L1 LASCO data
     Nfiles = 400
-    endfile = dir+'/lasco_c3/L2proxy_2014_01/LASCOC3_2014_01_16_181805.fts'
+    endfile = dir+'/lasco_c3/L2proxy_2014_01/LASCOC3_L1_2014_01_16_181644.fts'
     outdir = dir+'/lasco_c3/L3_2014_01'
 
 elif fig == 4:
