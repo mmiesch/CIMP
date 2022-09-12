@@ -18,7 +18,7 @@ def get_time(header, source):
 
     if source == 'lasco':
         d = np.array(header['DATE-OBS'].split('/'),dtype='int')
-        t = np.rint(np.array(header['TIME-OBS'].split(':'),dtype='float')).astype('int')
+        t = np.floor(np.array(header['TIME-OBS'].split(':'),dtype='float')).astype('int')
         return datetime.datetime(d[0],d[1],d[2],t[0],t[1],t[2])
     elif source == 'stereo' or source == 'lascoL1':
         d = header['DATE-OBS']
@@ -44,7 +44,7 @@ def noisegate(images, cubesize=(12,12,12), factor = 4.0):
     return dcubeng[nap:-nap,:,:]
 
 #------------------------------------------------------------------------------
-fig = 1
+fig = 4
 
 rootdir = '/home/mark.miesch/Products/image_processing/ATBD'
 ngflag = True
@@ -100,6 +100,21 @@ elif fig == 3:
     pdir = '/home/mark.miesch/Products/image_processing'
     outfile = rootdir+'/movies/lascoL1_2014_01_16_ba.mp4'
     #framedir = pdir+f'/frames/2021_05_16_ba'
+
+elif fig == 4:
+    source = 'lasco'
+    dir2 = rootdir + '/data/lasco_c3/L3_2021_05'
+    cmap2 = plt.get_cmap('soholasco2')
+    endfile = 'LASCOC3_L3_2021_05_23_223007.fts'
+    duration = 2.0
+    scale2 = (0.0, 0.6)
+
+    dir1 = rootdir + '/data/lasco_c3/L2proxy_2021_05'
+    cmap1 = plt.get_cmap('stereocor2')
+    scale1 = (1.0, 1.2)
+
+    pdir = '/home/mark.miesch/Products/image_processing'
+    outfile = rootdir+'/movies/lasco_2021_05_23_ba.mp4'
 
 else:
     print("pick a valid figure number")
