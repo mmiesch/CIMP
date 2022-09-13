@@ -263,6 +263,9 @@ else:
 images2 = noisegate(images, cubesize=cubesize2, factor = factor2, \
                     model=model2, dkfactor=dkfactor2)
 
+if cubesize1[0] == 12 and cubesize2[0] == 18:
+    images1 = images1[4:,:,:]
+
 #------------------------------------------------------------------------------
 
 fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(12,6))
