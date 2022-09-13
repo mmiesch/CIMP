@@ -49,7 +49,7 @@ def noisegate(images, cubesize=(12,12,12), factor = 4.0, model = 'constant', \
     return dcubeng[nap:-nap,:,:]
 
 #------------------------------------------------------------------------------
-fig = 3
+fig = 6
 
 rootdir = '/home/mark.miesch/Products/image_processing/ATBD'
 ngflag1 = True
@@ -162,7 +162,7 @@ elif fig == 5:
     dir2 = dir1
     cmap1 = plt.get_cmap('soholasco2')
     cmap2 = cmap1
-    endfile = 'LASCOC3_L3_2012_09_17_022400.fts'
+    endfile = 'STEREOA_L3_2012_09_17_022400.fts'
     duration = 2.0
 
     model1 = 'hybrid'
@@ -180,6 +180,31 @@ elif fig == 5:
     pdir = '/home/mark.miesch/Products/image_processing'
     outfile = rootdir+'/movies/stereo_2012_09_ng_ch.mp4'
     framedir = pdir+f'/frames/stereo_2012_09_ng_ch'
+
+elif fig == 6:
+    source = 'stereo'
+    dir1 = rootdir + '/data/stereo_a/L3_2012_09'
+    dir2 = dir1
+    cmap1 = plt.get_cmap('soholasco2')
+    cmap2 = cmap1
+    endfile = 'STEREOA_L3_2012_09_17_022400.fts'
+    duration = 2.0
+
+    model1 = 'hybrid'
+    cubesize1=(12,12,12)
+    factor1 = 4.0
+    dkfactor1 = 6.0
+    scale1 = (0.0, 1.0)
+
+    model2 = 'constant'
+    cubesize2=(18,18,18)
+    factor2 = 6.0
+    dkfactor2 = 6.0
+    scale2 = (0.0, 1.0)
+
+    pdir = '/home/mark.miesch/Products/image_processing'
+    outfile = rootdir+'/movies/stereo_2012_09_ng_c18.mp4'
+    framedir = pdir+f'/frames/stereo_2012_09_ng_c18'
 
 else:
     print("pick a valid figure number")
