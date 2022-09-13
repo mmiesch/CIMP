@@ -28,7 +28,7 @@ def get_time(header, source):
         return 0
 
 #------------------------------------------------------------------------------
-def noisegate(images, cubesize=(12,12,12), factor = 4.0):
+def noisegate(images, cubesize=(18,18,18), factor = 4.0):
 
     nap = int((2*cubesize[0])/3)
     nt, nx, ny = images.shape
@@ -43,7 +43,7 @@ def noisegate(images, cubesize=(12,12,12), factor = 4.0):
     return dcubeng[nap:-nap,:,:]
 
 #------------------------------------------------------------------------------
-fig = 5
+fig = 4
 
 rootdir = '/home/mark.miesch/Products/image_processing/ATBD'
 ngflag = True
@@ -84,6 +84,7 @@ elif fig == 2:
     #framedir = pdir+f'/frames/2012_09_16_ba'
 
 elif fig == 3:
+    # abandoned attempt to work with lasco L1
     source = 'lascoL1'
     dir2 = rootdir + '/data/lasco_c3/L3_L1_2014_01'
     cmap2 = plt.get_cmap('soholasco2')
@@ -101,6 +102,7 @@ elif fig == 3:
     #framedir = pdir+f'/frames/2021_05_16_ba'
 
 elif fig == 4:
+    # main result for lasco 2021 data
     source = 'lasco'
     dir2 = rootdir + '/data/lasco_c3/L3_2021_05'
     cmap2 = plt.get_cmap('soholasco2')
@@ -118,7 +120,7 @@ elif fig == 4:
     framedir = pdir+f'/frames/2021_05_23_f6'
 
 elif fig == 5:
-    # experimenting with 2021 data
+    # experimenting with lasco 2021 data
     source = 'lasco'
     dir2 = rootdir + '/data/lasco_c3/L3_2021_05'
     cmap2 = plt.get_cmap('soholasco2')
@@ -194,7 +196,7 @@ for idx in np.arange(Nfiles):
 
 if ngflag:
     images2 = noisegate(images2, factor = factor)
-    nt = 8
+    nt = 12 # for cubesize of 18
     images1 = images1[nt:,:,:]
 
 #------------------------------------------------------------------------------

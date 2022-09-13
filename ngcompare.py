@@ -49,9 +49,10 @@ def noisegate(images, cubesize=(12,12,12), factor = 4.0, model = 'constant', \
     return dcubeng[nap:-nap,:,:]
 
 #------------------------------------------------------------------------------
-fig = 2
+fig = 4
 
 rootdir = '/home/mark.miesch/Products/image_processing/ATBD'
+ngflag1 = True
 framedir = None
 
 if fig == 1:
@@ -104,6 +105,82 @@ elif fig == 2:
     outfile = rootdir+'/movies/lasco_2021_05_ng_46.mp4'
     framedir = pdir+f'/frames/2021_05_ng_46'
 
+elif fig == 3:
+    source = 'lasco'
+    dir1 = rootdir + '/data/lasco_c3/L3_2021_05'
+    dir2 = dir1
+    cmap1 = plt.get_cmap('soholasco2')
+    cmap2 = cmap1
+    endfile = 'LASCOC3_L3_2021_05_23_223007.fts'
+    duration = 2.0
+
+    ngflag1 = False
+    model1 = 'constant'
+    cubesize1=(12,12,12)
+    factor1 = 4.0
+    dkfactor1 = 6.0
+    scale1 = (0.0, 0.6)
+
+    model2 = 'constant'
+    cubesize2=(12,12,12)
+    factor2 = 6.0
+    dkfactor2 = 6.0
+    scale2 = (0.0, 0.6)
+
+    pdir = '/home/mark.miesch/Products/image_processing'
+    outfile = rootdir+'/movies/lasco_2021_05_ng.mp4'
+    framedir = pdir+f'/frames/2021_05_ng'
+
+elif fig == 4:
+    source = 'lasco'
+    dir1 = rootdir + '/data/lasco_c3/L3_2021_05'
+    dir2 = dir1
+    cmap1 = plt.get_cmap('soholasco2')
+    cmap2 = cmap1
+    endfile = 'LASCOC3_L3_2021_05_23_223007.fts'
+    duration = 2.0
+
+    model1 = 'constant'
+    cubesize1=(12,12,12)
+    factor1 = 6.0
+    dkfactor1 = 6.0
+    scale1 = (0.0, 0.6)
+
+    model2 = 'constant'
+    cubesize2=(18,18,18)
+    factor2 = 6.0
+    dkfactor2 = 6.0
+    scale2 = (0.0, 0.6)
+
+    pdir = '/home/mark.miesch/Products/image_processing'
+    outfile = rootdir+'/movies/lasco_2021_05_ng_c18.mp4'
+    framedir = pdir+f'/frames/2021_05_ng_c18'
+
+elif fig == 5:
+    source = 'stereo'
+    dir1 = rootdir + '/data/stereo_a/L3_2012_09'
+    dir2 = dir1
+    cmap1 = plt.get_cmap('soholasco2')
+    cmap2 = cmap1
+    endfile = 'LASCOC3_L3_2012_09_17_022400.fts'
+    duration = 2.0
+
+    model1 = 'hybrid'
+    cubesize1=(18,18,18)
+    factor1 = 4.0
+    dkfactor1 = 6.0
+    scale1 = (0.0, 1.0)
+
+    model2 = 'constant'
+    cubesize2=(18,18,18)
+    factor2 = 6.0
+    dkfactor2 = 6.0
+    scale2 = (0.0, 1.0)
+
+    pdir = '/home/mark.miesch/Products/image_processing'
+    outfile = rootdir+'/movies/stereo_2012_09_ng_ch.mp4'
+    framedir = pdir+f'/frames/stereo_2012_09_ng_ch'
+
 else:
     print("pick a valid figure number")
     exit()
@@ -151,8 +228,12 @@ for idx in np.arange(Nfiles):
    images[Nfiles-1-idx,:,:] = hdu2[0].data
    hdu2.close()
 
-images1 = noisegate(images, cubesize=cubesize1, factor = factor1, \
-                    model=model1, dkfactor=dkfactor1)
+if ngflag1:
+    images1 = noisegate(images, cubesize=cubesize1, factor = factor1, \
+                        model=model1, dkfactor=dkfactor1)
+else:
+    nt = 8
+    images1 = images[nt:,:,:]
 
 images2 = noisegate(images, cubesize=cubesize2, factor = factor2, \
                     model=model2, dkfactor=dkfactor2)
