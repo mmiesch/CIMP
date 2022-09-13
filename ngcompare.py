@@ -49,7 +49,7 @@ def noisegate(images, cubesize=(12,12,12), factor = 4.0, model = 'constant', \
     return dcubeng[nap:-nap,:,:]
 
 #------------------------------------------------------------------------------
-fig = 4
+fig = 3
 
 rootdir = '/home/mark.miesch/Products/image_processing/ATBD'
 ngflag1 = True
@@ -65,13 +65,13 @@ if fig == 1:
     duration = 2.0
 
     model1 = 'hybrid'
-    cubesize1=(12,12,12)
+    cubesize1=(18,18,18)
     factor1 = 4.0
     dkfactor1 = 6.0
     scale1 = (0.0, 0.6)
 
     model2 = 'constant'
-    cubesize2=(12,12,12)
+    cubesize2=(18,18,18)
     factor2 = 6.0
     dkfactor2 = 6.0
     scale2 = (0.0, 0.6)
@@ -90,13 +90,13 @@ elif fig == 2:
     duration = 2.0
 
     model1 = 'constant'
-    cubesize1=(12,12,12)
+    cubesize1=(18,18,18)
     factor1 = 4.0
     dkfactor1 = 6.0
     scale1 = (0.0, 0.6)
 
     model2 = 'constant'
-    cubesize2=(12,12,12)
+    cubesize2=(18,18,18)
     factor2 = 6.0
     dkfactor2 = 6.0
     scale2 = (0.0, 0.6)
@@ -116,13 +116,13 @@ elif fig == 3:
 
     ngflag1 = False
     model1 = 'constant'
-    cubesize1=(12,12,12)
+    cubesize1=(18,18,18)
     factor1 = 4.0
     dkfactor1 = 6.0
     scale1 = (0.0, 0.6)
 
     model2 = 'constant'
-    cubesize2=(12,12,12)
+    cubesize2=(18,18,18)
     factor2 = 6.0
     dkfactor2 = 6.0
     scale2 = (0.0, 0.6)
@@ -232,7 +232,7 @@ if ngflag1:
     images1 = noisegate(images, cubesize=cubesize1, factor = factor1, \
                         model=model1, dkfactor=dkfactor1)
 else:
-    nt = 8
+    nt = 12
     images1 = images[nt:,:,:]
 
 images2 = noisegate(images, cubesize=cubesize2, factor = factor2, \
