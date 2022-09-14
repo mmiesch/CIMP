@@ -17,6 +17,7 @@ dir = '/home/mark.miesch/Products/image_processing/ATBD/data'
 rmin = 0.16
 rmax = 1.0
 clip = (1.0, 1.4)
+qcrange = (1.0, 1.4)
 
 # if Nfiles list is None, do all files in directory
 Nfiles = None
@@ -25,7 +26,7 @@ Nfiles = None
 # the QC filter may not function properly if you do not do this
 wipe = True
 
-fig = 2
+fig = 5
 
 if fig == 1:
 
@@ -62,10 +63,12 @@ elif fig == 5:
 
     # HAO CME model
     Nfiles = 10
-    endfile = dir+'/model/CME0_pos30/L2proxy/Model0_2010_04_16_021057.fts'
+    endfile = dir+'/model/CME0_pos30/L2proxy/Model0_2010_04_17_234614.fts'
     outdir = dir+'/model/CME0_pos30/L3'
-    rmin = 0.0
-    rmax = np.inf
+    rmin = 0.1
+    rmax = 1.0
+    clip = (1.0, 6.0)
+    qcrange = (1.0, 100.0)
 
 elif fig == 6:
 
@@ -126,7 +129,7 @@ for file in flist:
     print(file)
     fpath = indir+'/'+file
     x = proc.l3proc(fpath, outdir)
-    x.process(rmin = rmin, rmax = rmax, clip = clip)
+    x.process(rmin = rmin, rmax = rmax, clip = clip, qcrange = qcrange)
     x.write()
 
 tstop = perf_counter()

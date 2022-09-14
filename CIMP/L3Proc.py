@@ -116,7 +116,7 @@ class l3proc:
         self.outfile = outdir+'/'+'_'.join(filename)
 
     def process(self, rmin = 0.0, rmax = np.inf, clip = None, \
-                noisefilter = False):
+                qcrange = (1.0, 1.4), noisefilter = False):
         # Proposed L3 pipeline
         # not including noise reduction and QC
 
@@ -142,7 +142,7 @@ class l3proc:
         self.data = Enhance.omr(self.data, rescaleim = False)
 
         # QC filter
-        self.header['L3QCFLAG'] = qc_range(self.data)
+        self.header['L3QCFLAG'] = qc_range(self.data, range = qcrange)
 
         # clip and rescale
         self.data = (self.data - clip[0])/(clip[1] - clip[0])
