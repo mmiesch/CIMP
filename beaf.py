@@ -165,7 +165,7 @@ elif fig == 7:
     endfile = 'Model0_L3_2010_04_17_234614.fts'
     duration = 4.0
     scale2 = (0.0, 0.6)
-    ngflag = False
+    #ngflag = False
 
     dir1 = rootdir + '/data/model/CME0_pos30/L2proxy'
     cmap1 = plt.get_cmap('stereocor2')

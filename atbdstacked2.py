@@ -1,0 +1,60 @@
+"""
+script for making a stacked plot for the ATBD
+This is for a 5-row figure made from beaf frames
+"""
+
+import imageio.v3 as iio
+import numpy as np
+import matplotlib.pyplot as plt
+
+dir = '/home/mark.miesch/Products/image_processing/frames/'
+
+file1 = dir + 'stereo_2012_09_16_ba/frame_019.png'
+file2 = dir + '2012_04_16/frame_001.png'
+#file3 = dir + '2014_01_16_ba/frame_174.png'
+#file4 = dir + '2021_05_23_f6/frame_037.png'
+#file5 = dir + 'CME0/frame_027.png'
+
+outdir = '/home/mark.miesch/Products/image_processing/figs/'
+outfile = outdir+'L3survey1.png'
+
+#------------------------------------------------------------------------------
+row1 = iio.imread(file1)
+row2 = iio.imread(file2)
+
+#------------------------------------------------------------------------------
+
+fig, ax = plt.subplots(nrows=2, ncols=1, figsize = (14,12))
+
+plt.subplots_adjust(hspace=-0.4)
+
+ax[0].imshow(row1)
+ax[0].axis('off')
+
+ax[1].imshow(row2)
+ax[1].axis('off')
+
+fig.tight_layout(pad=1,rect=(0.0,0.0,1.0,1.0))
+
+xx1 = .14
+yy2 = 0.92
+plt.annotate("(a)", (xx1,yy2), xycoords = 'figure fraction', color='white', \
+             fontsize = 'x-large', fontweight = 'semibold')
+
+xx2 = xx1 + 0.41
+plt.annotate("(b)", (xx2,yy2), xycoords = 'figure fraction', color='white', \
+             fontsize = 'x-large', fontweight = 'semibold')
+
+yy1 = 0.44
+plt.annotate("(c)", (xx1,yy1), xycoords = 'figure fraction', color='white', \
+             fontsize = 'x-large', fontweight = 'semibold')
+
+plt.annotate("(d)", (xx2,yy1), xycoords = 'figure fraction', color='white', \
+             fontsize = 'x-large', fontweight = 'semibold')
+
+
+
+plt.savefig(outfile,bbox_inches='tight')
+
+plt.show()
+
