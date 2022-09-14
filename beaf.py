@@ -43,7 +43,7 @@ def noisegate(images, cubesize=(18,18,18), factor = 6.0):
     return dcubeng[nap:-nap,:,:]
 
 #------------------------------------------------------------------------------
-fig = 2
+fig = 6
 
 rootdir = '/home/mark.miesch/Products/image_processing/ATBD'
 ngflag = True
@@ -136,6 +136,24 @@ elif fig == 5:
     pdir = '/home/mark.miesch/Products/image_processing'
     outfile = rootdir+'/movies/lasco_2021_05_23_nong.mp4'
     framedir = pdir+f'/frames/2021_05_23_nong'
+
+elif fig == 6:
+    # main result for lasco 2021 data
+    source = 'lasco'
+    dir2 = rootdir + '/data/lasco_c3/L3_2012_04'
+    cmap2 = plt.get_cmap('soholasco2')
+    endfile = 'LASCOC3_L3_2012_04_16_111805.fts'
+    duration = 2.0
+    scale2 = (0.0, 0.6)
+    factor = 6.0
+
+    dir1 = rootdir + '/data/lasco_c3/L2proxy_2012_04'
+    cmap1 = plt.get_cmap('stereocor2')
+    scale1 = (1.0, 1.3)
+
+    pdir = '/home/mark.miesch/Products/image_processing'
+    outfile = rootdir+'/movies/lasco_2012_04_16.mp4'
+    framedir = pdir+f'/frames/2012_04_16'
 
 else:
     print("pick a valid figure number")
