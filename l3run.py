@@ -62,13 +62,13 @@ elif fig == 4:
 elif fig == 5:
 
     # HAO CME model
-    Nfiles = 10
+    Nfiles = 200
     endfile = dir+'/model/CME0_pos30/L2proxy/Model0_2010_04_17_234614.fts'
     outdir = dir+'/model/CME0_pos30/L3'
     rmin = 0.1
     rmax = 1.0
     clip = (1.0, 6.0)
-    qcrange = (1.0, 100.0)
+    qcrange = (0.0, 10.0)
 
 elif fig == 6:
 
