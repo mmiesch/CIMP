@@ -10,22 +10,36 @@ import matplotlib.pyplot as plt
 dir = '/home/mark.miesch/Products/image_processing/frames/'
 outdir = '/home/mark.miesch/Products/image_processing/figs/'
 
-fig = 3
+fig = 4
 
 if fig == 1:
-    file1 = dir + 'stereo_2012_09_16_ba/frame_019.png'
+    #file1 = dir + 'stereo_2012_09_16_ba/frame_019.png'
+    file1 = dir + 'stereo_2012_09_16_ba/frame_119.png'
     file2 = dir + '2012_04_16/frame_001.png'
     outfile = outdir+'L3survey1.png'
 
 elif fig == 2:
-    file1 = dir + '2014_01_16_ba/frame_174.png'
-    file2 = dir + '2014_01_16_ba/frame_094.png'
+    file1 = dir + '2021_05_23_f6/frame_037.png'
+    file2 = dir + '2021_05_noh/frame_037.png'
     outfile = outdir+'L3survey2.png'
 
 elif fig == 3:
-    file1 = dir + '2021_05_23_f6/frame_037.png'
+    file1 = dir + '2014_01_16_ba/frame_174.png'
     file2 = dir + 'CME0/frame_027.png'
     outfile = outdir+'L3survey3.png'
+
+elif fig == 4:
+    #file1 = dir + '2021_05_23_f6/frame_079.png'
+    file1 = dir + '2021_05_23_f6/frame_129.png'
+    #file1 = dir + '2014_01_16_ba/frame_040.png'
+    file2 = dir + '2014_01_16_ba/frame_094.png'
+    outfile = outdir+'L3survey4.png'
+
+elif fig == 5:
+    #file1 = dir + '2021_05_23_f6/frame_129.png'
+    file1 = dir + '2014_01_16_ba/frame_051.png'
+    file2 = dir + '2014_01_16_ba/frame_052.png'
+    outfile = outdir+'L3survey5.png'
 
 else:
     print("enter a valid fig number")
