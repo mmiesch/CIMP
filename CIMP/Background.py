@@ -4,6 +4,7 @@ CIMP Background module
 
 import numpy as np
 import os
+import sys
 
 from astropy.io import fits
 
@@ -26,23 +27,27 @@ class background:
 
         self.dir = dir
 
-    def daily_medians(self, normalize = False):
+    def daily_medians(self, normalize = False, lasco_correction = False):
         """
         This loops through the subdirectories for each day and computes a daily median image.  The image is saved in the same directory with the name `daily_median.fits`
         """
-
         for subdir in os.listdir(self.dir):
             if os.path.isdir(self.dir+'/'+subdir):
-                self.compute_median(subdir, normalize = normalize)
+                self.compute_median(subdir, normalize, lasco_correction)
 
-
-    def compute_median(self, daydir, normalize):
+    def compute_median(self, daydir, normalize, lasco_correction):
         """
         Given the name of a directory that contains images for a given day, daydir, this method will loop over all the files in that directory to compute a median image.
         """
         Nimages = 0
 
         ddir = self.dir + '/' + daydir + '/'
+
+        # lasco exposure time correction
+        sys.path.append('/home/mark.miesch/Products/image_processing/NRL_python')
+        from lasco_utils import get_exp_factor
+
+        caldir = '/home/mark.miesch/data/lasco_cal/idl/expfac/data'
 
         # for now use the header of the first valid file as a basis for 
         # creating the header for the daily median image file.  So, it will 
@@ -55,28 +60,34 @@ class background:
 
         # first pass: count the number of valid images to process
         # make sure they all hve the same resolution
+        files = []
         for file in os.listdir(ddir):
             try:
                 assert("median" not in file)
-                hdu = fits.open(ddir+file)[0]
+                hdu = fits.open(ddir+file)
                 if nx is None:
-                    nx = hdu.header['NAXIS1']
+                    nx = hdu[0].header['NAXIS1']
                 else:
-                    assert(nx == hdu.header['NAXIS1'])
+                    assert(nx == hdu[0].header['NAXIS1'])
 
                 if ny is None:
-                    ny = hdu.header['NAXIS1']
+                    ny = hdu[0].header['NAXIS1']
                 else:
-                    assert(ny == hdu.header['NAXIS1'])
+                    assert(ny == hdu[0].header['NAXIS1'])
+
+                etime = hdu[0].header['EXPTIME']
 
                 if header0 is None:
-                    header0 = hdu.header
+                    header0 = hdu[0].header
 
-                Nimages += 1
+                files.append(file)
+
+                hdu.close()
 
             except:
                 print(yellow+f"skipping {file}"+cend)
 
+        Nimages = len(files)
         print(f"{daydir} : {Nimages} : {nx} {ny}")
 
         assert(Nimages > 0), \
@@ -87,26 +98,22 @@ class background:
         x[:,:,:] = np.nan
 
         idx = 0
-        for file in os.listdir(ddir):
-            try:
-                assert("median" not in file)
-                hdu= fits.open(ddir+file)[0]
-                assert(nx == hdu.header['NAXIS1'])
-                assert(ny == hdu.header['NAXIS2'])
-                if normalize:
-                    try:
-                        etime = hdu.header['EXPTIME']
-                        x[:,:,idx] = hdu.data / etime
-                        print(yellow+f"Normalized by exposure time {etime}"+cend)
-                        idx += 1
+        for file in files:
+            hdu= fits.open(ddir+file)
+            if lasco_correction:
+                etime = hdu[0].header['EXPTIME']
+                fac, bias = get_exp_factor(hdu[0].header, dir0 = caldir)
+                x[:,:,idx] = (hdu[0].data - bias) / (fac*etime)
+                print(yellow+f"Normalized, corrected {etime} {fac} {bias}"+cend)
+            elif normalize:
+                etime = hdu[0].header['EXPTIME']
+                x[:,:,idx] = hdu[0].data / etime
+                print(yellow+f"Normalized by exposure time {etime}"+cend)
+            else:
+                x[:,:,idx] = hdu[0].data
 
-                    except:
-                        print(red+f"Exposure time not found: skipping file {file}"+cend)
-                else:
-                    x[:,:,idx] = hdu.data
-                    idx += 1
-            except:
-                pass
+            idx += 1
+            hdu.close()
 
         # compute median image
         med_im = np.nanmedian(x, axis=2)
