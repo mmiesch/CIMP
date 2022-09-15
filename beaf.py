@@ -46,7 +46,7 @@ def noisegate(images, cubesize=(18,18,18), factor = 6.0):
     return dcubeng[nap:-nap,:,:]
 
 #------------------------------------------------------------------------------
-fig = 7
+fig = 9
 
 rootdir = '/home/mark.miesch/Products/image_processing/ATBD'
 ngflag = True
@@ -174,6 +174,40 @@ elif fig == 7:
     pdir = '/home/mark.miesch/Products/image_processing'
     outfile = rootdir+'/movies/CME0.mp4'
     framedir = pdir+f'/frames/CME0'
+
+elif fig == 8:
+    source = 'model'
+    dir2 = rootdir + '/data/model/CME0_pos30/L3_gaussian'
+    cmap2 = plt.get_cmap('soholasco2')
+    endfile = 'Model0_L3_2010_04_17_234614.fts'
+    duration = 4.0
+    scale2 = (0.0, 0.6)
+    #ngflag = False
+
+    dir1 = rootdir + '/data/model/CME0_pos30/L2proxy_gaussian'
+    cmap1 = plt.get_cmap('stereocor2')
+    scale1 = (1.0, 6.0)
+
+    pdir = '/home/mark.miesch/Products/image_processing'
+    outfile = rootdir+'/movies/CME0_gaussian.mp4'
+    framedir = pdir+f'/frames/CME0_gaussian'
+
+elif fig == 9:
+    source = 'model'
+    dir2 = rootdir + '/data/model/CME0_pos30/L3_salt'
+    cmap2 = plt.get_cmap('soholasco2')
+    endfile = 'Model0_L3_2010_04_17_234614.fts'
+    duration = 4.0
+    scale2 = (0.0, 0.6)
+    #ngflag = False
+
+    dir1 = rootdir + '/data/model/CME0_pos30/L2proxy_salt'
+    cmap1 = plt.get_cmap('stereocor2')
+    scale1 = (1.0, 6.0)
+
+    pdir = '/home/mark.miesch/Products/image_processing'
+    outfile = rootdir+'/movies/CME0_salt.mp4'
+    framedir = pdir+f'/frames/CME0_salt'
 
 else:
     print("pick a valid figure number")

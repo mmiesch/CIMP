@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 dir = '/home/mark.miesch/Products/image_processing/frames/'
 outdir = '/home/mark.miesch/Products/image_processing/figs/'
 
-fig = 4
+fig = 6
 
 if fig == 1:
     #file1 = dir + 'stereo_2012_09_16_ba/frame_019.png'
@@ -40,6 +40,11 @@ elif fig == 5:
     file1 = dir + '2014_01_16_ba/frame_051.png'
     file2 = dir + '2014_01_16_ba/frame_052.png'
     outfile = outdir+'L3survey5.png'
+
+elif fig == 6:
+    file1 = dir + 'CME0_gaussian/frame_027.png'
+    file2 = dir + 'CME0_salt/frame_027.png'
+    outfile = outdir+'L3noise.png'
 
 else:
     print("enter a valid fig number")

@@ -3,9 +3,6 @@ Add noise to CME model images
 """
 
 import os
-import numpy as np
-import matplotlib.pyplot as plt
-import sunpy.visualization.colormaps as cm
 
 from astropy.io import fits
 from skimage.util import random_noise
@@ -14,17 +11,14 @@ dir = '/home/mark.miesch/Products/image_processing/ATBD/data/model/CME0_pos30'
 
 indir = dir+'/L2proxy'
 
-#cmap = plt.get_cmap('soholasco2')
-cmap = plt.get_cmap('stereocor2')
-
 #------------------------------------------------------------------------------
 ccase = 2
 clip = (1.0,4.0)
 
 if ccase == 1:
-    outdir = dir + '/L3_gaussian'
+    outdir = dir + '/L2proxy_gaussian'
 else:
-    outdir = dir + '/L3_salt'
+    outdir = dir + '/L2proxy_salt'
 
 norm = clip[1] - clip[0]
 for file in os.listdir(indir):

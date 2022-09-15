@@ -26,7 +26,7 @@ Nfiles = None
 # the QC filter may not function properly if you do not do this
 wipe = True
 
-fig = 5
+fig = 9
 
 if fig == 1:
 
@@ -83,6 +83,28 @@ elif fig == 7:
     Nfiles = 400
     endfile = dir+'/lasco_c3/L2proxy1_2014_01/LASCOC3_L1_2014_01_17_050449.fts'
     outdir = dir+'/lasco_c3/L3_L1_2014_01'
+
+elif fig == 8:
+
+    # HAO CME model with gaussian noise
+    Nfiles = 200
+    endfile = dir+'/model/CME0_pos30/L2proxy_gaussian/Model0_2010_04_17_234614.fts'
+    outdir = dir+'/model/CME0_pos30/L3_gaussian'
+    rmin = 0.1
+    rmax = 1.0
+    clip = (1.0, 6.0)
+    qcrange = (0.0, 10.0)
+
+elif fig == 9:
+
+    # HAO CME model with salt noise
+    Nfiles = 200
+    endfile = dir+'/model/CME0_pos30/L2proxy_salt/Model0_2010_04_17_234614.fts'
+    outdir = dir+'/model/CME0_pos30/L3_salt'
+    rmin = 0.1
+    rmax = 1.0
+    clip = (1.0, 6.0)
+    qcrange = (0.0, 10.0)
 
 else:
     print("pick a valid figure number")
