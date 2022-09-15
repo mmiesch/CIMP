@@ -16,10 +16,11 @@ outroot = '/home/mark.miesch/Products/image_processing/ATBD/data/'
 rmin = 0.16
 rmax = 1.0
 
-fig = 6
+fig = 7
 
 # set this to true to normalize by exposure time
 norm = False
+lasco_correction = False
 
 if fig == 1:
 
@@ -95,6 +96,19 @@ elif fig == 6:
 
     outdir = outroot+'lasco_c3/L2proxy1_2014_01'
 
+elif fig == 7:
+
+    # A poor man's L1 processing for LASCO
+    name = 'LASCOC3'
+    instrument = a.Instrument.lasco
+    detector = a.Detector.c3
+    dir='/home/mark.miesch/data/lasco_monthly/c3/2014_01'
+    bgfile = dir+'/background.fts'
+    norm = True
+    lasco_correction = True
+
+    outdir = outroot+'lasco_c3/L2proxyc_2014_01'
+
 else:
     print("pick a valid figure number")
     exit()
@@ -125,7 +139,7 @@ for d in os.listdir(dir):
                 assert(fpath != bgfile)
                 x = snap.snapshot(file = fpath, bgfile = bgfile, \
                     instrument = instrument, detector = detector, \
-                    normalize = norm)
+                    normalize = norm, lasco_correction = lasco_correction)
                 assert(x.nx == nx)
                 assert(x.ny == ny)
                 t = x.time.datetime

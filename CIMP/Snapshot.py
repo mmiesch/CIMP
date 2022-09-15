@@ -9,6 +9,7 @@ import logging
 from astropy.utils import data_info
 import numpy as np
 import os
+import sys
 import sunpy.map
 
 from astropy.io import fits
@@ -51,7 +52,8 @@ class snapshot:
     """A snapshot is defined as a single coronagraph images for a particular instrument, detector, and time"""
 
     def __init__(self, file = None, bgfile = None, instrument = None, \
-                       detector = None, normalize = False):
+                       detector = None, normalize = False, \
+                       lasco_correction = False):
 
         if (file is None):
             print("Incomplete argument list: Using default test case")
@@ -99,7 +101,10 @@ class snapshot:
         self.header = hdu.header
 
         # normalize by exposure time
-        if normalize:
+        # optionally with LASCO correction
+        if lasco_correction:
+            self.lasco_expcorr()
+        elif normalize:
             self.norm()
 
         # adjustments for simulation data
@@ -158,6 +163,23 @@ class snapshot:
             print(yellow+f"Normalized by exposure time {etime}"+cend)
         except:
             print(red+"Exposure time not found: not normalized"+cend)
+
+    def lasco_expcorr(self):
+        """
+        Lasco exposure time correction
+        """
+        if self.instrument != 'LASCO':
+            return
+
+        etime = self.header['EXPTIME']
+
+        sys.path.append('/home/mark.miesch/Products/image_processing/NRL_python')
+        from lasco_utils import get_exp_factor
+        caldir = '/home/mark.miesch/data/lasco_cal/idl/expfac/data'
+        fac, bias = get_exp_factor(self.header, dir0 = caldir)
+
+        print(yellow+f"Normalized, corrected {etime} {fac} {bias}"+cend)
+        self.data = (self.data - bias) / (etime*fac)
 
     def clip(self, limits, rescale = False):
         self.data = self.data.clip(min = limits[0], max = limits[1])
