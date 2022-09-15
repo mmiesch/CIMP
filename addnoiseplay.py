@@ -30,12 +30,12 @@ data = (data - clip[0])/(clip[1] - clip[0])
 data = data.clip(min = 0.0, max = 1.0)
 
 #------------------------------------------------------------------------------
-ccase = 1
+ccase = 2
 
 if ccase == 1:
   noisyd = random_noise(data, mode = 'gaussian', var = 0.05)
 elif ccase == 2:
-  noisyd = random_noise(data, mode = 'poisson')
+  noisyd = random_noise(data, mode = 'salt')
 else:
     print("pick a valid ccase")
     exit()
