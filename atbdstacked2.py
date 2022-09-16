@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 dir = '/home/mark.miesch/Products/image_processing/frames/'
 outdir = '/home/mark.miesch/Products/image_processing/figs/'
 
-fig = 6
+fig = 5
 
 if fig == 1:
     #file1 = dir + 'stereo_2012_09_16_ba/frame_019.png'

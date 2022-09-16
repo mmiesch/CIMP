@@ -46,7 +46,7 @@ def noisegate(images, cubesize=(18,18,18), factor = 6.0):
     return dcubeng[nap:-nap,:,:]
 
 #------------------------------------------------------------------------------
-fig = 9
+fig = 1
 
 rootdir = '/home/mark.miesch/Products/image_processing/ATBD'
 ngflag = True

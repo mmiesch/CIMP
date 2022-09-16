@@ -26,7 +26,7 @@ lasco_correction = True
 
 bg = bg.background(dir)
 
-#bg.daily_medians(normalize = normalize, lasco_correction = lasco_correction)
+bg.daily_medians(normalize = normalize, lasco_correction = lasco_correction)
 bg.minimize_medians()
 bg.write_background()
 

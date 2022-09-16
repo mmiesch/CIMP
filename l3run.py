@@ -17,7 +17,7 @@ dir = '/home/mark.miesch/Products/image_processing/ATBD/data'
 rmin = 0.16
 rmax = 1.0
 clip = (1.0, 1.4)
-qcrange = (1.0, 1.4)
+qcrange = (0.9, 1.4)
 
 # if Nfiles list is None, do all files in directory
 Nfiles = None
@@ -26,7 +26,7 @@ Nfiles = None
 # the QC filter may not function properly if you do not do this
 wipe = True
 
-fig = 9
+fig = 3
 
 if fig == 1:
 
@@ -49,7 +49,7 @@ elif fig == 3:
 
     # L0.5 LASCO data
     Nfiles = 400
-    endfile = dir+'/lasco_c3/L2proxy_2014_01/LASCOC3_2014_01_17_053005.fts'
+    endfile = dir+'/lasco_c3/L2proxyc_2014_01/LASCOC3_2014_01_17_053005.fts'
     outdir = dir+'/lasco_c3/L3_2014_01'
 
 elif fig == 4:
