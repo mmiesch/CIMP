@@ -66,14 +66,14 @@ class background:
                 assert("median" not in file)
                 hdu = fits.open(ddir+file)
                 if nx is None:
-                    nx = hdu[0].header['NAXIS1']
+                    nx = hdu[0].data.shape[0]
                 else:
-                    assert(nx == hdu[0].header['NAXIS1'])
+                    assert(nx == hdu[0].data.shape[0])
 
                 if ny is None:
-                    ny = hdu[0].header['NAXIS1']
+                    ny = hdu[0].data.shape[1]
                 else:
-                    assert(ny == hdu[0].header['NAXIS1'])
+                    assert(ny == hdu[0].data.shape[1])
 
                 etime = hdu[0].header['EXPTIME']
 

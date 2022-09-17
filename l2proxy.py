@@ -16,7 +16,7 @@ outroot = '/home/mark.miesch/Products/image_processing/ATBD/data/'
 rmin = 0.16
 rmax = 1.0
 
-fig = 7
+fig = 1
 
 # set this to true to normalize by exposure time
 norm = False
@@ -30,9 +30,10 @@ if fig == 1:
     detector = a.Detector.c3
     dir='/home/mark.miesch/data/lasco_monthly/c3/2012_04'
     bgfile = dir+'/background.fts'
-    norm = True
+    norm = False
+    lasco_correction = True
 
-    outdir = outroot+'lasco_c3/L2proxy_2012_04'
+    outdir = outroot+'lasco_c3/L2proxyc_2012_04'
 
 elif fig == 2:
 

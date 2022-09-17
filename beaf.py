@@ -47,7 +47,7 @@ def noisegate(images, cubesize=(18,18,18), factor = 6.0):
     return dcubeng[nap:-nap,:,:]
 
 #------------------------------------------------------------------------------
-fig = 1
+fig = 6
 
 rootdir = '/home/mark.miesch/Products/image_processing/ATBD'
 ngflag = True
@@ -159,7 +159,7 @@ elif fig == 6:
 
     pdir = '/home/mark.miesch/Products/image_processing'
     outfile = rootdir+'/movies/lasco_2012_04_16.mp4'
-    framedir = pdir+f'/frames/2012_04_16'
+    #framedir = pdir+f'/frames/2012_04_16'
 
 elif fig == 7:
     source = 'model'
