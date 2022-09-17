@@ -179,8 +179,8 @@ class snapshot:
         fac, bias = get_exp_factor(self.header, dir0 = caldir)
 
         print(yellow+f"Normalized, corrected {etime} {fac} {bias}"+cend)
-        #self.data = (self.data - bias) / (etime*fac)
-        self.data = self.data / (etime*fac)
+        self.data = (self.data - bias) / (etime*fac)
+        #self.data = self.data / (etime*fac)
 
     def clip(self, limits, rescale = False):
         self.data = self.data.clip(min = limits[0], max = limits[1])

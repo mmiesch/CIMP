@@ -103,8 +103,8 @@ class background:
             if lasco_correction:
                 etime = hdu[0].header['EXPTIME']
                 fac, bias = get_exp_factor(hdu[0].header, dir0 = caldir)
-                #x[:,:,idx] = (hdu[0].data - bias) / (fac*etime)
-                x[:,:,idx] = hdu[0].data / (fac*etime)
+                x[:,:,idx] = (hdu[0].data - bias) / (fac*etime)
+                #x[:,:,idx] = hdu[0].data / (fac*etime)
                 print(yellow+f"Normalized, corrected {etime} {fac} {bias}"+cend)
             elif normalize:
                 etime = hdu[0].header['EXPTIME']

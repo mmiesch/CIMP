@@ -42,8 +42,8 @@ elif fig == 2:
     # L0.5 LASCO data
     # This is the same endfile as 1 but should span 2 days
     Nfiles = 250
-    endfile = dir+'/lasco_c3/L2proxyc_2012_04/LASCOC3_2012_04_16_111805.fts'
-    outdir = dir+'/lasco_c3/L3_2012_04'
+    endfile = dir+'/lasco_c3/L2proxyb_2012_04/LASCOC3_2012_04_16_111805.fts'
+    outdir = dir+'/lasco_c3/L3b_2012_04'
 
 elif fig == 3:
 

@@ -33,7 +33,7 @@ if fig == 1:
     norm = False
     lasco_correction = True
 
-    outdir = outroot+'lasco_c3/L2proxyc_2012_04'
+    outdir = outroot+'lasco_c3/L2proxyb_2012_04'
 
 elif fig == 2:
 

@@ -12,6 +12,7 @@ import os
 import sunpy.visualization.colormaps as cm
 
 from astropy.io import fits
+from CIMP.Enhance import mask_annulus
 
 #------------------------------------------------------------------------------
 def get_time(header, source):
@@ -53,6 +54,7 @@ rootdir = '/home/mark.miesch/Products/image_processing/ATBD'
 ngflag = True
 framedir = None
 factor = 6.0
+maskbe = False
 
 if fig == 1:
     source = 'lasco'
@@ -146,16 +148,18 @@ elif fig == 5:
 elif fig == 6:
     # main result for lasco 2021 data
     source = 'lasco'
-    dir2 = rootdir + '/data/lasco_c3/L3_2012_04'
+    dir2 = rootdir + '/data/lasco_c3/L3b_2012_04'
     cmap2 = plt.get_cmap('soholasco2')
     endfile = 'LASCOC3_L3_2012_04_16_111805.fts'
     duration = 2.0
-    scale2 = (0.0, 0.6)
+    scale2 = (0.2, 0.6)
     factor = 6.0
 
-    dir1 = rootdir + '/data/lasco_c3/L2proxy_2012_04'
+    dir1 = rootdir + '/data/lasco_c3/L2proxyb_2012_04'
     cmap1 = plt.get_cmap('stereocor2')
     scale1 = (1.0, 1.3)
+    maskbe = True
+    rmaxb = 1.0
 
     pdir = '/home/mark.miesch/Products/image_processing'
     outfile = rootdir+'/movies/lasco_2012_04_16.mp4'
@@ -273,6 +277,14 @@ if ngflag:
     #nt = 12 # for cubesize of 18
     nt = 14
     images1 = images1[nt:,:,:]
+
+#------------------------------------------------------------------------------
+# optionally mask before frames
+
+if maskbe:
+    for idx in np.arange(images1.shape[0]):
+        im = images1[idx,:,:].copy()
+        images1[idx,:,:] = mask_annulus(im, rmax=rmaxb)
 
 #------------------------------------------------------------------------------
 
