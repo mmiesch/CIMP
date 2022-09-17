@@ -16,7 +16,7 @@ outroot = '/home/mark.miesch/Products/image_processing/ATBD/data/'
 rmin = 0.16
 rmax = 1.0
 
-fig = 1
+fig = 5
 
 # set this to true to normalize by exposure time
 norm = False
@@ -75,15 +75,15 @@ elif fig == 4:
 
 elif fig == 5:
 
-    # HAO CME model
     name = 'LASCOC3'
     instrument = a.Instrument.lasco
     detector = a.Detector.c3
     dir = '/home/mark.miesch/data/lasco_monthly/c3/2021_05'
     bgfile = dir+'/background.fts'
-    norm = True
+    norm = False
+    lasco_correction = True
 
-    outdir = outroot+'lasco_c3/L2proxy_2021_05'
+    outdir = outroot+'lasco_c3/L2proxyb_2021_05'
 
 elif fig == 6:
 
@@ -105,10 +105,10 @@ elif fig == 7:
     detector = a.Detector.c3
     dir='/home/mark.miesch/data/lasco_monthly/c3/2014_01'
     bgfile = dir+'/background.fts'
-    norm = True
+    norm = False
     lasco_correction = True
 
-    outdir = outroot+'lasco_c3/L2proxyc_2014_01'
+    outdir = outroot+'lasco_c3/L2proxyb_2014_01'
 
 else:
     print("pick a valid figure number")
