@@ -45,7 +45,7 @@ def get_time(header, source):
         return 0
 
 #------------------------------------------------------------------------------
-def noisegate(images, cubesize=(12,12,12), model='hybrid', factor = 4.0, \
+def noisegate(images, cubesize=(18,18,18), model='constant', factor = 6.0, \
               dkfactor = 1.5):
 
     nap = int((2*cubesize[0])/3)
@@ -69,15 +69,15 @@ def noisegate(images, cubesize=(12,12,12), model='hybrid', factor = 4.0, \
 
 #------------------------------------------------------------------------------
 
-fig = 11
+fig = 12
 
 rootdir = '/home/mark.miesch/Products/image_processing/ATBD'
-ngflag = False
+ngflag = True
 framedir = None
 beqmethod = None
-cubesize = (12,12,12)
-method = 'constant'
-factor = 4.0
+cubesize = (18,18,18)
+model = 'constant'
+factor = 6.0
 dkfactor = 1.5
 
 if fig == 1:
@@ -227,6 +227,17 @@ elif fig == 11:
     outfile = rootdir+'/movies/stereoa_2012_09_16_L2.mp4'
     #framedir = pdir+f'/frames/2012_09_16_L2'
     ngflag = False
+
+elif fig == 12:
+    source = 'stereo'
+    title = 'STEREO-A/COR2 Sept 13-21, 2012'
+    cmap = plt.get_cmap('soholasco2')
+    dir = rootdir + '/data/stereo_a/L3_2012_09_7day'
+    endfile = 'STEREOA_L3_2012_09_21_222400.fts'
+    duration = 7.0
+    scale = (0.2, 1.0)
+    pdir = '/home/mark.miesch/Products/image_processing'
+    outfile = rootdir+'/movies/stereoa_2012_7day.mp4'
 
 else:
     print("pick a valid figure number")

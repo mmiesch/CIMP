@@ -37,8 +37,10 @@ elif fig == 4:
 
 elif fig == 5:
     #file1 = dir + '2021_05_23_f6/frame_129.png'
-    file1 = dir + '2014_01_16_ba/frame_051.png'
-    file2 = dir + '2014_01_16_ba/frame_052.png'
+    #file1 = dir + '2014_01_16_ba/frame_051.png'
+    #file2 = dir + '2014_01_16_ba/frame_052.png'
+    file1 = dir + '2014_01_16_ba/frame_049.png'
+    file2 = dir + '2014_01_16_ba/frame_050.png'
     outfile = outdir+'L3survey5.png'
 
 elif fig == 6:

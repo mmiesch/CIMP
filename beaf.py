@@ -33,7 +33,8 @@ def get_time(header, source):
 #------------------------------------------------------------------------------
 def noisegate(images, cubesize=(18,18,18), factor = 6.0):
 
-    nap = int((2*cubesize[0])/3)
+    #nap = int((2*cubesize[0])/3)
+    nap = 14
     nt, nx, ny = images.shape
     dcube = np.zeros((nt+nap, nx, ny), dtype = 'float')
     dcube[0:nt,:,:] = images
@@ -59,7 +60,8 @@ if fig == 1:
     cmap2 = plt.get_cmap('soholasco2')
     endfile = 'LASCOC3_L3_2014_01_17_053005.fts'
     duration = 2.0
-    scale2 = (0.0, 0.6)
+    #scale2 = (0.2, 0.6)
+    scale2 = (0.24, 0.6)
 
     dir1 = rootdir + '/data/lasco_c3/L2proxy_2014_01'
     cmap1 = plt.get_cmap('stereocor2')
@@ -67,7 +69,8 @@ if fig == 1:
 
     pdir = '/home/mark.miesch/Products/image_processing'
     outfile = rootdir+'/movies/lasco_2014_01_16_ba.mp4'
-    framedir = pdir+f'/frames/2014_01_16_ba'
+    #framedir = pdir+f'/frames/2014_01_16_ba'
+    framedir = pdir+f'/frames/beta'
 
 elif fig == 2:
     source = 'stereo'
@@ -267,7 +270,8 @@ for idx in np.arange(Nfiles):
 
 if ngflag:
     images2 = noisegate(images2, factor = factor)
-    nt = 12 # for cubesize of 18
+    #nt = 12 # for cubesize of 18
+    nt = 14
     images1 = images1[nt:,:,:]
 
 #------------------------------------------------------------------------------

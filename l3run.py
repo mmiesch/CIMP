@@ -16,7 +16,7 @@ dir = '/home/mark.miesch/Products/image_processing/ATBD/data'
 # default parameters for all
 rmin = 0.16
 rmax = 1.0
-clip = (1.0, 1.4)
+clip = (0.9, 1.4)
 qcrange = (0.9, 1.4)
 
 # if Nfiles list is None, do all files in directory
@@ -26,7 +26,7 @@ Nfiles = None
 # the QC filter may not function properly if you do not do this
 wipe = True
 
-fig = 3
+fig = 10
 
 if fig == 1:
 
@@ -105,6 +105,13 @@ elif fig == 9:
     rmax = 1.0
     clip = (1.0, 6.0)
     qcrange = (0.0, 10.0)
+
+elif fig == 10:
+
+    # L1 STEREO-A data - 7-day run
+    Nfiles = 600
+    endfile = dir+'/stereo_a/L2proxy_2012_09/STEREOA_2012_09_21_222400.fts'
+    outdir = dir+'/stereo_a/L3_2012_09_7day'
 
 else:
     print("pick a valid figure number")
