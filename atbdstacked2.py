@@ -30,9 +30,11 @@ elif fig == 3:
 
 elif fig == 4:
     #file1 = dir + '2021_05_23_f6/frame_079.png'
-    file1 = dir + '2021_05_23_f6/frame_129.png'
+    #file1 = dir + '2021_05_23_f6/frame_129.png'
+    file1 = dir + '2021_05_23_f6/frame_127.png'
     #file1 = dir + '2014_01_16_ba/frame_040.png'
-    file2 = dir + '2014_01_16_ba/frame_094.png'
+    #file2 = dir + '2014_01_16_ba/frame_094.png'
+    file2 = dir + '2014_01_16_ba/frame_092.png'
     outfile = outdir+'L3survey4.png'
 
 elif fig == 5:

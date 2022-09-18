@@ -9,6 +9,7 @@ import numpy as np
 import sunpy.visualization.colormaps as cm
 
 from astropy.io import fits
+from CIMP.Enhance import mask_annulus
 
 #------------------------------------------------------------------------------
 # choose the images you want to compare
@@ -22,7 +23,7 @@ if fig == 1:
     outfile = 'qclevels.png'
 
     title1 = 'QC flag = 1'
-    dir1='/home/mark.miesch/Products/image_processing/ATBD/data/lasco_c3/L2proxyc_2014_01'
+    dir1='/home/mark.miesch/Products/image_processing/ATBD/data/lasco_c3/L2proxyb_2014_01'
     file1 = dir1+'/'+ 'LASCOC3_2014_01_16_233006.fts'
     cmap1 = plt.get_cmap('stereocor2')
     #cmap1 = plt.get_cmap('soholasco2')
@@ -48,6 +49,12 @@ hdu1.close()
 hdu2 = fits.open(file2)
 data2 = hdu2[0].data
 hdu2.close()
+
+#------------------------------------------------------------------------------
+# mask annulus
+
+data1 = mask_annulus(data1,rmax = 1.0)
+data2 = mask_annulus(data2,rmax = 1.0)
 
 #------------------------------------------------------------------------------
 # plot

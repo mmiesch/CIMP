@@ -48,7 +48,7 @@ def noisegate(images, cubesize=(18,18,18), factor = 6.0):
     return dcubeng[nap:-nap,:,:]
 
 #------------------------------------------------------------------------------
-fig = 4
+fig = 6
 
 rootdir = '/home/mark.miesch/Products/image_processing/ATBD'
 ngflag = True
@@ -74,8 +74,8 @@ if fig == 1:
 
     pdir = '/home/mark.miesch/Products/image_processing'
     outfile = rootdir+'/movies/lasco_2014_01_16_ba.mp4'
-    #framedir = pdir+f'/frames/2014_01_16_ba'
-    framedir = pdir+f'/frames/beta'
+    framedir = pdir+f'/frames/2014_01_16_ba'
+    #framedir = pdir+f'/frames/beta'
 
 elif fig == 2:
     source = 'stereo'
@@ -109,7 +109,6 @@ elif fig == 3:
 
     pdir = '/home/mark.miesch/Products/image_processing'
     outfile = rootdir+'/movies/lascoL1_2014_01_16_ba.mp4'
-    #framedir = pdir+f'/frames/2021_05_16_ba'
 
 elif fig == 4:
     # main result for lasco 2021 data
@@ -152,7 +151,7 @@ elif fig == 5:
     framedir = pdir+f'/frames/2021_05_23_nong'
 
 elif fig == 6:
-    # main result for lasco 2021 data
+    # main result for lasco 2012 data
     source = 'lasco'
     dir2 = rootdir + '/data/lasco_c3/L3_2012_04'
     cmap2 = plt.get_cmap('soholasco2')
@@ -170,7 +169,7 @@ elif fig == 6:
 
     pdir = '/home/mark.miesch/Products/image_processing'
     outfile = rootdir+'/movies/lasco_2012_04_16.mp4'
-    #framedir = pdir+f'/frames/2012_04_16'
+    framedir = pdir+'/frames/2012_04_16'
 
 elif fig == 7:
     source = 'model'

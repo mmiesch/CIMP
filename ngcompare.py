@@ -271,13 +271,13 @@ elif fig == 9:
     cubesize1=(18,18,18)
     factor1 = 4.0
     dkfactor1 = 6.0
-    scale1 = (0.0, 0.6)
+    scale1 = (0.2, 0.6)
 
     model2 = 'hybrid'
-    cubesize2=(12,12,12)
+    cubesize2=(18,18,18)
     factor2 = 4.0
-    dkfactor2 = 4.0
-    scale2 = (0.0, 0.6)
+    dkfactor2 = 6.0
+    scale2 = (0.2, 0.6)
 
     pdir = '/home/mark.miesch/Products/image_processing'
     outfile = rootdir+'/movies/lasco_2021_05_ng_noh.mp4'
