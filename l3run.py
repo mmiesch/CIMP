@@ -26,7 +26,7 @@ Nfiles = None
 # the QC filter may not function properly if you do not do this
 wipe = True
 
-fig = 6
+fig = 14
 
 if fig == 1:
 
@@ -113,6 +113,38 @@ elif fig == 10:
     endfile = dir+'/stereo_a/L2proxy_2012_09/STEREOA_2012_09_21_222400.fts'
     outdir = dir+'/stereo_a/L3_2012_09_7day'
 
+elif fig == 11:
+
+    # timing trial for LASCO/2012
+    Nfiles = 1000
+    #endfile = dir+'/lasco_c3/L2proxyb_2012_04/LASCOC3_2012_04_25_000605.fts'
+    endfile = dir+'/lasco_c3/L2proxyb_2012_04/LASCOC3_2012_04_10_000605.fts'
+    #endfile = dir+'/lasco_c3/L2proxyb_2012_04/LASCOC3_2012_04_29_115405.fts'
+    outdir = dir+'/timings'
+
+elif fig == 12:
+
+    # timing trial for LASCO/2014
+    Nfiles = 1000
+    endfile = dir+'/lasco_c3/L2proxyb_2014_01/LASCOC3_2014_01_25_000606.fts'
+#    endfile = dir+'/lasco_c3/L2proxyb_2014_01/LASCOC3_2014_01_16_000606.fts'
+    outdir = dir+'/timings'
+
+elif fig == 13:
+
+    # timing trial for LASCO/2021
+    Nfiles = 1000
+#    endfile = dir+'/lasco_c3/L2proxyb_2021_05/LASCOC3_2021_05_25_000607.fts'
+    endfile = dir+'/lasco_c3/L2proxyb_2021_05/LASCOC3_2021_05_16_000607.fts'
+    outdir = dir+'/timings'
+
+elif fig == 14:
+
+    # timing trial for STEREO/2012
+    Nfiles = 1000
+    endfile = dir+'/stereo_a/L2proxy_2012_09/STEREOA_2012_09_27_002400.fts'
+    outdir = dir+'/timings'
+
 else:
     print("pick a valid figure number")
     exit()
@@ -154,8 +186,7 @@ else:
 tstart = perf_counter()
 
 for file in flist:
-    print(80*'-')
-    print(file)
+    #print(80*'-'+'\n'+f'{file}')
     fpath = indir+'/'+file
     x = proc.l3proc(fpath, outdir)
     x.process(rmin = rmin, rmax = rmax, clip = clip, qcrange = qcrange)
