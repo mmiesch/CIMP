@@ -26,7 +26,7 @@ Nfiles = None
 # the QC filter may not function properly if you do not do this
 wipe = True
 
-fig = 14
+fig = 5
 
 if fig == 1:
 
@@ -64,7 +64,8 @@ elif fig == 5:
     # HAO CME model
     Nfiles = 200
     endfile = dir+'/model/CME0_pos30/L2proxy/Model0_2010_04_17_234614.fts'
-    outdir = dir+'/model/CME0_pos30/L3'
+    #outdir = dir+'/model/CME0_pos30/L3'
+    outdir = dir+'/timings'
     rmin = 0.1
     rmax = 1.0
     clip = (1.0, 6.0)
@@ -117,8 +118,8 @@ elif fig == 11:
 
     # timing trial for LASCO/2012
     Nfiles = 1000
-    #endfile = dir+'/lasco_c3/L2proxyb_2012_04/LASCOC3_2012_04_25_000605.fts'
-    endfile = dir+'/lasco_c3/L2proxyb_2012_04/LASCOC3_2012_04_10_000605.fts'
+    endfile = dir+'/lasco_c3/L2proxyb_2012_04/LASCOC3_2012_04_25_000605.fts'
+    #endfile = dir+'/lasco_c3/L2proxyb_2012_04/LASCOC3_2012_04_10_000605.fts'
     #endfile = dir+'/lasco_c3/L2proxyb_2012_04/LASCOC3_2012_04_29_115405.fts'
     outdir = dir+'/timings'
 
@@ -134,8 +135,8 @@ elif fig == 13:
 
     # timing trial for LASCO/2021
     Nfiles = 1000
-#    endfile = dir+'/lasco_c3/L2proxyb_2021_05/LASCOC3_2021_05_25_000607.fts'
-    endfile = dir+'/lasco_c3/L2proxyb_2021_05/LASCOC3_2021_05_16_000607.fts'
+    endfile = dir+'/lasco_c3/L2proxyb_2021_05/LASCOC3_2021_05_25_000607.fts'
+#    endfile = dir+'/lasco_c3/L2proxyb_2021_05/LASCOC3_2021_05_16_000607.fts'
     outdir = dir+'/timings'
 
 elif fig == 14:
