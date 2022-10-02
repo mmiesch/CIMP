@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 dir = '/home/mark.miesch/Products/image_processing/frames/'
 outdir = '/home/mark.miesch/Products/image_processing/figs/'
 
-fig = 5
+fig = 2
 
 if fig == 1:
     #file1 = dir + 'stereo_2012_09_16_ba/frame_019.png'
@@ -19,7 +19,7 @@ if fig == 1:
     outfile = outdir+'L3survey1.png'
 
 elif fig == 2:
-    file1 = dir + '2021_05_23_f6/frame_037.png'
+    file1 = dir + '2021_05_23_f6/frame_035.png'
     file2 = dir + '2021_05_noh/frame_037.png'
     outfile = outdir+'L3survey2.png'
 

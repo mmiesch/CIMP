@@ -16,7 +16,11 @@ print("Starting")
 #dir = "/home/mark.miesch/data/lasco_monthly/c3/2014_01"
 
 # another lasco test set
-dir = "/home/mark.miesch/data/lasco_monthly/c3/2021_05"
+#dir = "/home/mark.miesch/data/lasco_monthly/c3/2021_05"
+
+# the hard-to-fit CME that was the topic of the
+# TREC workshop
+dir = "/home/mark.miesch/data/lasco_monthly/c3/2021_10"
 
 # for full-res STEREO-A L1 data
 #dir = "/home/mark.miesch/sunpy/data/secchi_cor2/L1/2012/09"

@@ -26,7 +26,7 @@ Nfiles = None
 # the QC filter may not function properly if you do not do this
 wipe = True
 
-fig = 5
+fig = 15
 
 if fig == 1:
 
@@ -145,6 +145,13 @@ elif fig == 14:
     Nfiles = 1000
     endfile = dir+'/stereo_a/L2proxy_2012_09/STEREOA_2012_09_27_002400.fts'
     outdir = dir+'/timings'
+
+elif fig == 15:
+
+    # L0.5 LASCO data from 2021
+    Nfiles = 400
+    endfile = dir+'/lasco_c3/L2proxyb_2021_10/LASCOC3_2021_10_29_003007.fts'
+    outdir = dir+'/lasco_c3/L3_2021_10'
 
 else:
     print("pick a valid figure number")
